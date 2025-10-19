@@ -25,7 +25,7 @@ const defenderTargetInp = document.querySelector<HTMLInputElement>("#defender-ta
 const defenderRerollInp = document.querySelector<HTMLInputElement>("#defender-rerolls")!;
 
 rollBtn.addEventListener('click', () => {
-  console.log(simulateUWAttacks({
+  const results = simulateUWAttacks({
     simulations: parseInt(numSimulationsInp.value),
     attackerDice: parseInt(attackerDiceInp.value),
     attackerSuccess: parseInt(attackerTargetInp.value),
@@ -33,5 +33,9 @@ rollBtn.addEventListener('click', () => {
     defenderDice: parseInt(defenderDiceInp.value),
     defenderSuccess: parseInt(defenderTargetInp.value),
     defenderRerolls: parseInt(defenderRerollInp.value),
-  }));
+  });
+  console.log(results);
+  console.log(`Attacker wins: ${results.attackerWins / results.numSimulations}`)
+  console.log(`Defender wins: ${results.defenderWins / results.numSimulations}`)
+  console.log(`Ties: ${results.ties / results.numSimulations}`)
 });

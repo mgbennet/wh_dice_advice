@@ -29,7 +29,7 @@ export function simulateUWAttacks(simulation: underworldsMC) {
     let defenseDice = reroll(dicePool(simulation.defenderDice), simulation.defenderSuccess, simulation.defenderRerolls);
     results.push(evaluateAttack(attackDice, simulation.attackerSuccess, defenseDice, simulation.defenderSuccess));
   }
-  
+
   // summarize the results
   const attackerWins = results.filter((val) => val.winner === CombatWinner.Attacker);
   const defenderWins = results.filter((val) => val.winner === CombatWinner.Defender);
@@ -44,12 +44,12 @@ export function simulateUWAttacks(simulation: underworldsMC) {
 }
 
 function evaluateAttack(attackDice: number[], attackSuccess: number, defenseDice: number[], defenseSuccess: number): uwCombatResult {
-  const attackSuccesses = attackDice.reduce((wins, cur) => cur >= attackSuccess ? wins + 1 : 0, 0);
-  const attackCrits = attackDice.reduce((wins, cur) => cur === 6 ? wins + 1 : 0, 0);
-  const defenseSuccesses = defenseDice.reduce((wins, cur) => cur >= defenseSuccess ? wins + 1 : 0, 0);
-  const defenseCrits = defenseDice.reduce((wins, cur) => cur === 6 ? wins + 1 : 0, 0);
+  const attackSuccesses = attackDice.reduce((wins, cur) => cur >= attackSuccess ? wins + 1 : wins, 0);
+  const attackCrits = attackDice.reduce((wins, cur) => cur === 6 ? wins + 1 : wins, 0);
+  const defenseSuccesses = defenseDice.reduce((wins, cur) => cur >= defenseSuccess ? wins + 1 : wins, 0);
+  const defenseCrits = defenseDice.reduce((wins, cur) => cur === 6 ? wins + 1 : wins, 0);
   return {
-    winner: attackSuccesses == defenseSuccesses
+    winner: attackSuccesses == defenseSuccesses && attackSuccesses > 0
       ? CombatWinner.Tie
       : attackSuccesses > defenseSuccesses
         ? CombatWinner.Attacker
