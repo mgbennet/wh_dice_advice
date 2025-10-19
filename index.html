@@ -7,6 +7,24 @@
 </head>
 <body>
   <h1>Dice pool simulation for Warhammer Underworlds</h1>
+  <label for="num-simulations">Number of </label>
+  <input type="number" id="num-simulations" min="1" value="100"/>
+  <h3>Attacker</h3>
+  <label for="attacker-dice">Dice amount</label>
+  <input type="number" id="attacker-dice" min="1" value="2"/>
+  <label for="attacker-target">Success target</label>
+  <input type="number" id="attacker-target" min="1" max="6" value="4"/>
+  <label for="attacker-rerolls">Rerolls</label>
+  <input type="number" id="attacker-rerolls" min="0" value="0"/>
+  <h3>Defender</h3>
+  <label for="defender-dice">Dice amount</label>
+  <input type="number" id="defender-dice" min="1" value="1"/>
+  <label for="defender-target">Success target</label>
+  <input type="number" id="defender-target" min="1" max="6" value="4"/>
+  <label for="defender-rerolls">Rerolls</label>
+  <input type="number" id="defender-rerolls" min="0" value="0"/>
+  <br/>
+  <button id="roll-btn">Roll</button>
   <div id="chart"></div>
   <script type="module" src="/src/main.ts"></script>
 </body>
