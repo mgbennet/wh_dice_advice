@@ -6,26 +6,46 @@
   <title>Underworlds Monte Carlo</title>
 </head>
 <body>
-  <h1>Dice pool simulations for Warhammer Underworlds</h1>
-  <label for="num-simulations">Number of simulated rolls</label>
-  <input type="number" id="num-simulations" min="1" value="1000"/>
-  <h3>Attacker</h3>
-  <label for="attacker-dice">Dice amount</label>
-  <input type="number" id="attacker-dice" min="1" value="2"/>
-  <label for="attacker-target">Success target</label>
-  <input type="number" id="attacker-target" min="1" max="6" value="4"/>
-  <label for="attacker-rerolls">Rerolls</label>
-  <input type="number" id="attacker-rerolls" min="0" value="0"/>
-  <h3>Defender</h3>
-  <label for="defender-dice">Dice amount</label>
-  <input type="number" id="defender-dice" min="1" value="1"/>
-  <label for="defender-target">Success target</label>
-  <input type="number" id="defender-target" min="1" max="6" value="4"/>
-  <label for="defender-rerolls">Rerolls</label>
-  <input type="number" id="defender-rerolls" min="0" value="0"/>
-  <br/>
-  <button id="roll-btn">Roll</button>
-  <div id="chart"></div>
+  <div id="app">
+    <h1>Dice pool simulations for Warhammer Underworlds</h1>
+    <div id="inputs-wrapper">
+      <div id="attacker-inputs">
+        <h3>Attacker</h3>
+        <div class="input-line">
+          <label for="attacker-dice">Dice amount</label>
+          <input type="number" id="attacker-dice" min="1" value="2"/>
+        </div>
+        <div class="input-line">
+          <label for="attacker-target">Success target</label>
+          <input type="number" id="attacker-target" min="1" max="6" value="4"/>
+        </div>
+        <div class="input-line">
+          <label for="attacker-rerolls">Rerolls</label>
+          <input type="number" id="attacker-rerolls" min="0" value="0"/>
+        </div>
+      </div>
+      <div id="defender-inputs">
+        <h3>Defender</h3>
+        <div class="input-line">
+          <label for="defender-dice">Dice amount</label>
+          <input type="number" id="defender-dice" min="1" value="1"/>
+        </div>
+        <div class="input-line">
+          <label for="defender-target">Success target</label>
+          <input type="number" id="defender-target" min="1" max="6" value="4"/>
+        </div>
+        <div class="input-line">
+          <label for="defender-rerolls">Rerolls</label>
+          <input type="number" id="defender-rerolls" min="0" value="0"/>
+        </div>
+      </div>
+    </div>
+    <label for="num-simulations">Number of simulated rolls</label>
+    <input type="number" id="num-simulations" min="1" value="10000"/>
+    <br/>
+    <button id="roll-btn">Roll!</button>
+    <div id="chart"></div>
+  </div>
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>

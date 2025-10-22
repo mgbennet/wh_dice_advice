@@ -1,3 +1,4 @@
+import './style.css'
 import { dicePool, reroll } from './dice';
 import { simulateUWAttacks } from './underworlds';
 
