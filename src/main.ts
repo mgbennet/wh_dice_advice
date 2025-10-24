@@ -1,20 +1,6 @@
 import './style.css'
-import { dicePool, reroll } from './dice';
 import { simulateUWAttacks } from './underworlds';
-
-const rolls: number[][] = [];
-for (let i = 0; i < 100; i++) {
-  rolls.push(dicePool(3));
-}
-const successRoll = 5;
-const requiredSuccesses = 2;
-const successCount = rolls.filter((rollPool) => rollPool.filter((roll) => roll >= successRoll).length >= requiredSuccesses).length;
-console.log(`Number of successful rolls: ${successCount}`);
-
-const examplePool = [6, 5, 4, 3, 2, 1];
-const numRerolls = 8;
-console.log(`Rerolling pool: ${examplePool} with success=5+, rerolls = ${numRerolls}`)
-console.log(reroll(examplePool, 5, numRerolls));
+import * as d3 from 'd3';
 
 const rollBtn = document.querySelector<HTMLButtonElement>("#roll-btn")!;
 const numSimulationsInp = document.querySelector<HTMLInputElement>("#num-simulations")!;
@@ -25,7 +11,58 @@ const defenderDiceInp = document.querySelector<HTMLInputElement>("#defender-dice
 const defenderTargetInp = document.querySelector<HTMLInputElement>("#defender-target")!;
 const defenderRerollInp = document.querySelector<HTMLInputElement>("#defender-rerolls")!;
 
-rollBtn.addEventListener('click', () => {
+const width = 300,
+  height = 300,
+  radius = Math.min(width, height) / 2;
+let initData = [
+  { name: "Attacker wins", value: .5 },
+  { name: "Ties", value: .3 },
+  { name: "Defender wins", value: .2 }
+];
+const colors = d3.schemeSpectral[3];
+const color = d3.scaleOrdinal(initData, colors);
+const svg = d3.select("#chart").append("svg")
+  .attr("width", width)
+  .attr("height", height)
+  .attr("viewBox", [-width / 2, - height / 2, width, height]);
+
+let drawResultsPie = (data: { name: string, value: number }[]) => {
+  const pie = d3.pie().sort(null).value((d) => d.value);
+  const arc = d3.arc()
+    .innerRadius(0)
+    .outerRadius(radius - 1);
+  const labelRadius = (radius - 1) * 0.6;
+  const arcLabel = d3.arc()
+    .outerRadius(labelRadius)
+    .innerRadius(labelRadius);
+
+  const arcs = pie(data).sort((a, b) => 0);
+
+  svg.selectChildren().remove();
+  svg.append("g").selectAll()
+    .data(arcs)
+    .join("path")
+    .attr("fill", d => color(d.value))
+    .attr("d", arc);
+
+  svg.append("g").attr("text-anchor", "middle")
+    .selectAll()
+    .data(arcs)
+    .join("text")
+      .attr("transform", d => `translate(${arcLabel.centroid(d)})`)
+      .call(text => text.append("tspan")
+        .attr("y", "-0.4em")
+        .attr("font-weight", "bold")
+        .text(d => d.data.name))
+      .call(text => text.filter(d => (d.endAngle - d.startAngle) > 0.25).append("tspan")
+          .attr("x", 0)
+          .attr("y", "0.7em")
+          .attr("fill-opacity", 0.7)
+          .text(d => (d.data.value.toPrecision(3) * 100).toLocaleString("en-US") + "%"));
+}
+
+// Button actions
+rollBtn.addEventListener("click", () => {
   const results = simulateUWAttacks({
     simulations: parseInt(numSimulationsInp.value),
     attackerDice: parseInt(attackerDiceInp.value),
@@ -35,8 +72,15 @@ rollBtn.addEventListener('click', () => {
     defenderSuccess: parseInt(defenderTargetInp.value),
     defenderRerolls: parseInt(defenderRerollInp.value),
   });
-  console.log(results);
-  console.log(`Attacker wins: ${results.attackerWins / results.numSimulations}`)
-  console.log(`Defender wins: ${results.defenderWins / results.numSimulations}`)
-  console.log(`Ties: ${results.ties / results.numSimulations}`)
+  drawResultsPie(resultsToData(results));
 });
+
+const resultsToData = (results) => {
+  return [
+    { name: "Attacker wins", value: results.attackerWins / results.numSimulations },
+    { name: "Ties", value: results.ties / results.numSimulations },
+    { name: "Defender wins", value: results.defenderWins / results.numSimulations },
+  ]
+}
+
+drawResultsPie(initData);
