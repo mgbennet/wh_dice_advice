@@ -15,12 +15,13 @@ const width = 300,
   height = 300,
   radius = Math.min(width, height) / 2;
 let initData = [
-  { name: "Attacker wins", value: .5 },
-  { name: "Ties", value: .3 },
-  { name: "Defender wins", value: .2 }
+  { name: "Success", value: .5 },
+  { name: "Tie", value: .3 },
+  { name: "Failure", value: .2 }
 ];
-const colors = d3.schemeSpectral[3];
-const color = d3.scaleOrdinal(initData, colors);
+const color = d3.scaleOrdinal()
+  .domain(initData.map(d => d.name))
+  .range(["#ca5252ff", "#ffffbf", "#6d60faff"]);
 const svg = d3.select("#chart").append("svg")
   .attr("width", width)
   .attr("height", height)
@@ -42,7 +43,7 @@ let drawResultsPie = (data: { name: string, value: number }[]) => {
   svg.append("g").selectAll()
     .data(arcs)
     .join("path")
-    .attr("fill", d => color(d.value))
+    .attr("fill", d => color(d.data.name))
     .attr("d", arc);
 
   svg.append("g").attr("text-anchor", "middle")
@@ -77,9 +78,9 @@ rollBtn.addEventListener("click", () => {
 
 const resultsToData = (results) => {
   return [
-    { name: "Attacker wins", value: results.attackerWins / results.numSimulations },
-    { name: "Ties", value: results.ties / results.numSimulations },
-    { name: "Defender wins", value: results.defenderWins / results.numSimulations },
+    { name: "Success", value: results.attackerWins / results.numSimulations },
+    { name: "Tie", value: results.ties / results.numSimulations },
+    { name: "Failure", value: results.defenderWins / results.numSimulations },
   ]
 }
 
