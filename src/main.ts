@@ -15,20 +15,22 @@ const width = 300,
   height = 300,
   radius = Math.min(width, height) / 2;
 let initData = [
-  { name: "Success", value: .5 },
+  { name: "Failure", value: .2 },
   { name: "Tie", value: .3 },
-  { name: "Failure", value: .2 }
+  { name: "Success", value: .5 },
 ];
 const color = d3.scaleOrdinal()
   .domain(initData.map(d => d.name))
-  .range(["#ca5252ff", "#ffffbf", "#6d60faff"]);
+  .range(["#6d60faff", "#ffffbf", "#ca5252ff"]);
 const svg = d3.select("#chart").append("svg")
   .attr("width", width)
   .attr("height", height)
   .attr("viewBox", [-width / 2, - height / 2, width, height]);
 
 let drawResultsPie = (data: { name: string, value: number }[]) => {
-  const pie = d3.pie().sort(null).value((d) => d.value);
+  const pie = d3.pie()
+    .sort(null)
+    .value((d) => d.value);
   const arc = d3.arc()
     .innerRadius(0)
     .outerRadius(radius - 1);
@@ -78,9 +80,9 @@ rollBtn.addEventListener("click", () => {
 
 const resultsToData = (results) => {
   return [
-    { name: "Success", value: results.attackerWins / results.numSimulations },
-    { name: "Tie", value: results.ties / results.numSimulations },
     { name: "Failure", value: results.defenderWins / results.numSimulations },
+    { name: "Tie", value: results.ties / results.numSimulations },
+    { name: "Success", value: results.attackerWins / results.numSimulations },
   ]
 }
 

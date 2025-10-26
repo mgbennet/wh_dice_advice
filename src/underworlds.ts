@@ -1,5 +1,6 @@
 import { dicePool, reroll } from './dice';
 
+// All requirements for defining a UWs combat
 export interface underworldsMC {
   simulations: number;
   attackerDice: number;
@@ -10,12 +11,14 @@ export interface underworldsMC {
   defenderRerolls: number;
 }
 
+// All possibilities results for a UWs combat
 export enum CombatWinner {
   Attacker = 'attacker',
   Defender = 'defender',
   Tie = 'tie',
 }
 
+// Relevent results of a UWs combat
 export interface uwCombatResult {
   winner: CombatWinner;
   critWinner: CombatWinner;
