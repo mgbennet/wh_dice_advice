@@ -24,7 +24,26 @@ export interface uwCombatResult {
   critWinner: CombatWinner;
 }
 
-export function simulateUWAttacks(simulation: underworldsMC) {
+export interface simulationResults {
+  attackerWins: {
+    count: number;
+    attackerCritWins: number;
+    defenderCritWins: number;
+  };
+  defenderWins: {
+    count: number;
+    attackerCritWins: number;
+    defenderCritWins: number;
+  };
+  ties: {
+    count: number;
+    attackerCritWins: number;
+    defenderCritWins: number;
+  };
+  numSimulations: number;
+}
+
+export function simulateUWAttacks(simulation: underworldsMC): simulationResults {
   // roll the dice
   let results = [];
   for (let i = 0; i < simulation.simulations; i++) {
@@ -38,9 +57,21 @@ export function simulateUWAttacks(simulation: underworldsMC) {
   const defenderWins = results.filter((val) => val.winner === CombatWinner.Defender);
   const ties = results.filter((val) => val.winner === CombatWinner.Tie);
   let summary = {
-    attackerWins: attackerWins.length,
-    defenderWins: defenderWins.length,
-    ties: ties.length,
+    attackerWins: {
+      count: attackerWins.length,
+      attackerCritWins: attackerWins.filter((val) => val.critWinner === CombatWinner.Attacker).length,
+      defenderCritWins: attackerWins.filter((val) => val.critWinner === CombatWinner.Defender).length,
+    },
+    defenderWins: {
+      count: defenderWins.length,
+      attackerCritWins: defenderWins.filter((val) => val.critWinner === CombatWinner.Attacker).length,
+      defenderCritWins: defenderWins.filter((val) => val.critWinner === CombatWinner.Defender).length,
+    },
+    ties: {
+      count: ties.length,
+      attackerCritWins: ties.filter((val) => val.critWinner === CombatWinner.Attacker).length,
+      defenderCritWins: ties.filter((val) => val.critWinner === CombatWinner.Defender).length,
+    },
     numSimulations: simulation.simulations
   }
   return summary;
