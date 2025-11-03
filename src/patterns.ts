@@ -1,8 +1,9 @@
 import * as d3 from 'd3';
 
 export function smallCirclePattern() {
-  const widthHeight = 6;
+  const widthHeight = 8;
   const radius = 1;
+  const color = "#0009"
   const pattern = d3.create("svg:pattern")
     .attr("id", "circle-hatch")
     .attr("patternUnits", "userSpaceOnUse")
@@ -12,22 +13,22 @@ export function smallCirclePattern() {
     .attr("cx", widthHeight / 2)
     .attr("cy", 0)
     .attr("r", radius)
-    .attr("fill", "black");
+    .attr("fill", color);
   pattern.append("circle")
     .attr("cx", 0)
     .attr("cy", widthHeight / 2)
     .attr("r", radius)
-    .attr("fill", "black");
+    .attr("fill", color);
   pattern.append("circle")
     .attr("cx", widthHeight)
     .attr("cy", widthHeight / 2)
     .attr("r", radius)
-    .attr("fill", "black");
+    .attr("fill", color);
   pattern.append("circle")
     .attr("cx", widthHeight / 2)
     .attr("cy", widthHeight)
     .attr("r", radius)
-    .attr("fill", "black");
+    .attr("fill", color);
   return pattern.node();
 }
 

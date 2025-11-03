@@ -3,12 +3,12 @@ import './style.css'
 import { simulateUWAttacks, simulationResults } from './underworlds';
 import * as d3 from 'd3';
 
-interface resultData {
-  winners: Array<pieData>;
-  crits: Array<pieData>;
+interface ResultData {
+  winners: Array<PieData>;
+  crits: Array<PieData>;
 }
 
-interface pieData {
+interface PieData {
   name: string;
   value: number;
 }
@@ -33,7 +33,7 @@ let initData = {
   ],
   crits: []
 };
-const color = d3.scaleOrdinal()
+const color = d3.scaleOrdinal<string>()
   .domain(["Failure", "Tie", "Success", "TieDefender", "TieNone", "TieAttacker", "SuccessDefender", "SuccessNone", "SuccessAttacker"])
   .range(["#6d60faff", "#9c9c9cff", "#ca5252ff", "url(#circle-hatch)", "#0000", "url(#diagonal-hatch)", "url(#circle-hatch)", "#0000", "url(#diagonal-hatch)"]);
 const svg = d3.select("#chart").append("svg")
@@ -45,15 +45,15 @@ const defs = svg.append("defs");
 defs.append(() => smallCirclePattern());
 defs.append(() => diagonalLinePattern());
 
-let drawResultsPie = (data: resultData) => {
-  const pie = d3.pie<pieData>()
+let drawResultsPie = (data: ResultData) => {
+  const pie = d3.pie<PieData>()
     .sort(null)
     .value((d) => d.value);
-  const arc = d3.arc()
+  const arc = d3.arc<d3.PieArcDatum<PieData>>()
     .innerRadius(0)
     .outerRadius(radius - 1);
   const labelRadius = (radius - 1) * 0.6;
-  const arcLabel = d3.arc()
+  const arcLabel = d3.arc<d3.PieArcDatum<PieData>>()
     .outerRadius(labelRadius)
     .innerRadius(labelRadius);
 
@@ -89,7 +89,7 @@ let drawResultsPie = (data: resultData) => {
       .attr("x", 0)
       .attr("y", "0.7em")
       .attr("fill-opacity", 0.7)
-      .text(d => (d.data.value.toPrecision(3) * 100).toLocaleString("en-US") + "%"));
+      .text(d => ((d.data.value * 100).toPrecision(3)) + "%"));
 }
 
 // Button actions
@@ -106,7 +106,7 @@ rollBtn.addEventListener("click", () => {
   drawResultsPie(resultsToData(results));
 });
 
-const resultsToData = (results: simulationResults): resultData => {
+const resultsToData = (results: simulationResults): ResultData => {
   return {
     winners: [
       { name: "Failure", value: results.defenderWins.count / results.numSimulations },
