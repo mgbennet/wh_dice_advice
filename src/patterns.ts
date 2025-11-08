@@ -1,9 +1,9 @@
-import * as d3 from 'd3';
+import * as d3 from "d3";
 
 export function smallCirclePattern() {
   const widthHeight = 8;
   const radius = 1;
-  const color = "#0009"
+  const color = "#0009";
   const pattern = d3.create("svg:pattern")
     .attr("id", "circle-hatch")
     .attr("patternUnits", "userSpaceOnUse")

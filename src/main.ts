@@ -1,7 +1,7 @@
-import { diagonalLinePattern, smallCirclePattern } from './patterns';
-import './style.css'
-import { simulateUWAttacks, simulationResults } from './underworlds';
-import * as d3 from 'd3';
+import { diagonalLinePattern, smallCirclePattern } from "./patterns";
+import "./style.css";
+import { simulateUWAttacks, simulationResults } from "./underworlds";
+import * as d3 from "d3";
 
 interface ResultData {
   winners: Array<PieData>;
@@ -25,13 +25,13 @@ const defenderRerollInp = document.querySelector<HTMLInputElement>("#defender-re
 const width = 300,
   height = 300,
   radius = Math.min(width, height) / 2;
-let initData = {
+const initData = {
   winners: [
-    { name: "Failure", value: .2 },
-    { name: "Tie", value: .3 },
-    { name: "Success", value: .5 },
+    { name: "Failure", value: 0.2 },
+    { name: "Tie", value: 0.3 },
+    { name: "Success", value: 0.5 },
   ],
-  crits: []
+  crits: [],
 };
 const color = d3.scaleOrdinal<string>()
   .domain(["Failure", "Tie", "Success", "TieDefender", "TieNone", "TieAttacker", "SuccessDefender", "SuccessNone", "SuccessAttacker"])
@@ -39,16 +39,16 @@ const color = d3.scaleOrdinal<string>()
 const svg = d3.select("#chart").append("svg")
   .attr("width", width)
   .attr("height", height)
-  .attr("viewBox", [-width / 2, - height / 2, width, height]);
+  .attr("viewBox", [-width / 2, -height / 2, width, height]);
 
 const defs = svg.append("defs");
 defs.append(() => smallCirclePattern());
 defs.append(() => diagonalLinePattern());
 
-let drawResultsPie = (data: ResultData) => {
+const drawResultsPie = (data: ResultData) => {
   const pie = d3.pie<PieData>()
     .sort(null)
-    .value((d) => d.value);
+    .value(d => d.value);
   const arc = d3.arc<d3.PieArcDatum<PieData>>()
     .innerRadius(0)
     .outerRadius(radius - 1);
@@ -61,13 +61,13 @@ let drawResultsPie = (data: ResultData) => {
   const critArcs = pie(data.crits);
 
   svg.selectChildren("g").remove();
-  
+
   svg.append("g").selectAll()
     .data(winnersArcs)
     .join("path")
     .attr("fill", d => color(d.data.name))
     .attr("d", arc);
-  
+
   svg.append("g").selectAll()
     .data(critArcs)
     .join("path")
@@ -90,7 +90,7 @@ let drawResultsPie = (data: ResultData) => {
       .attr("y", "0.7em")
       .attr("fill-opacity", 0.7)
       .text(d => ((d.data.value * 100).toPrecision(3)) + "%"));
-}
+};
 
 // Button actions
 rollBtn.addEventListener("click", () => {
@@ -121,8 +121,8 @@ const resultsToData = (results: simulationResults): ResultData => {
       { name: "SuccessDefender", value: results.attackerWins.defenderCritWins / results.numSimulations },
       { name: "SuccessNone", value: (results.attackerWins.count - results.attackerWins.defenderCritWins - results.attackerWins.attackerCritWins) / results.numSimulations },
       { name: "SuccessAttacker", value: results.attackerWins.attackerCritWins / results.numSimulations },
-    ]
-  }
-}
+    ],
+  };
+};
 
 drawResultsPie(initData);

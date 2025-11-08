@@ -12,7 +12,7 @@ export function d6(): number {
  * @returns {number[]} An array of the dice roll results.
  */
 export function dicePool(numDice: number): number[] {
-  return Array.from({length: numDice}, () => d6());
+  return Array.from({ length: numDice }, () => d6());
 }
 
 /**
@@ -24,7 +24,7 @@ export function dicePool(numDice: number): number[] {
  * @returns {number[]} The dice pool after rerolls have been done.
  */
 export function reroll(dicePool: number[], successTarget: number, rerolls: number): number[] {
-  let rerolledPool: number[] = [];
+  const rerolledPool: number[] = [];
   let usedRerolls = 0;
   for (let i = 0; i < dicePool.length; i++) {
     if (dicePool[i] < successTarget && usedRerolls < rerolls) {

@@ -1,4 +1,4 @@
-import { dicePool, reroll } from './dice';
+import { dicePool, reroll } from "./dice";
 
 // All requirements for defining a UWs combat
 export interface underworldsMC {
@@ -13,9 +13,9 @@ export interface underworldsMC {
 
 // All possibilities results for a UWs combat
 export enum CombatWinner {
-  Attacker = 'attacker',
-  Defender = 'defender',
-  Tie = 'tie',
+  Attacker = "attacker",
+  Defender = "defender",
+  Tie = "tie",
 }
 
 // Relevent results of a UWs combat
@@ -45,35 +45,35 @@ export interface simulationResults {
 
 export function simulateUWAttacks(simulation: underworldsMC): simulationResults {
   // roll the dice
-  let results = [];
+  const results = [];
   for (let i = 0; i < simulation.simulations; i++) {
-    let attackDice = reroll(dicePool(simulation.attackerDice), simulation.attackerSuccess, simulation.attackerRerolls);
-    let defenseDice = reroll(dicePool(simulation.defenderDice), simulation.defenderSuccess, simulation.defenderRerolls);
+    const attackDice = reroll(dicePool(simulation.attackerDice), simulation.attackerSuccess, simulation.attackerRerolls);
+    const defenseDice = reroll(dicePool(simulation.defenderDice), simulation.defenderSuccess, simulation.defenderRerolls);
     results.push(evaluateCombat(attackDice, simulation.attackerSuccess, defenseDice, simulation.defenderSuccess));
   }
 
   // summarize the results
-  const attackerWins = results.filter((val) => val.winner === CombatWinner.Attacker);
-  const defenderWins = results.filter((val) => val.winner === CombatWinner.Defender);
-  const ties = results.filter((val) => val.winner === CombatWinner.Tie);
-  let summary = {
+  const attackerWins = results.filter(val => val.winner === CombatWinner.Attacker);
+  const defenderWins = results.filter(val => val.winner === CombatWinner.Defender);
+  const ties = results.filter(val => val.winner === CombatWinner.Tie);
+  const summary = {
     attackerWins: {
       count: attackerWins.length,
-      attackerCritWins: attackerWins.filter((val) => val.critWinner === CombatWinner.Attacker).length,
-      defenderCritWins: attackerWins.filter((val) => val.critWinner === CombatWinner.Defender).length,
+      attackerCritWins: attackerWins.filter(val => val.critWinner === CombatWinner.Attacker).length,
+      defenderCritWins: attackerWins.filter(val => val.critWinner === CombatWinner.Defender).length,
     },
     defenderWins: {
       count: defenderWins.length,
-      attackerCritWins: defenderWins.filter((val) => val.critWinner === CombatWinner.Attacker).length,
-      defenderCritWins: defenderWins.filter((val) => val.critWinner === CombatWinner.Defender).length,
+      attackerCritWins: defenderWins.filter(val => val.critWinner === CombatWinner.Attacker).length,
+      defenderCritWins: defenderWins.filter(val => val.critWinner === CombatWinner.Defender).length,
     },
     ties: {
       count: ties.length,
-      attackerCritWins: ties.filter((val) => val.critWinner === CombatWinner.Attacker).length,
-      defenderCritWins: ties.filter((val) => val.critWinner === CombatWinner.Defender).length,
+      attackerCritWins: ties.filter(val => val.critWinner === CombatWinner.Attacker).length,
+      defenderCritWins: ties.filter(val => val.critWinner === CombatWinner.Defender).length,
     },
-    numSimulations: simulation.simulations
-  }
+    numSimulations: simulation.simulations,
+  };
   return summary;
 }
 
@@ -103,5 +103,5 @@ function evaluateCombat(attackDice: number[], attackSuccess: number, defenseDice
       : attackCrits > defenseCrits
         ? CombatWinner.Attacker
         : CombatWinner.Defender,
-  }
+  };
 }
