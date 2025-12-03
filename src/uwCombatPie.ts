@@ -17,11 +17,19 @@ const color = d3.scaleOrdinal<string>()
 
 const initData = {
   winners: [
-    { name: "Failure", value: 0.2 },
-    { name: "Tie", value: 0.3 },
+    { name: "Failure", value: 0.25 },
+    { name: "Tie", value: 0.25 },
     { name: "Success", value: 0.5 },
   ],
-  crits: [],
+  crits: [
+    { name: "Failure", value: 0.25 },
+    { name: "TieDefender", value: 0.056 },
+    { name: "TieNone", value: 0.138 },
+    { name: "TieAttacker", value: 0.056 },
+    { name: "SuccessDefender", value: 0.019 },
+    { name: "SuccessNone", value: 0.277 },
+    { name: "SuccessAttacker", value: 0.204 },
+  ],
 };
 
 export class UWCombatPie {
