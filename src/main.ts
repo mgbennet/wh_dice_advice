@@ -17,8 +17,7 @@ const width = 300,
   svgId = "chartSvg";
 d3.select("#chart").append("svg")
   .attr("id", svgId)
-  .attr("width", width)
-  .attr("height", height)
+  .attr("style", `max-width: ${width}px; max-height: ${height}px`)
   .attr("viewBox", [-width / 2, -height / 2, width, height]);
 const pieChart = new UWCombatPie(`#${svgId}`, width);
 pieChart.init();

@@ -7,45 +7,73 @@
 </head>
 <body>
   <div id="app">
-    <h1>Dice Advice for Warhammer Underworlds</h1>
-    <div id="inputs-wrapper">
-      <div id="attacker-inputs">
-        <h3>Attacker</h3>
-        <div class="input-line">
-          <label for="attacker-dice">Dice amount</label>
-          <input type="number" id="attacker-dice" min="1" value="2"/>
+    <div id="main-content">
+      <h1><span>Dice Advice</span><br><span>for</span><br><span>Warhammer Underworlds</span></h1>
+      <div id="inputs-wrapper">
+        <div id="attacker-inputs">
+          <h3>Attacker</h3>
+          <div class="input-line">
+            <label for="attacker-dice">Dice amount</label>
+            <input type="number" id="attacker-dice" min="1" value="2"/>
+          </div>
+          <div class="input-line">
+            <label for="attacker-target">Success target</label>
+            <select name="attacker-target" id="attacker-target">
+              <button>
+                <selectedcontent></selectedcontent>
+              </button>
+              <option value="6"><span class="target-label">6+</span></option>
+              <option value="5"><span class="target-label">5+</span> <span class="target-helper">(swords)</span></option>
+              <option value="4" selected><span class="target-label">4+</span> <span class="target-helper">(hammers)</span></option>
+              <option value="3"><span class="target-label">3+</span></option>
+              <option value="2"><span class="target-label">2+</span></option>
+              <option value="1"><span class="target-label">1+</span></option>
+            </select>
+            <!-- <input type="number" id="attacker-target" min="1" max="6" value="4"/> -->
+          </div>
+          <div class="input-line">
+            <label for="attacker-rerolls">Rerolls</label>
+            <input type="number" id="attacker-rerolls" min="0" value="0"/>
+          </div>
         </div>
-        <div class="input-line">
-          <label for="attacker-target">Success target</label>
-          <input type="number" id="attacker-target" min="1" max="6" value="4"/>
-        </div>
-        <div class="input-line">
-          <label for="attacker-rerolls">Rerolls</label>
-          <input type="number" id="attacker-rerolls" min="0" value="0"/>
+        <div id="defender-inputs">
+          <h3>Defender</h3>
+          <div class="input-line">
+            <label for="defender-dice">Dice amount</label>
+            <input type="number" id="defender-dice" min="1" value="1"/>
+          </div>
+          <div class="input-line">
+            <label for="defender-target">Success target</label>
+            <select name="defender-target" id="defender-target">
+              <button>
+                <selectedcontent></selectedcontent>
+              </button>
+              <option value="6"><span class="target-label">6+</span></option>
+              <option value="5"><span class="target-label">5+</span> <span class="target-helper">(dodge)</span></option>
+              <option value="4" selected><span class="target-label">4+</span> <span class="target-helper">(block)</span></option>
+              <option value="3"><span class="target-label">3+</span></option>
+              <option value="2"><span class="target-label">2+</span></option>
+              <option value="1"><span class="target-label">1+</span></option>
+            </select>
+            <!-- <input type="number" id="defender-target" min="1" max="6" value="4"/> -->
+          </div>
+          <div class="input-line">
+            <label for="defender-rerolls">Rerolls</label>
+            <input type="number" id="defender-rerolls" min="0" value="0"/>
+          </div>
         </div>
       </div>
-      <div id="defender-inputs">
-        <h3>Defender</h3>
-        <div class="input-line">
-          <label for="defender-dice">Dice amount</label>
-          <input type="number" id="defender-dice" min="1" value="1"/>
-        </div>
-        <div class="input-line">
-          <label for="defender-target">Success target</label>
-          <input type="number" id="defender-target" min="1" max="6" value="4"/>
-        </div>
-        <div class="input-line">
-          <label for="defender-rerolls">Rerolls</label>
-          <input type="number" id="defender-rerolls" min="0" value="0"/>
-        </div>
+      <div class="individual-input-line">
+        <label for="num-simulations">Number of simulated rolls</label>
+        <input type="number" id="num-simulations" min="1" value="10000"/>
       </div>
+      <button id="roll-btn">Roll!</button>
+      <div id="chart"></div>
     </div>
-    <div class="individual-input-line">
-      <label for="num-simulations">Number of simulated rolls</label>
-      <input type="number" id="num-simulations" min="1" value="10000"/>
+    <div id="legal-footer">
+      <p>Licensed under a <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International</a> License.</p>
+      <p>This site is not endorsed by or affiliated with Games Workshop Limited.</p>
     </div>
-    <button id="roll-btn">Roll!</button>
-    <div id="chart"></div>
   </div>
   <script type="module" src="/src/main.ts"></script>
 </body>
