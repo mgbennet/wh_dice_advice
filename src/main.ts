@@ -4,6 +4,7 @@ import { UWCombatPie, ResultData } from "./uwCombatPie";
 import * as d3 from "d3";
 
 const rollBtn = document.querySelector<HTMLButtonElement>("#roll-btn")!;
+const dscptExpandBtn = document.querySelector<HTMLSpanElement>("#description-expand")!;
 const numSimulationsInp = document.querySelector<HTMLInputElement>("#num-simulations")!;
 const attackerDiceInp = document.querySelector<HTMLInputElement>("#attacker-dice")!;
 const attackerTargetInp = document.querySelector<HTMLInputElement>("#attacker-target")!;
@@ -34,6 +35,16 @@ rollBtn.addEventListener("click", () => {
     defenderRerolls: parseInt(defenderRerollInp.value),
   });
   pieChart.draw(resultsToData(results));
+});
+
+dscptExpandBtn.addEventListener("click", (ev: PointerEvent) => {
+  ev.preventDefault();
+  const hiddenDescription = document.querySelector<HTMLDivElement>("#hidden-description")!;
+  if (hiddenDescription.className !== "expanded") {
+    hiddenDescription.className = "expanded";
+  } else {
+    hiddenDescription.className = "";
+  }
 });
 
 const resultsToData = (results: simulationResults): ResultData => {

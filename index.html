@@ -9,6 +9,13 @@
   <div id="app">
     <div id="main-content">
       <h1><span>Dice Advice</span><br><span>for</span><br><span>Warhammer Underworlds</span></h1>
+      <div id="description-block">
+        <p>Calculate the probabilities of combat outcomes in Warhammer Underworlds. <a class="expand-icon" id="description-expand" href="">&#9660;</a></p>
+        <div id="hidden-description">
+          <p>Input the attacker and defender's weapon and defensive stats in the appropriate inputs. The success target is a conversion of the Underworlds combat dice to a traditional d6; lower the number by one for flanking and by two for surrounding.</p>
+          <p>This web app uses a Monte Carlo simulation rather than a direct probabilistic calculation; it simulates a large number of combats and tallies the results. This is easier to implement but gives inexact results, with a higher number of simulations leading to more accuracy. You can specify the number of combats to simulate.</p>
+        </div>
+      </div>
       <div id="inputs-wrapper">
         <div id="attacker-inputs">
           <h3>Attacker</h3>
@@ -29,7 +36,6 @@
               <option value="2"><span class="target-label">2+</span></option>
               <option value="1"><span class="target-label">1+</span></option>
             </select>
-            <!-- <input type="number" id="attacker-target" min="1" max="6" value="4"/> -->
           </div>
           <div class="input-line">
             <label for="attacker-rerolls">Rerolls</label>
@@ -55,7 +61,6 @@
               <option value="2"><span class="target-label">2+</span></option>
               <option value="1"><span class="target-label">1+</span></option>
             </select>
-            <!-- <input type="number" id="defender-target" min="1" max="6" value="4"/> -->
           </div>
           <div class="input-line">
             <label for="defender-rerolls">Rerolls</label>
@@ -64,7 +69,7 @@
         </div>
       </div>
       <div class="individual-input-line">
-        <label for="num-simulations">Number of simulated rolls</label>
+        <label for="num-simulations">Number of simulated combats</label>
         <input type="number" id="num-simulations" min="1" value="10000"/>
       </div>
       <button id="roll-btn">Roll!</button>
