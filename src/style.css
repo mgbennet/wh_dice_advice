@@ -168,15 +168,34 @@ selectedcontent .target-helper {
 #data-area {
   margin-top: 2rem;
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 42px;
+}
+
+#data-area > * {
+  margin: 0 auto;
 }
 
 .space-filler {
-  width: 204px;
+  width: 214px;
+}
+@media (max-width: 900px) {
+  .space-filler {
+    display: none;
+  }
 }
 
 #chart {
   width: 300px;
+}
+
+#chart tspan {
+  text-transform: capitalize;
+}
+
+#results-table {
+  display: flex;
+  align-items: center;
 }
 
 table {
@@ -184,7 +203,7 @@ table {
 }
 
 tbody {
-  width: 204px;
+  width: 214px;
   display: table;
   font-size: 14px;
 }

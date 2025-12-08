@@ -12,23 +12,23 @@ export interface PieData {
 }
 
 const color = d3.scaleOrdinal<string>()
-  .domain(["Failure", "Tie", "Success", "TieDefender", "TieNone", "TieAttacker", "SuccessDefender", "SuccessNone", "SuccessAttacker"])
+  .domain(["failure", "tie", "success", "tie-standfast", "tie-none", "tie-overrun", "success-standfast", "success-none", "success-overrun"])
   .range(["#6d60faff", "#9c9c9cff", "#ca5252ff", "url(#circle-hatch)", "#0000", "url(#diagonal-hatch)", "url(#circle-hatch)", "#0000", "url(#diagonal-hatch)"]);
 
 const initData = {
   winners: [
-    { name: "Failure", value: 0.25 },
-    { name: "Tie", value: 0.25 },
-    { name: "Success", value: 0.5 },
+    { name: "failure", value: 0.25 },
+    { name: "tie", value: 0.25 },
+    { name: "success", value: 0.5 },
   ],
   crits: [
-    { name: "Failure", value: 0.25 },
-    { name: "TieDefender", value: 0.056 },
-    { name: "TieNone", value: 0.138 },
-    { name: "TieAttacker", value: 0.056 },
-    { name: "SuccessDefender", value: 0.019 },
-    { name: "SuccessNone", value: 0.277 },
-    { name: "SuccessAttacker", value: 0.204 },
+    { name: "failure", value: 0.25 },
+    { name: "tie-standfast", value: 0.056 },
+    { name: "tie-none", value: 0.138 },
+    { name: "tie-overrun", value: 0.056 },
+    { name: "success-standfast", value: 0.019 },
+    { name: "success-none", value: 0.277 },
+    { name: "success-overrun", value: 0.204 },
   ],
 };
 

@@ -18,7 +18,7 @@ export enum CombatWinner {
   Tie = "tie",
 }
 
-// Relevent results of a UWs combat
+// Relevant results of a UWs combat
 export interface uwCombatResult {
   winner: CombatWinner;
   critWinner: CombatWinner;

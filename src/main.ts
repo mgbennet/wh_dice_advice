@@ -2,6 +2,7 @@ import "./style.css";
 import { simulateUWAttacks, simulationResults } from "./underworlds";
 import { UWCombatPie, ResultData } from "./uwCombatPie";
 import * as d3 from "d3";
+import { ResultTableData, UWCombatTable } from "./uwCombatTable";
 
 const rollBtn = document.querySelector<HTMLButtonElement>("#roll-btn")!;
 const dscptExpandBtn = document.querySelector<HTMLSpanElement>("#description-expand")!;
@@ -23,6 +24,9 @@ d3.select("#chart").append("svg")
 const pieChart = new UWCombatPie(`#${svgId}`, width);
 pieChart.init();
 
+const table = new UWCombatTable("results-table");
+table.init();
+
 // Button actions
 rollBtn.addEventListener("click", () => {
   const results = simulateUWAttacks({
@@ -34,7 +38,8 @@ rollBtn.addEventListener("click", () => {
     defenderSuccess: parseInt(defenderTargetInp.value),
     defenderRerolls: parseInt(defenderRerollInp.value),
   });
-  pieChart.draw(resultsToData(results));
+  pieChart.draw(resultsToPieData(results));
+  table.draw(resultsToTableData(results));
 });
 
 dscptExpandBtn.addEventListener("click", (ev: PointerEvent) => {
@@ -47,21 +52,33 @@ dscptExpandBtn.addEventListener("click", (ev: PointerEvent) => {
   }
 });
 
-const resultsToData = (results: simulationResults): ResultData => {
+const resultsToPieData = (results: simulationResults): ResultData => {
   return {
     winners: [
-      { name: "Failure", value: results.defenderWins.count / results.numSimulations },
-      { name: "Tie", value: results.ties.count / results.numSimulations },
-      { name: "Success", value: results.attackerWins.count / results.numSimulations },
+      { name: "failure", value: results.defenderWins.count / results.numSimulations },
+      { name: "tie", value: results.ties.count / results.numSimulations },
+      { name: "success", value: results.attackerWins.count / results.numSimulations },
     ],
     crits: [
-      { name: "Failure", value: results.defenderWins.count / results.numSimulations },
-      { name: "TieDefender", value: results.ties.defenderCritWins / results.numSimulations },
-      { name: "TieNone", value: (results.ties.count - results.ties.defenderCritWins - results.ties.attackerCritWins) / results.numSimulations },
-      { name: "TieAttacker", value: results.ties.attackerCritWins / results.numSimulations },
-      { name: "SuccessDefender", value: results.attackerWins.defenderCritWins / results.numSimulations },
-      { name: "SuccessNone", value: (results.attackerWins.count - results.attackerWins.defenderCritWins - results.attackerWins.attackerCritWins) / results.numSimulations },
-      { name: "SuccessAttacker", value: results.attackerWins.attackerCritWins / results.numSimulations },
+      { name: "failure", value: results.defenderWins.count / results.numSimulations },
+      { name: "tie-standfast", value: results.ties.defenderCritWins / results.numSimulations },
+      { name: "tie-none", value: (results.ties.count - results.ties.defenderCritWins - results.ties.attackerCritWins) / results.numSimulations },
+      { name: "tie-overrun", value: results.ties.attackerCritWins / results.numSimulations },
+      { name: "success-standfast", value: results.attackerWins.defenderCritWins / results.numSimulations },
+      { name: "success-none", value: (results.attackerWins.count - results.attackerWins.defenderCritWins - results.attackerWins.attackerCritWins) / results.numSimulations },
+      { name: "success-overrun", value: results.attackerWins.attackerCritWins / results.numSimulations },
     ],
   };
+};
+
+const resultsToTableData = (results: simulationResults): ResultTableData => {
+  return [
+    { name: "success", value: results.attackerWins.count / results.numSimulations },
+    { name: "success-overrun", value: results.attackerWins.attackerCritWins / results.numSimulations },
+    { name: "success-standfast", value: results.attackerWins.defenderCritWins / results.numSimulations },
+    { name: "tie", value: results.ties.count / results.numSimulations },
+    { name: "tie-standfast", value: results.ties.defenderCritWins / results.numSimulations },
+    { name: "tie-overrun", value: results.ties.attackerCritWins / results.numSimulations },
+    { name: "failure", value: results.defenderWins.count / results.numSimulations },
+  ];
 };
