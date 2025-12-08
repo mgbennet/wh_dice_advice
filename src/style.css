@@ -31,6 +31,12 @@ body {
   height: 100vh;
 }
 
+#pattern-defs {
+  display: block;
+  height: 0;
+  width: 0;
+}
+
 h1 {
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
   line-height: 1;
@@ -159,8 +165,40 @@ selectedcontent .target-helper {
   font-size: large;
 }
 
-#chart {
+#data-area {
   margin-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.space-filler {
+  width: 204px;
+}
+
+#chart {
+  width: 300px;
+}
+
+table {
+  text-align: left;
+}
+
+tbody {
+  width: 204px;
+  display: table;
+  font-size: 14px;
+}
+
+td {
+  padding: 0px;
+}
+
+td svg {
+  display: block;
+}
+
+td:last-child {
+  text-align: right;
 }
 
 #legal-footer {
