@@ -1,3 +1,3 @@
 export default {
-  base: "/<REPO>/",
+  base: "/wh_dice_advice/",
 };
