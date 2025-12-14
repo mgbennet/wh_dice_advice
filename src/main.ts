@@ -22,7 +22,6 @@ d3.select("#chart").append("svg")
   .attr("style", `max-width: ${width}px; max-height: ${height}px`)
   .attr("viewBox", [-width / 2, -height / 2, width, height]);
 const pieChart = new UWCombatPie(`#${svgId}`, width);
-pieChart.init();
 
 const table = new UWCombatTable("results-table");
 table.init();
@@ -38,7 +37,7 @@ rollBtn.addEventListener("click", () => {
     defenderSuccess: parseInt(defenderTargetInp.value),
     defenderRerolls: parseInt(defenderRerollInp.value),
   });
-  pieChart.draw(resultsToPieData(results));
+  pieChart.update(resultsToPieData(results));
   table.draw(resultsToTableData(results));
 });
 

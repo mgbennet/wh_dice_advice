@@ -39,62 +39,114 @@ export class UWCombatPie {
   constructor(svgId: string, diameter: number) {
     this.svgId = svgId;
     this.diameter = diameter;
-  }
-
-  init() {
-    const svg = d3.select(this.svgId);
-    const defs = svg.append("defs");
-    defs.append(() => smallCirclePattern());
-    defs.append(() => diagonalLinePattern());
-    this.draw(initData);
-  }
-
-  draw(data: ResultData) {
-    const svg = d3.select(this.svgId);
-    const radius = this.diameter / 2;
     const pie = d3.pie<PieData>()
       .sort(null)
       .value(d => d.value);
     const arc = d3.arc<d3.PieArcDatum<PieData>>()
       .innerRadius(0)
-      .outerRadius(radius - 1);
-    const labelRadius = (radius - 1) * 0.6;
+      .outerRadius((diameter / 2) - 1);
+
+    const svg = d3.select(this.svgId);
+    const defs = svg.append("defs");
+    defs.append(() => smallCirclePattern());
+    defs.append(() => diagonalLinePattern());
+
+    const labelRadius = ((this.diameter / 2) - 1) * 0.6;
+    const winnersArcs = pie(initData.winners);
+    const critArcs = pie(initData.crits);
     const arcLabel = d3.arc<d3.PieArcDatum<PieData>>()
       .outerRadius(labelRadius)
       .innerRadius(labelRadius);
 
-    const winnersArcs = pie(data.winners);
-    const critArcs = pie(data.crits);
-
-    svg.selectChildren("g").remove();
-
-    svg.append("g").selectAll()
+    svg.append("g")
+      .attr("id", "winners")
+      .selectAll("path")
       .data(winnersArcs)
       .join("path")
       .attr("fill", d => color(d.data.name))
-      .attr("d", arc);
+      .attr("d", arc)
+      .each(function (d) { this._current = d; });
 
-    svg.append("g").selectAll()
+    svg.append("g")
+      .attr("id", "crits")
+      .selectAll("path")
       .data(critArcs)
       .join("path")
+      .attr("d", arc)
       .attr("fill", d => color(d.data.name))
-      .attr("d", arc);
+      .each(function (d) { this._current = d; });
 
     // labels
-    svg.append("g").attr("text-anchor", "middle")
+    svg.append("g")
+      .attr("id", "labels")
+      .attr("text-anchor", "middle")
       .selectAll()
       .data(winnersArcs)
       .join("text")
       .attr("transform", d => `translate(${arcLabel.centroid(d)})`)
       .attr("fill", "#FFF")
       .call(text => text.append("tspan")
+        .attr("class", "labelName")
         .attr("y", "-0.4em")
         .attr("font-weight", "bold")
         .text(d => d.data.name))
       .call(text => text.filter(d => (d.endAngle - d.startAngle) > 0.25).append("tspan")
+        .attr("class", "percentLabel")
         .attr("x", 0)
         .attr("y", "0.7em")
         .attr("fill-opacity", 0.7)
         .text(d => ((d.data.value * 100).toPrecision(3)) + "%"));
+  }
+
+  update(data: ResultData) {
+    const svg = d3.select(this.svgId);
+    const pie = d3.pie<PieData>()
+      .sort(null)
+      .value(d => d.value);
+    const arc = d3.arc<d3.PieArcDatum<PieData>>()
+      .innerRadius(0)
+      .outerRadius((this.diameter / 2) - 1);
+    const transitionDur = 400;
+    const labelRadius = ((this.diameter / 2) - 1) * 0.6;
+
+    function arcTween(a: SVGPathElement): (t: number) => never {
+      const interpolation = d3.interpolate(this._current, a);
+      this._current = interpolation(0);
+      return (t: number) => arc(interpolation(t));
+    }
+
+    const winnersArcs = pie(data.winners);
+    svg.selectAll("#winners")
+      .selectAll("path")
+      .data(winnersArcs)
+      .transition()
+      .duration(transitionDur)
+      .attrTween("d", arcTween);
+    const critArcs = pie(data.crits);
+    svg.selectAll("#crits")
+      .selectAll("path")
+      .data(critArcs)
+      .transition()
+      .duration(transitionDur)
+      .attrTween("d", arcTween);
+    const arcLabel = d3.arc<d3.PieArcDatum<PieData>>()
+      .outerRadius(labelRadius)
+      .innerRadius(labelRadius);
+    svg.selectAll("#labels")
+      .selectAll("text")
+      .data(winnersArcs)
+      .transition()
+      .duration(transitionDur)
+      .attr("transform", d => `translate(${arcLabel.centroid(d)})`)
+      .call(text => text.selectChild(".percentLabel")
+        .text((d: d3.PieArcDatum<PieData>) => {
+          console.log(d);
+          if ((d.endAngle - d.startAngle) > 0.25) {
+            return (d.data.value * 100).toPrecision(3) + "%";
+          } else {
+            return "";
+          }
+        }),
+      );
   }
 }
