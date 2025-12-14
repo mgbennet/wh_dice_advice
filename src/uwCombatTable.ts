@@ -53,9 +53,6 @@ export class UWCombatTable {
     }
     table.appendChild(tbody);
     div?.appendChild(table);
-  }
-
-  init() {
     this.draw(initData);
   }
 

@@ -143,10 +143,10 @@ export class UWCombatPie {
       .duration(transitionDur)
       .attr("transform", d => `translate(${arcLabel.centroid(d)})`)
       .selectChild(".percentLabel")
-      // @ts-expect-error: No overload matches this call.
-      .text((d: d3.PieArcDatum<PieData>) => {
-        if ((d.endAngle - d.startAngle) > 0.25) {
-          return (d.data.value * 100).toPrecision(3) + "%";
+      .text((d) => {
+        const dCast = d as d3.PieArcDatum<PieData>;
+        if ((dCast.endAngle - dCast.startAngle) > 0.25) {
+          return (dCast.data.value * 100).toPrecision(3) + "%";
         } else {
           return "";
         }

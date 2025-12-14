@@ -24,7 +24,6 @@ d3.select("#chart").append("svg")
 const pieChart = new UWCombatPie(`#${svgId}`, width);
 
 const table = new UWCombatTable("results-table");
-table.init();
 
 // Button actions
 rollBtn.addEventListener("click", () => {
