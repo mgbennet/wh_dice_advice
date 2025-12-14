@@ -59,7 +59,7 @@ const resultsToPieData = (results: simulationResults): ResultData => {
       { name: "success", value: results.attackerWins.count / results.numSimulations },
     ],
     crits: [
-      { name: "failure", value: results.defenderWins.count / results.numSimulations },
+      { name: "failure-crits", value: results.defenderWins.count / results.numSimulations },
       { name: "tie-standfast", value: results.ties.defenderCritWins / results.numSimulations },
       { name: "tie-none", value: (results.ties.count - results.ties.defenderCritWins - results.ties.attackerCritWins) / results.numSimulations },
       { name: "tie-overrun", value: results.ties.attackerCritWins / results.numSimulations },

@@ -12,8 +12,8 @@ export interface PieData {
 }
 
 const color = d3.scaleOrdinal<string>()
-  .domain(["failure", "tie", "success", "tie-standfast", "tie-none", "tie-overrun", "success-standfast", "success-none", "success-overrun"])
-  .range(["#6d60faff", "#9c9c9cff", "#ca5252ff", "url(#circle-hatch)", "#0000", "url(#diagonal-hatch)", "url(#circle-hatch)", "#0000", "url(#diagonal-hatch)"]);
+  .domain(["failure", "tie", "success", "failure-crits", "tie-standfast", "tie-none", "tie-overrun", "success-standfast", "success-none", "success-overrun"])
+  .range(["#6d60faff", "#9c9c9cff", "#ca5252ff", "#0000", "url(#circle-hatch)", "#0000", "url(#diagonal-hatch)", "url(#circle-hatch)", "#0000", "url(#diagonal-hatch)"]);
 
 const initData = {
   winners: [
@@ -22,7 +22,7 @@ const initData = {
     { name: "success", value: 0.5 },
   ],
   crits: [
-    { name: "failure", value: 0.25 },
+    { name: "failure-crits", value: 0.25 },
     { name: "tie-standfast", value: 0.056 },
     { name: "tie-none", value: 0.138 },
     { name: "tie-overrun", value: 0.056 },
@@ -35,10 +35,12 @@ const initData = {
 export class UWCombatPie {
   svgId: string;
   diameter: number;
+  previous: Record<string, d3.PieArcDatum<PieData>>;
 
   constructor(svgId: string, diameter: number) {
     this.svgId = svgId;
     this.diameter = diameter;
+    this.previous = {};
     const pie = d3.pie<PieData>()
       .sort(null)
       .value(d => d.value);
@@ -65,7 +67,7 @@ export class UWCombatPie {
       .join("path")
       .attr("fill", d => color(d.data.name))
       .attr("d", arc)
-      .each(function (d) { this._current = d; });
+      .each((d) => { this.previous[d.data.name] = d; });
 
     svg.append("g")
       .attr("id", "crits")
@@ -74,7 +76,7 @@ export class UWCombatPie {
       .join("path")
       .attr("d", arc)
       .attr("fill", d => color(d.data.name))
-      .each(function (d) { this._current = d; });
+      .each((d) => { this.previous[d.data.name] = d; });
 
     // labels
     svg.append("g")
@@ -106,47 +108,48 @@ export class UWCombatPie {
     const arc = d3.arc<d3.PieArcDatum<PieData>>()
       .innerRadius(0)
       .outerRadius((this.diameter / 2) - 1);
-    const transitionDur = 400;
+
+    const transitionDur = 300;
+
+    const arcTween = (a: d3.PieArcDatum<PieData>): (t: number) => string => {
+      const interpo = d3.interpolate(this.previous[a.data.name], a);
+      this.previous[a.data.name] = a;
+      return (t: number) => arc(interpo(t)) || "";
+    };
+
     const labelRadius = ((this.diameter / 2) - 1) * 0.6;
-
-    function arcTween(a: SVGPathElement): (t: number) => never {
-      const interpolation = d3.interpolate(this._current, a);
-      this._current = interpolation(0);
-      return (t: number) => arc(interpolation(t));
-    }
-
     const winnersArcs = pie(data.winners);
+    const critArcs = pie(data.crits);
+    const arcLabel = d3.arc<d3.PieArcDatum<PieData>>()
+      .outerRadius(labelRadius)
+      .innerRadius(labelRadius);
+
     svg.selectAll("#winners")
       .selectAll("path")
       .data(winnersArcs)
       .transition()
       .duration(transitionDur)
       .attrTween("d", arcTween);
-    const critArcs = pie(data.crits);
     svg.selectAll("#crits")
       .selectAll("path")
       .data(critArcs)
       .transition()
       .duration(transitionDur)
       .attrTween("d", arcTween);
-    const arcLabel = d3.arc<d3.PieArcDatum<PieData>>()
-      .outerRadius(labelRadius)
-      .innerRadius(labelRadius);
     svg.selectAll("#labels")
       .selectAll("text")
       .data(winnersArcs)
       .transition()
       .duration(transitionDur)
       .attr("transform", d => `translate(${arcLabel.centroid(d)})`)
-      .call(text => text.selectChild(".percentLabel")
-        .text((d: d3.PieArcDatum<PieData>) => {
-          console.log(d);
-          if ((d.endAngle - d.startAngle) > 0.25) {
-            return (d.data.value * 100).toPrecision(3) + "%";
-          } else {
-            return "";
-          }
-        }),
-      );
+      .selectChild(".percentLabel")
+      // @ts-expect-error: No overload matches this call.
+      .text((d: d3.PieArcDatum<PieData>) => {
+        if ((d.endAngle - d.startAngle) > 0.25) {
+          return (d.data.value * 100).toPrecision(3) + "%";
+        } else {
+          return "";
+        }
+      });
   }
 }
