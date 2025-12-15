@@ -7,6 +7,14 @@ import { ResultTableData, UWCombatTable } from "./uwCombatTable";
 const rollBtn = document.querySelector<HTMLButtonElement>("#roll-btn")!;
 const dscptExpandBtn = document.querySelector<HTMLSpanElement>("#description-expand")!;
 const numSimulationsInp = document.querySelector<HTMLInputElement>("#num-simulations")!;
+const inputNames = [
+  "attacker-dice",
+  "attacker-target",
+  "attacker-rerolls",
+  "defender-dice",
+  "defender-target",
+  "defender-rerolls",
+];
 const attackerDiceInp = document.querySelector<HTMLInputElement>("#attacker-dice")!;
 const attackerTargetInp = document.querySelector<HTMLInputElement>("#attacker-target")!;
 const attackerRerollInp = document.querySelector<HTMLInputElement>("#attacker-rerolls")!;
@@ -49,6 +57,28 @@ dscptExpandBtn.addEventListener("click", (ev: PointerEvent) => {
     hiddenDescription.className = "";
   }
 });
+
+for (let i = 0; i < inputNames.length; i++) {
+  const name = inputNames[i];
+  document.querySelector<HTMLDivElement>(`#${name}-inc`)!.addEventListener("click", () => {
+    const input = document.querySelector<HTMLInputElement>(`#${name}`)!;
+    if (name.includes("target")) {
+      if (input.value !== "6")
+        input.value = (parseInt(input.value) + 1).toString();
+    } else {
+      input.value = (parseInt(input.value) + 1).toString();
+    }
+  });
+  document.querySelector<HTMLDivElement>(`#${name}-dec`)!.addEventListener("click", () => {
+    const input = document.querySelector<HTMLInputElement>(`#${name}`)!;
+    if (name.includes("target")) {
+      if (input.value !== "1")
+        input.value = (parseInt(input.value) - 1).toString();
+    } else {
+      input.value = (parseInt(input.value) > 0 ? parseInt(input.value) - 1 : 0).toString();
+    }
+  });
+}
 
 const resultsToPieData = (results: simulationResults): ResultData => {
   return {

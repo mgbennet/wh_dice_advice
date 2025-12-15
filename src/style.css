@@ -110,7 +110,7 @@ h3 {
   flex-wrap: wrap;
 }
 
-#inputs-wrapper div {
+#inputs-wrapper>div {
   padding: 0 1rem;
 }
 
@@ -118,6 +118,13 @@ h3 {
   display: flex;
   justify-content: space-between;
   gap: 12px;
+}
+
+.input-elements-div {
+  display: flex;
+  height: 20px;
+  padding-top: 2px;
+  gap: 1px;
 }
 
 input {
@@ -157,6 +164,14 @@ select {
 
 selectedcontent .target-helper {
   display: none;
+}
+
+.inc-btn, .dec-btn {
+  width: 18px;
+  border: 1px solid #788878;
+  border-radius: 3px;
+  padding: 0;
+  background-color: #dedcea;
 }
 
 #roll-btn {
