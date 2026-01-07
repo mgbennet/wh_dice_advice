@@ -5,7 +5,6 @@ import * as d3 from "d3";
 import { ResultTableData, UWCombatTable } from "./uwCombatTable";
 
 const rollBtn = document.querySelector<HTMLButtonElement>("#roll-btn")!;
-const dscptExpandBtn = document.querySelector<HTMLSpanElement>("#description-expand")!;
 const numSimulationsInp = document.querySelector<HTMLInputElement>("#num-simulations")!;
 const inputNames = [
   "attacker-dice",
@@ -46,16 +45,6 @@ rollBtn.addEventListener("click", () => {
   });
   pieChart.update(resultsToPieData(results));
   table.draw(resultsToTableData(results));
-});
-
-dscptExpandBtn.addEventListener("click", (ev: PointerEvent) => {
-  ev.preventDefault();
-  const hiddenDescription = document.querySelector<HTMLDivElement>("#hidden-description")!;
-  if (hiddenDescription.className !== "expanded") {
-    hiddenDescription.className = "expanded";
-  } else {
-    hiddenDescription.className = "";
-  }
 });
 
 for (let i = 0; i < inputNames.length; i++) {

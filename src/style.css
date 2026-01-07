@@ -40,14 +40,18 @@ body {
 h1 {
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
   line-height: 1;
-}
 
-h1 span:nth-child(3) {
-  font-size: 14px;
-}
-
-h1 span:nth-child(5) {
-  font-size: 26px;
+  span:nth-child(1) {
+    font-size: 32px;
+  }
+  
+  span:nth-child(3) {
+    font-size: 14px;
+  }
+  
+  span:nth-child(5) {
+    font-size: 26px;
+  }
 }
 
 #description-block {
@@ -56,39 +60,23 @@ h1 span:nth-child(5) {
   text-align: left;
 }
 
-.expand-icon {
-  text-decoration: none;
-  color: #fafafa;
-
-  &:hover {
-    color: #5f920e;
+summary {
+  cursor: pointer;
+  
+  &::marker {
+    content: "";
+  }
+  &::after {
+    content: "+";
+  }
+  [open] &::after {
+    content: "–";
   }
 }
 
-#hidden-description {
-  max-height: 0px;
-  overflow: hidden;
-  transition: max-height .3s;
-  font-size: 14px;
-  padding: 0px 12px;
-
-  &.expanded {
-    max-height: 175px;
-  }
-}
-@media (max-width: 600px) {
-   #hidden-description.expanded {
-    max-height: 400px;
-   }
-}
-@media (max-width: 327px) {
-   #hidden-description.expanded {
-    max-height: 600px;
-   }
-}
-
-#hidden-description p {
-  margin-top: 0px;
+details p {
+  padding: 0 20px;
+  font-size: 0.9rem;
 }
 
 h3 {

@@ -26,11 +26,11 @@
     <div id="main-content">
       <h1><span>Dice Advice</span><br><span>for</span><br><span>Warhammer Underworlds</span></h1>
       <div id="description-block">
-        <p>Calculate the probabilities of combat outcomes in Warhammer Underworlds. <a class="expand-icon" id="description-expand" href="">&#9660;</a></p>
-        <div id="hidden-description">
-          <p>Input the attacker and defender's weapon and defensive stats in the appropriate inputs. The success target is a conversion of the Underworlds combat dice to a traditional d6; lower the number by one for flanking and by two for surrounding.</p>
-          <p>This web app uses a Monte Carlo simulation rather than a direct probabilistic calculation; it simulates a large number of combats and tallies the results. This is easier to implement but gives inexact results, with a higher number of simulations leading to more accuracy. You can specify the number of combats to simulate.</p>
-        </div>
+        <details>
+          <summary>Calculate the probabilities of combat outcomes in Warhammer Underworlds.&nbsp;</summary>
+          <p>The success target is a conversion of the Underworlds combat dice to a traditional d6; lowering the number improves the accuracy of the attack. For example, lower the number by one for flanking and by two for surrounding.</p>
+          <p>Currently we use a Monte Carlo simulation rather than direct probabilistic calculation; we simulate a large number of combats and tally the results. This is easier to implement but gives inexact results, with a higher number of simulations leading to more accuracy. You can specify the number of combats to simulate.</p>
+        </details>
       </div>
       <div id="inputs-wrapper">
         <div id="attacker-inputs">

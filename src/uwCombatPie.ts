@@ -109,7 +109,7 @@ export class UWCombatPie {
       .innerRadius(0)
       .outerRadius((this.diameter / 2) - 1);
 
-    const transitionDur = 300;
+    const transitionDur = 200;
 
     const arcTween = (a: d3.PieArcDatum<PieData>): (t: number) => string => {
       const interpo = d3.interpolate(this.previous[a.data.name], a);
