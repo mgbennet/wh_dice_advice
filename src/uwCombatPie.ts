@@ -66,23 +66,27 @@ export class UWCombatPie {
   diameter: number;
   outerThickness: number;
   previous: Record<string, d3.PieArcDatum<PieData>>;
+  private pie: d3.Pie<any, PieData>;
+  private innerArc: d3.Arc<any, d3.PieArcDatum<PieData>>;
+  private outerArc: d3.Arc<any, d3.PieArcDatum<PieData>>;
+  private labelArc: d3.Arc<any, d3.PieArcDatum<PieData>>;
 
   constructor(svgId: string, diameter: number) {
     this.svgId = svgId;
     this.diameter = diameter;
-    this.outerThickness = 20;
+    this.outerThickness = 10;
     this.previous = {};
-    const pie = d3.pie<PieData>()
+    this.pie = d3.pie<PieData>()
       .sort(null)
       .value(d => d.value);
-    const innerArc = d3.arc<d3.PieArcDatum<PieData>>()
+    this.innerArc = d3.arc<d3.PieArcDatum<PieData>>()
       .innerRadius(0)
-      .outerRadius(((this.diameter - this.outerThickness) / 2) - 1);
-    const outerArc = d3.arc<d3.PieArcDatum<PieData>>()
-      .innerRadius(((this.diameter - this.outerThickness + 10) / 2) - 1)
+      .outerRadius(((this.diameter - this.outerThickness - 10) / 2) - 1);
+    this.outerArc = d3.arc<d3.PieArcDatum<PieData>>()
+      .innerRadius(((this.diameter - this.outerThickness) / 2) - 1)
       .outerRadius(((this.diameter) / 2) - 1);
     const labelRadius = ((this.diameter / 2) - 1) * 0.5;
-    const arcLabel = d3.arc<d3.PieArcDatum<PieData>>()
+    this.labelArc = d3.arc<d3.PieArcDatum<PieData>>()
       .outerRadius(labelRadius)
       .innerRadius(labelRadius);
 
@@ -92,9 +96,9 @@ export class UWCombatPie {
     defs.append(() => diagonalLinePattern());
     defs.append(() => diagonalLinePattern("green-diagonal-hatch", "#1dad48ff"));
 
-    const winnersArcs = pie(initData.winners);
-    const pushArcs = pie(pushDataFromResults(initData));
-    const critArcs = pie(initData.crits);
+    const winnersArcs = this.pie(initData.winners);
+    const pushArcs = this.pie(pushDataFromResults(initData));
+    const critArcs = this.pie(initData.crits);
 
     svg.append("g")
       .attr("id", "winners")
@@ -102,7 +106,7 @@ export class UWCombatPie {
       .data(winnersArcs)
       .join("path")
       .attr("fill", d => color(d.data.name))
-      .attr("d", innerArc)
+      .attr("d", this.innerArc)
       .each((d) => { this.previous[d.data.name] = d; });
 
     svg.append("g")
@@ -110,7 +114,7 @@ export class UWCombatPie {
       .selectAll("path")
       .data(critArcs)
       .join("path")
-      .attr("d", innerArc)
+      .attr("d", this.innerArc)
       .attr("fill", d => color(d.data.name))
       .each((d) => { this.previous[d.data.name] = d; });
 
@@ -119,7 +123,7 @@ export class UWCombatPie {
       .selectAll("path")
       .data(pushArcs)
       .join("path")
-      .attr("d", outerArc)
+      .attr("d", this.outerArc)
       .attr("fill", d => color(d.data.name))
       .each((d) => { this.previous[d.data.name] = d; });
 
@@ -130,7 +134,7 @@ export class UWCombatPie {
       .selectAll()
       .data(winnersArcs)
       .join("text")
-      .attr("transform", d => `translate(${arcLabel.centroid(d)})`)
+      .attr("transform", d => `translate(${this.labelArc.centroid(d)})`)
       .attr("fill", "#FFF")
       .call(text => text.append("tspan")
         .attr("class", "labelName")
@@ -146,18 +150,6 @@ export class UWCombatPie {
   }
 
   update(data: ResultData) {
-    const svg = d3.select(this.svgId);
-    const pie = d3.pie<PieData>()
-      .sort(null)
-      .value(d => d.value);
-    const innerArc = d3.arc<d3.PieArcDatum<PieData>>()
-      .innerRadius(0)
-      .outerRadius(((this.diameter - this.outerThickness) / 2) - 1);
-    const outerArc = d3.arc<d3.PieArcDatum<PieData>>()
-      .innerRadius(((this.diameter - this.outerThickness + 10) / 2) - 1)
-      .outerRadius(((this.diameter) / 2) - 1);
-    const labelRadius = ((this.diameter / 2) - 1) * 0.5;
-
     const transitionDur = 200;
 
     const arcTween = (a: d3.PieArcDatum<PieData>): (t: number) => string => {
@@ -165,18 +157,16 @@ export class UWCombatPie {
       this.previous[a.data.name] = a;
       return (t: number) => 
         (a.data.name.includes('push') 
-          ? outerArc(interpo(t))
-          : innerArc(interpo(t))
+          ? this.outerArc(interpo(t))
+          : this.innerArc(interpo(t))
         ) || "";
     };
 
-    const winnersArcs = pie(data.winners);
-    const critArcs = pie(data.crits);
-    const pushArcs = pie(pushDataFromResults(data));
-    const arcLabel = d3.arc<d3.PieArcDatum<PieData>>()
-      .outerRadius(labelRadius)
-      .innerRadius(labelRadius);
+    const winnersArcs = this.pie(data.winners);
+    const critArcs = this.pie(data.crits);
+    const pushArcs = this.pie(pushDataFromResults(data));
 
+    const svg = d3.select(this.svgId);
     svg.selectAll("#winners")
       .selectAll("path")
       .data(winnersArcs)
@@ -200,7 +190,7 @@ export class UWCombatPie {
       .data(winnersArcs)
       .transition()
       .duration(transitionDur)
-      .attr("transform", d => `translate(${arcLabel.centroid(d)})`)
+      .attr("transform", d => `translate(${this.labelArc.centroid(d)})`)
       .selectChild(".percentLabel")
       .text((d) => {
         const dCast = d as d3.PieArcDatum<PieData>;

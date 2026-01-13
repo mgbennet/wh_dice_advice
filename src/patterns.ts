@@ -9,6 +9,14 @@ export function smallCirclePattern(backgroundColor?: string) {
     .attr("patternUnits", "userSpaceOnUse")
     .attr("width", widthHeight)
     .attr("height", widthHeight);
+  if (backgroundColor) {
+    pattern.append("rect")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", widthHeight)
+      .attr("height", widthHeight)
+      .attr("fill", backgroundColor)
+  }
   pattern.append("circle")
     .attr("cx", widthHeight / 2)
     .attr("cy", 0)
@@ -29,14 +37,6 @@ export function smallCirclePattern(backgroundColor?: string) {
     .attr("cy", widthHeight)
     .attr("r", radius)
     .attr("fill", color);
-  if (backgroundColor) {
-    pattern.append("rect")
-      .attr("x", 0)
-      .attr("y", 0)
-      .attr("width", widthHeight)
-      .attr("height", widthHeight)
-      .attr("fill", backgroundColor)
-  }
   return pattern.node();
 }
 
