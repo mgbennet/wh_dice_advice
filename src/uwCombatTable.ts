@@ -8,6 +8,9 @@ const initData = [
   { name: "tie-overrun", value: 0.056 },
   { name: "tie-standfast", value: 0.056 },
   { name: "failure", value: 0.25 },
+  { name: "push", value: 0.665 },
+  { name: "push-overrun", value: 0.26 },
+  { name: "no-push", value: 0.325 },
 ];
 
 const tableDef = [
@@ -18,6 +21,9 @@ const tableDef = [
   { title: "Tie + Overrun", id: "tie-overrun-row", iconColor: "#9c9c9cff", iconPattern: "diagonal-hatch" },
   { title: "Tie + Stand Fast", id: "tie-standfast-row", iconColor: "#9c9c9cff", iconPattern: "circle-hatch" },
   { title: "Failure", id: "failure-row", iconColor: "#6d60faff", iconPattern: undefined },
+  { title: "Push", id: "push-row", iconColor: "#1dad48ff", iconPattern: undefined },
+  { title: "Push + Overrun", id: "push-overrun-row", iconColor: "#1dad48ff", iconPattern: "diagonal-hatch" },
+  { title: "No push", id: "no-push-row", iconColor: "#e6f334ff", iconPattern: undefined },
 ];
 
 export class UWCombatTable {
@@ -28,7 +34,7 @@ export class UWCombatTable {
     const div = document.querySelector(`#${divId}`);
     const table = document.createElement("table");
     const tbody = document.createElement("tbody");
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 10; i++) {
       const row = document.createElement("tr");
       row.id = tableDef[i].id;
       const iconCell = document.createElement("td");

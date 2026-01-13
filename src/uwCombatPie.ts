@@ -11,9 +11,21 @@ export interface PieData {
   value: number;
 }
 
+const colorDefs = {
+  "failure": "#6d60faff",
+  "tie": "#9c9c9cff",
+  "success": "#ca5252ff",
+  "failure-crits": "#0000",
+  "tie-standfast": "url(#circle-hatch)",
+  "tie-none": "#0000",
+  "tie-overrun": "url(#diagonal-hatch)",
+  "success-standfast": "url(#circle-hatch)",
+  "success-none": "#0000",
+  "success-overrun": "url(#diagonal-hatch)",
+}
 const color = d3.scaleOrdinal<string>()
-  .domain(["failure", "tie", "success", "failure-crits", "tie-standfast", "tie-none", "tie-overrun", "success-standfast", "success-none", "success-overrun"])
-  .range(["#6d60faff", "#9c9c9cff", "#ca5252ff", "#0000", "url(#circle-hatch)", "#0000", "url(#diagonal-hatch)", "url(#circle-hatch)", "#0000", "url(#diagonal-hatch)"]);
+  .domain(Object.keys(colorDefs))
+  .range(Object.values(colorDefs));
 
 const initData = {
   winners: [
@@ -46,14 +58,14 @@ export class UWCombatPie {
       .value(d => d.value);
     const arc = d3.arc<d3.PieArcDatum<PieData>>()
       .innerRadius(0)
-      .outerRadius((diameter / 2) - 1);
+      .outerRadius((this.diameter / 2) - 1);
 
     const svg = d3.select(this.svgId);
     const defs = svg.append("defs");
     defs.append(() => smallCirclePattern());
     defs.append(() => diagonalLinePattern());
 
-    const labelRadius = ((this.diameter / 2) - 1) * 0.6;
+    const labelRadius = ((this.diameter / 2) - 1) * 0.5;
     const winnersArcs = pie(initData.winners);
     const critArcs = pie(initData.crits);
     const arcLabel = d3.arc<d3.PieArcDatum<PieData>>()
@@ -117,7 +129,7 @@ export class UWCombatPie {
       return (t: number) => arc(interpo(t)) || "";
     };
 
-    const labelRadius = ((this.diameter / 2) - 1) * 0.6;
+    const labelRadius = ((this.diameter / 2) - 1) * 0.5;
     const winnersArcs = pie(data.winners);
     const critArcs = pie(data.crits);
     const arcLabel = d3.arc<d3.PieArcDatum<PieData>>()

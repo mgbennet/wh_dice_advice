@@ -21,14 +21,13 @@ const defenderDiceInp = document.querySelector<HTMLInputElement>("#defender-dice
 const defenderTargetInp = document.querySelector<HTMLInputElement>("#defender-target")!;
 const defenderRerollInp = document.querySelector<HTMLInputElement>("#defender-rerolls")!;
 
-const width = 300,
-  height = 300,
+const canvasSize = 300,
   svgId = "chartSvg";
 d3.select("#chart").append("svg")
   .attr("id", svgId)
-  .attr("style", `max-width: ${width}px; max-height: ${height}px`)
-  .attr("viewBox", [-width / 2, -height / 2, width, height]);
-const pieChart = new UWCombatPie(`#${svgId}`, width);
+  .attr("style", `max-width: ${canvasSize}px; max-height: ${canvasSize}px`)
+  .attr("viewBox", [-canvasSize / 2, -canvasSize / 2, canvasSize, canvasSize]);
+const pieChart = new UWCombatPie(`#${svgId}`, canvasSize);
 
 const table = new UWCombatTable("results-table");
 
@@ -89,6 +88,9 @@ const resultsToPieData = (results: simulationResults): ResultData => {
 };
 
 const resultsToTableData = (results: simulationResults): ResultTableData => {
+  const pushOverruns = results.attackerWins.attackerCritWins + results.ties.attackerCritWins;
+  const noPushs = results.attackerWins.defenderCritWins + results.ties.defenderCritWins + results.defenderWins.count;
+  const pushs = results.numSimulations - noPushs;
   return [
     { name: "success", value: results.attackerWins.count / results.numSimulations },
     { name: "success-overrun", value: results.attackerWins.attackerCritWins / results.numSimulations },
@@ -97,5 +99,8 @@ const resultsToTableData = (results: simulationResults): ResultTableData => {
     { name: "tie-standfast", value: results.ties.defenderCritWins / results.numSimulations },
     { name: "tie-overrun", value: results.ties.attackerCritWins / results.numSimulations },
     { name: "failure", value: results.defenderWins.count / results.numSimulations },
+    { name: "push", value: pushs / results.numSimulations },
+    { name: "push-overrun", value: pushOverruns / results.numSimulations },
+    { name: "no-push", value: noPushs / results.numSimulations },
   ];
 };
