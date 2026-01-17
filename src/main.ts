@@ -4,6 +4,7 @@ import { UWCombatPie, ResultData } from "./uwCombatPie";
 import * as d3 from "d3";
 import { ResultTableData, UWCombatTable } from "./uwCombatTable";
 
+
 const rollBtn = document.querySelector<HTMLButtonElement>("#roll-btn")!;
 const numSimulationsInp = document.querySelector<HTMLInputElement>("#num-simulations")!;
 const inputNames = [
@@ -20,6 +21,9 @@ const attackerRerollInp = document.querySelector<HTMLInputElement>("#attacker-re
 const defenderDiceInp = document.querySelector<HTMLInputElement>("#defender-dice")!;
 const defenderTargetInp = document.querySelector<HTMLInputElement>("#defender-target")!;
 const defenderRerollInp = document.querySelector<HTMLInputElement>("#defender-rerolls")!;
+
+let monteCarlo = false;
+const monteCarloToggle = document.querySelector<HTMLButtonElement>("#monteCarloToggle");
 
 const canvasSize = 300,
   svgId = "chartSvg";
@@ -56,6 +60,7 @@ for (let i = 0; i < inputNames.length; i++) {
     } else {
       input.value = (parseInt(input.value) + 1).toString();
     }
+    input.dispatchEvent(new Event("change"));
   });
   document.querySelector<HTMLDivElement>(`#${name}-dec`)!.addEventListener("click", () => {
     const input = document.querySelector<HTMLInputElement>(`#${name}`)!;
@@ -65,9 +70,42 @@ for (let i = 0; i < inputNames.length; i++) {
     } else {
       input.value = (parseInt(input.value) > 0 ? parseInt(input.value) - 1 : 0).toString();
     }
+    input.dispatchEvent(new Event("change"));
   });
 }
 
+monteCarloToggle?.addEventListener("click", () => {
+  monteCarlo = !monteCarlo;
+  if (monteCarlo) {
+    monteCarloToggle.textContent = "Use binomal calculation";
+    document.querySelector("#monteCarloSection")?.setAttribute("style", "display: block");
+  } else {
+    monteCarloToggle.textContent = "Use Monte Carlo simulation";
+    document.querySelector("#monteCarloSection")?.setAttribute("style", "display: none");
+  }
+});
+
+// automatic updates when not using monte carlo
+const inputs = document.querySelectorAll<HTMLInputElement|HTMLSelectElement>("#inputs-wrapper input,#inputs-wrapper select");
+inputs.forEach((element) => {
+  element.addEventListener("change", () => {
+    if (!monteCarlo) {
+      const results = simulateUWAttacks({
+        simulations: 10000,
+        attackerDice: parseInt(attackerDiceInp.value),
+        attackerSuccess: parseInt(attackerTargetInp.value),
+        attackerRerolls: parseInt(attackerRerollInp.value),
+        defenderDice: parseInt(defenderDiceInp.value),
+        defenderSuccess: parseInt(defenderTargetInp.value),
+        defenderRerolls: parseInt(defenderRerollInp.value),
+      });
+      pieChart.update(resultsToPieData(results));
+      table.draw(resultsToTableData(results));
+    }
+  });
+});
+
+// utils
 const resultsToPieData = (results: simulationResults): ResultData => {
   return {
     winners: [

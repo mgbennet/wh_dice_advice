@@ -108,11 +108,13 @@
           </div>
         </div>
       </div>
-      <div class="individual-input-line">
-        <label for="num-simulations">Number of simulated combats</label>
-        <input type="number" id="num-simulations" min="1" value="10000"/>
+      <div id="monteCarloSection" style="display:none">
+        <div class="individual-input-line">
+          <label for="num-simulations">Number of simulated combats</label>
+          <input type="number" id="num-simulations" min="1" value="10000"/>
+        </div>
+        <button id="roll-btn">Roll!</button>
       </div>
-      <button id="roll-btn">Roll!</button>
       <div id="data-area">
         <div class="space-filler"></div>
         <div id="chart"></div>
@@ -120,6 +122,7 @@
       </div>
     </div>
     <div id="legal-footer">
+      <button id="monteCarloToggle">Use Monte Carlo simulations</button>
       <p>Licensed under a <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International</a> License.</p>
       <p>This site is not endorsed by or affiliated with Games Workshop Limited.</p>
     </div>
