@@ -1,14 +1,27 @@
 import { dicePool, reroll } from "./dice";
 
 // All requirements for defining a UWs combat
-export interface underworldsMC {
-  simulations: number;
+export interface uwCombatDef {
   attackerDice: number;
   attackerSuccess: number;
   attackerRerolls: number;
   defenderDice: number;
   defenderSuccess: number;
   defenderRerolls: number;
+}
+
+export interface uwCombatSim extends uwCombatDef {
+  simulations: number;
+}
+
+export interface uwCombatCalcResult {
+  success: number;
+  successOverrun: number;
+  successStandfast: number;
+  tie: number;
+  tieOverrun: number;
+  tieStandfast: number;
+  failure: number;
 }
 
 // All possibilities results for a UWs combat
@@ -24,6 +37,7 @@ export interface uwCombatResult {
   critWinner: CombatWinner;
 }
 
+// Counts of outcomes for a batch of simluations
 export interface simulationResults {
   attackerWins: {
     count: number;
@@ -43,7 +57,10 @@ export interface simulationResults {
   numSimulations: number;
 }
 
-export function simulateUWAttacks(simulation: underworldsMC): simulationResults {
+/**
+ * Does a Monte Carlo simulation of an Underworlds combat.
+ */
+export function simulateUWAttacks(simulation: uwCombatSim): simulationResults {
   // roll the dice
   const results = [];
   for (let i = 0; i < simulation.simulations; i++) {
@@ -104,4 +121,16 @@ function evaluateCombat(attackDice: number[], attackSuccess: number, defenseDice
         ? CombatWinner.Attacker
         : CombatWinner.Defender,
   };
+}
+
+export function calculateUWAttack(combatDef: uwCombatDef): uwCombatCalcResult {
+  return {
+    success: .5,
+    successOverrun: .204,
+    successStandfast: .019,
+    tie: .25,
+    tieOverrun: .056,
+    tieStandfast: .056,
+    failure: .25,
+  }
 }

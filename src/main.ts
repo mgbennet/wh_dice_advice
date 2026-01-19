@@ -1,8 +1,9 @@
 import "./style.css";
-import { simulateUWAttacks, simulationResults } from "./underworlds";
+import { calculateUWAttack, simulateUWAttacks, simulationResults, uwCombatCalcResult } from "./underworlds";
 import { UWCombatPie, ResultData } from "./uwCombatPie";
 import * as d3 from "d3";
 import { ResultTableData, UWCombatTable } from "./uwCombatTable";
+import { diceProbDist } from "./probCalc";
 
 
 const rollBtn = document.querySelector<HTMLButtonElement>("#roll-btn")!;
@@ -46,8 +47,8 @@ rollBtn.addEventListener("click", () => {
     defenderSuccess: parseInt(defenderTargetInp.value),
     defenderRerolls: parseInt(defenderRerollInp.value),
   });
-  pieChart.update(resultsToPieData(results));
-  table.draw(resultsToTableData(results));
+  pieChart.update(simResultsToPieData(results));
+  table.draw(simResultsToTableData(results));
 });
 
 for (let i = 0; i < inputNames.length; i++) {
@@ -90,8 +91,7 @@ const inputs = document.querySelectorAll<HTMLInputElement|HTMLSelectElement>("#i
 inputs.forEach((element) => {
   element.addEventListener("change", () => {
     if (!monteCarlo) {
-      const results = simulateUWAttacks({
-        simulations: 10000,
+      const results = calculateUWAttack({
         attackerDice: parseInt(attackerDiceInp.value),
         attackerSuccess: parseInt(attackerTargetInp.value),
         attackerRerolls: parseInt(attackerRerollInp.value),
@@ -99,14 +99,33 @@ inputs.forEach((element) => {
         defenderSuccess: parseInt(defenderTargetInp.value),
         defenderRerolls: parseInt(defenderRerollInp.value),
       });
-      pieChart.update(resultsToPieData(results));
-      table.draw(resultsToTableData(results));
+      pieChart.update(calcResultsToPieData(results));
+      table.draw(calcResultsToTableData(results));
     }
   });
 });
 
 // utils
-const resultsToPieData = (results: simulationResults): ResultData => {
+const calcResultsToPieData = (results: uwCombatCalcResult): ResultData => {
+  return {
+    winners: [
+      { name: "failure", value: results.failure },
+      { name: "tie", value: results.tie },
+      { name: "success", value: results.success },
+    ],
+    crits: [
+      { name: "failure-crits", value: results.failure },
+      { name: "tie-standfast", value: results.tieStandfast },
+      { name: "tie-none", value: results.tie - results.tieOverrun - results.tieStandfast},
+      { name: "tie-overrun", value: results.tieOverrun },
+      { name: "success-standfast", value: results.successStandfast },
+      { name: "success-none", value: results.success - results.successOverrun - results.successStandfast },
+      { name: "success-overrun", value: results.successOverrun },
+    ],
+  }
+}
+
+const simResultsToPieData = (results: simulationResults): ResultData => {
   return {
     winners: [
       { name: "failure", value: results.defenderWins.count / results.numSimulations },
@@ -125,7 +144,22 @@ const resultsToPieData = (results: simulationResults): ResultData => {
   };
 };
 
-const resultsToTableData = (results: simulationResults): ResultTableData => {
+const calcResultsToTableData = (results: uwCombatCalcResult): ResultTableData => {
+  return [
+    { name: "success", value: results.success },
+    { name: "success-overrun", value: results.successOverrun },
+    { name: "success-standfast", value: results.successStandfast },
+    { name: "tie", value: results.tie },
+    { name: "tie-overrun", value: results.tieOverrun },
+    { name: "tie-standfast", value: results.tieStandfast },
+    { name: "failure", value: results.failure },
+    { name: "push", value: results.success + results.tie - results.tieStandfast - results.successStandfast },
+    { name: "push-overrun", value: results.successOverrun + results.tieOverrun },
+    { name: "no-push", value: results.failure + results.tieStandfast + results.successStandfast },
+  ];
+};
+
+const simResultsToTableData = (results: simulationResults): ResultTableData => {
   const pushOverruns = results.attackerWins.attackerCritWins + results.ties.attackerCritWins;
   const noPushs = results.attackerWins.defenderCritWins + results.ties.defenderCritWins + results.defenderWins.count;
   const pushs = results.numSimulations - noPushs;
@@ -134,8 +168,8 @@ const resultsToTableData = (results: simulationResults): ResultTableData => {
     { name: "success-overrun", value: results.attackerWins.attackerCritWins / results.numSimulations },
     { name: "success-standfast", value: results.attackerWins.defenderCritWins / results.numSimulations },
     { name: "tie", value: results.ties.count / results.numSimulations },
-    { name: "tie-standfast", value: results.ties.defenderCritWins / results.numSimulations },
     { name: "tie-overrun", value: results.ties.attackerCritWins / results.numSimulations },
+    { name: "tie-standfast", value: results.ties.defenderCritWins / results.numSimulations },
     { name: "failure", value: results.defenderWins.count / results.numSimulations },
     { name: "push", value: pushs / results.numSimulations },
     { name: "push-overrun", value: pushOverruns / results.numSimulations },
