@@ -83,10 +83,11 @@ monteCarloToggle?.addEventListener("click", () => {
   } else {
     monteCarloToggle.textContent = "Use Monte Carlo simulation";
     document.querySelector("#monteCarloSection")?.setAttribute("style", "display: none");
+    document.querySelector("input")?.dispatchEvent(new Event("change"));
   }
 });
 
-// automatic updates when not using monte carlo
+// automatic triggers calcuation when not using monte carlo
 const inputs = document.querySelectorAll<HTMLInputElement|HTMLSelectElement>("#inputs-wrapper input,#inputs-wrapper select");
 inputs.forEach((element) => {
   element.addEventListener("change", () => {

@@ -1,4 +1,5 @@
 import { dicePool, reroll } from "./dice";
+import { arrayMult, diceProbDist } from "./probCalc";
 
 // All requirements for defining a UWs combat
 export interface uwCombatDef {
@@ -124,13 +125,30 @@ function evaluateCombat(attackDice: number[], attackSuccess: number, defenseDice
 }
 
 export function calculateUWAttack(combatDef: uwCombatDef): uwCombatCalcResult {
+  const attackerOdds = diceProbDist(combatDef.attackerDice, combatDef.attackerSuccess);
+  const defenderOdds = diceProbDist(combatDef.defenderDice, combatDef.defenderSuccess);
+  const outcomeOdds = arrayMult(attackerOdds, defenderOdds);
+  
+  let successOdds = 0, tieOdds = 0, failureOdds = 0;
+  for (let attackerHits = 0; attackerHits < outcomeOdds.length; attackerHits++) {
+    for (let defenderHits = 0; defenderHits < outcomeOdds[attackerHits].length; defenderHits++) {
+      if (attackerHits < defenderHits || attackerHits === 0) {
+        failureOdds += outcomeOdds[attackerHits][defenderHits];
+      } else if (attackerHits > defenderHits) {
+        successOdds += outcomeOdds[attackerHits][defenderHits];
+      } else {
+        tieOdds += outcomeOdds[attackerHits][defenderHits];
+      }
+    }
+  }
+
   return {
-    success: .5,
+    success: successOdds,
     successOverrun: .204,
     successStandfast: .019,
-    tie: .25,
+    tie: tieOdds,
     tieOverrun: .056,
     tieStandfast: .056,
-    failure: .25,
+    failure: failureOdds,
   }
 }
