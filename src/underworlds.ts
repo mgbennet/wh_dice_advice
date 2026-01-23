@@ -1,5 +1,5 @@
 import { dicePool, reroll } from "./dice";
-import { arrayMult, diceProbDist } from "./probCalc";
+import { arrayMult, critProbDist, diceProbDist } from "./probCalc";
 
 // All requirements for defining a UWs combat
 export interface uwCombatDef {
@@ -125,9 +125,11 @@ function evaluateCombat(attackDice: number[], attackSuccess: number, defenseDice
 }
 
 export function calculateUWAttack(combatDef: uwCombatDef): uwCombatCalcResult {
-  const attackerOdds = diceProbDist(combatDef.attackerDice, combatDef.attackerSuccess);
-  const defenderOdds = diceProbDist(combatDef.defenderDice, combatDef.defenderSuccess);
+  const attackerOdds = diceProbDist(combatDef.attackerDice, combatDef.attackerSuccess, combatDef.attackerRerolls);
+  const defenderOdds = diceProbDist(combatDef.defenderDice, combatDef.defenderSuccess, combatDef.defenderRerolls);
   const outcomeOdds = arrayMult(attackerOdds, defenderOdds);
+  const attackerCritsOdds = critProbDist(combatDef.attackerDice, combatDef.attackerSuccess);
+  const defenderCritsOdds = critProbDist(combatDef.defenderDice, combatDef.defenderSuccess);
   
   let successOdds = 0, tieOdds = 0, failureOdds = 0;
   for (let attackerHits = 0; attackerHits < outcomeOdds.length; attackerHits++) {
@@ -142,13 +144,37 @@ export function calculateUWAttack(combatDef: uwCombatDef): uwCombatCalcResult {
     }
   }
 
+  let successOverrun = 0, successStandfast = 0, tieOverrun = 0, tieStandfast = 0; 
+  for (let attackCrits = 0; attackCrits < attackerCritsOdds.length; attackCrits++) {
+    for (let attackHits = 0; attackHits < attackerCritsOdds[attackCrits].length; attackHits++) {
+      for (let defendCrits = 0; defendCrits < defenderCritsOdds.length; defendCrits++) {
+        for (let defendHits = 0; defendHits < defenderCritsOdds[defendCrits].length; defendHits++) {
+          const odds = attackerCritsOdds[attackCrits][attackHits] * defenderCritsOdds[defendCrits][defendHits];
+          if (attackCrits > defendCrits) {
+            if (attackCrits + attackHits > defendCrits + defendHits) {
+              successOverrun += odds;
+            } else if (attackCrits + attackHits === defendCrits + defendHits) {
+              tieOverrun += odds;
+            }
+          } else if (attackCrits < defendCrits) {
+            if (attackCrits + attackHits > defendCrits + defendHits) {
+              successStandfast += odds;
+            } else if (attackCrits + attackHits === defendCrits + defendHits) {
+              tieStandfast += odds;
+            }
+          }
+        }
+      }
+    }
+  }
+
   return {
     success: successOdds,
-    successOverrun: .204,
-    successStandfast: .019,
+    successOverrun,
+    successStandfast,
     tie: tieOdds,
-    tieOverrun: .056,
-    tieStandfast: .056,
+    tieOverrun,
+    tieStandfast,
     failure: failureOdds,
   }
 }

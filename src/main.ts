@@ -3,7 +3,6 @@ import { calculateUWAttack, simulateUWAttacks, simulationResults, uwCombatCalcRe
 import { UWCombatPie, ResultData } from "./uwCombatPie";
 import * as d3 from "d3";
 import { ResultTableData, UWCombatTable } from "./uwCombatTable";
-import { diceProbDist } from "./probCalc";
 
 
 const rollBtn = document.querySelector<HTMLButtonElement>("#roll-btn")!;
