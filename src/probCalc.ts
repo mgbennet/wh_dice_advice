@@ -7,7 +7,7 @@
  * @returns {number} The calculated odds
  */
 export function binomialProbability(t: number, p: number, s: number): number {
-  return factorial(t) / (factorial(s)*factorial(t - s)) * p**s * (1 - p)**(t - s); 
+  return fact(t) / (fact(s)*fact(t - s)) * p**s * (1 - p)**(t - s); 
 }
 
 export function multinomialProbability(probs: number[], events: number[]): number {
@@ -15,19 +15,30 @@ export function multinomialProbability(probs: number[], events: number[]): numbe
     throw new Error("multinomialProbability: probs and events must be arrays of the same length");
   }
   const total = events.reduce((prev, cur) => prev + cur);
-  const factorialSide = factorial(total) / (events.reduce((prev, cur) => prev*factorial(cur || 1), 1));
+  const factorialSide = fact(total) / (events.reduce((prev, cur) => prev*fact(cur || 1), 1));
   const oddsSide = probs.reduce((prev, cur, curInd) => prev * cur**events[curInd], 1);
   return factorialSide * oddsSide;
 }
 
-export function factorial(n: number): number {
-  return n > 1 ? n * factorial(n - 1) : 1;
+// factorial function
+export function fact(n: number): number {
+  return n > 1 ? n * fact(n - 1) : 1;
 }
 
 export function diceProbDist(n: number, target: number, rerolls: number): number[] {
-  let result = [];
+  let result: number[] = [];
   for (let i = 0; i <= n; i++) {
     result.push(binomialProbability(n, (7 - target) / 6, i));
+  }
+  if (rerolls > 0) {
+    let rerolledResult = new Array(result.length).fill(0);
+    for (let i = 0; i < result.length; i++) {
+      let rerollDist = diceProbDist(Math.min(rerolls, result.length - i - 1), target, 0);
+      rerollDist.forEach((val, j) => {
+        rerolledResult[i + j] = rerolledResult[i+j] + result[i] * val;
+      });
+    }
+    result = rerolledResult;
   }
   return result;
 }
