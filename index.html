@@ -29,7 +29,7 @@
         <details>
           <summary>Calculate the probabilities of combat outcomes in Warhammer Underworlds.&nbsp;</summary>
           <p>The success target is a conversion of the Underworlds combat dice to a traditional d6; lowering the number improves the accuracy of the attack. For example, lower the number by one for flanking and by two for surrounding.</p>
-          <p>Currently we use a Monte Carlo simulation rather than direct probabilistic calculation; we simulate a large number of combats and tally the results. This is easier to implement but gives inexact results, with a higher number of simulations leading to more accuracy. You can specify the number of combats to simulate.</p>
+          <p>Results are calculated with polynomial distributions. You can instead use a Monte Carlo simulation to calculate the results; they should be the same, but it's easier for me to implement the Monte Carlo simulation correctly.</p>
         </details>
       </div>
       <div id="inputs-wrapper">

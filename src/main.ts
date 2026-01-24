@@ -176,3 +176,6 @@ const simResultsToTableData = (results: simulationResults): ResultTableData => {
     { name: "no-push", value: noPushs / results.numSimulations },
   ];
 };
+
+// on intial load, trigger a draw from current/saved inputs.
+inputs[0].dispatchEvent(new Event("change"));
