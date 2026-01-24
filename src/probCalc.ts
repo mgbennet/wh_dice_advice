@@ -25,7 +25,7 @@ export function fact(n: number): number {
   return n > 1 ? n * fact(n - 1) : 1;
 }
 
-export function diceProbDist(n: number, target: number, rerolls: number): number[] {
+export function diceProbDist(n: number, target: number, rerolls: number = 0): number[] {
   let result: number[] = [];
   for (let i = 0; i <= n; i++) {
     result.push(binomialProbability(n, (7 - target) / 6, i));
@@ -43,7 +43,7 @@ export function diceProbDist(n: number, target: number, rerolls: number): number
   return result;
 }
 
-export function critProbDist(n: number, target: number): number[][] {
+export function critProbDist(n: number, target: number, rerolls: number = 0): number[][] {
   let result: number[][] = [];
   const regHitOdds = (6 - target) / 6
   for (let crits = 0; crits <= n; crits++) {
@@ -51,6 +51,21 @@ export function critProbDist(n: number, target: number): number[][] {
     for (let hits = 0; hits <= n - crits; hits++) {
       result[crits].push(multinomialProbability([1/6, regHitOdds, 1 - regHitOdds - 1/6], [crits, hits, n - crits - hits]));
     }
+  }
+  if (rerolls > 0) {
+    let rerolledResult = new Array(result.length).fill([]);
+    result.forEach((row, i) => rerolledResult[i] = (new Array(row.length).fill(0)));
+    for (let i = 0; i < result.length; i++) {
+      for (let j = 0; j < result[i].length; j++) {
+        let rerollDist = critProbDist(Math.min(rerolls, result.length - j-i-1), target, 0);
+        rerollDist.forEach((rerollRow, r_i) => {
+          rerollRow.forEach((val, r_j) => {
+            rerolledResult[i + r_i][j + r_j] = rerolledResult[i + r_i][j + r_j] + result[i][j] * val;
+          });
+        });
+      }
+    }
+    result = rerolledResult;
   }
   return result;
 }
