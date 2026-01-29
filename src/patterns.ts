@@ -15,7 +15,7 @@ export function smallCirclePattern(backgroundColor?: string) {
       .attr("y", 0)
       .attr("width", widthHeight)
       .attr("height", widthHeight)
-      .attr("fill", backgroundColor)
+      .attr("fill", backgroundColor);
   }
   pattern.append("circle")
     .attr("cx", widthHeight / 2)
@@ -52,7 +52,7 @@ export function diagonalLinePattern(id?: string, backgroundColor?: string) {
       .attr("y", 0)
       .attr("width", 4)
       .attr("height", 4)
-      .attr("fill", backgroundColor)
+      .attr("fill", backgroundColor);
   }
   pattern.append("path")
     .attr("d", "M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2")

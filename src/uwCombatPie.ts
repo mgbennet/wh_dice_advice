@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import { diagonalLinePattern, smallCirclePattern } from "./patterns";
+import { BaseType } from "d3";
 
 export interface ResultData {
   winners: Array<PieData>;
@@ -28,7 +29,7 @@ const colorDefs = {
   "push-success-overrun": "url(#green-diagonal-hatch)",
   "no-push": "#e6f334ff",
   "no-push-success": "#e6f334ff",
-}
+};
 const color = d3.scaleOrdinal<string>()
   .domain(Object.keys(colorDefs))
   .range(Object.values(colorDefs));
@@ -55,21 +56,21 @@ const pushDataFromResults = (data: ResultData) => {
     { name: "no-push", value: data.winners[0].value + data.crits[1].value },
     { name: "push-tie", value: data.winners[1].value - data.crits[1].value - data.crits[3].value },
     { name: "push-tie-overrun", value: data.crits[3].value },
-    { name: "no-push-success", value: data.crits[4].value},
+    { name: "no-push-success", value: data.crits[4].value },
     { name: "push-success", value: data.winners[2].value - data.crits[4].value - data.crits[6].value },
     { name: "push-success-overrun", value: data.crits[6].value },
-  ]
-}
+  ];
+};
 
 export class UWCombatPie {
   svgId: string;
   diameter: number;
   outerThickness: number;
   previous: Record<string, d3.PieArcDatum<PieData>>;
-  private pie: d3.Pie<any, PieData>;
-  private innerArc: d3.Arc<any, d3.PieArcDatum<PieData>>;
-  private outerArc: d3.Arc<any, d3.PieArcDatum<PieData>>;
-  private labelArc: d3.Arc<any, d3.PieArcDatum<PieData>>;
+  private pie: d3.Pie<UWCombatPie, PieData>;
+  private innerArc: d3.Arc<BaseType | UWCombatPie, d3.PieArcDatum<PieData>>;
+  private outerArc: d3.Arc<BaseType | UWCombatPie, d3.PieArcDatum<PieData>>;
+  private labelArc: d3.Arc<BaseType, d3.PieArcDatum<PieData>>;
 
   constructor(svgId: string, diameter: number) {
     this.svgId = svgId;
@@ -155,8 +156,8 @@ export class UWCombatPie {
     const arcTween = (a: d3.PieArcDatum<PieData>): (t: number) => string => {
       const interpo = d3.interpolate(this.previous[a.data.name], a);
       this.previous[a.data.name] = a;
-      return (t: number) => 
-        (a.data.name.includes('push') 
+      return (t: number) =>
+        (a.data.name.includes("push")
           ? this.outerArc(interpo(t))
           : this.innerArc(interpo(t))
         ) || "";

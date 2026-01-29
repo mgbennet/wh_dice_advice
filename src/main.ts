@@ -4,7 +4,6 @@ import { UWCombatPie, ResultData } from "./uwCombatPie";
 import * as d3 from "d3";
 import { ResultTableData, UWCombatTable } from "./uwCombatTable";
 
-
 const rollBtn = document.querySelector<HTMLButtonElement>("#roll-btn")!;
 const numSimulationsInp = document.querySelector<HTMLInputElement>("#num-simulations")!;
 const inputNames = [
@@ -87,7 +86,7 @@ monteCarloToggle?.addEventListener("click", () => {
 });
 
 // automatic triggers calcuation when not using monte carlo
-const inputs = document.querySelectorAll<HTMLInputElement|HTMLSelectElement>("#inputs-wrapper input,#inputs-wrapper select");
+const inputs = document.querySelectorAll<HTMLInputElement | HTMLSelectElement>("#inputs-wrapper input,#inputs-wrapper select");
 inputs.forEach((element) => {
   element.addEventListener("change", () => {
     if (!monteCarlo) {
@@ -116,14 +115,14 @@ const calcResultsToPieData = (results: uwCombatCalcResult): ResultData => {
     crits: [
       { name: "failure-crits", value: results.failure },
       { name: "tie-standfast", value: results.tieStandfast },
-      { name: "tie-none", value: results.tie - results.tieOverrun - results.tieStandfast},
+      { name: "tie-none", value: results.tie - results.tieOverrun - results.tieStandfast },
       { name: "tie-overrun", value: results.tieOverrun },
       { name: "success-standfast", value: results.successStandfast },
       { name: "success-none", value: results.success - results.successOverrun - results.successStandfast },
       { name: "success-overrun", value: results.successOverrun },
     ],
-  }
-}
+  };
+};
 
 const simResultsToPieData = (results: simulationResults): ResultData => {
   return {

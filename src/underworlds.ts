@@ -130,7 +130,7 @@ export function calculateUWAttack(combatDef: uwCombatDef): uwCombatCalcResult {
   const outcomeOdds = arrayMult(attackerOdds, defenderOdds);
   const attackerCritsOdds = critProbDist(combatDef.attackerDice, combatDef.attackerSuccess, combatDef.attackerRerolls);
   const defenderCritsOdds = critProbDist(combatDef.defenderDice, combatDef.defenderSuccess, combatDef.defenderRerolls);
-  
+
   let successOdds = 0, tieOdds = 0, failureOdds = 0;
   for (let attackerHits = 0; attackerHits < outcomeOdds.length; attackerHits++) {
     for (let defenderHits = 0; defenderHits < outcomeOdds[attackerHits].length; defenderHits++) {
@@ -144,7 +144,7 @@ export function calculateUWAttack(combatDef: uwCombatDef): uwCombatCalcResult {
     }
   }
 
-  let successOverrun = 0, successStandfast = 0, tieOverrun = 0, tieStandfast = 0; 
+  let successOverrun = 0, successStandfast = 0, tieOverrun = 0, tieStandfast = 0;
   for (let attackCrits = 0; attackCrits < attackerCritsOdds.length; attackCrits++) {
     for (let attackHits = 0; attackHits < attackerCritsOdds[attackCrits].length; attackHits++) {
       for (let defendCrits = 0; defendCrits < defenderCritsOdds.length; defendCrits++) {
@@ -176,5 +176,5 @@ export function calculateUWAttack(combatDef: uwCombatDef): uwCombatCalcResult {
     tieOverrun,
     tieStandfast,
     failure: failureOdds,
-  }
+  };
 }

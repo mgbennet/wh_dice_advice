@@ -7,7 +7,7 @@
  * @returns {number} The calculated odds
  */
 export function binomialProbability(t: number, p: number, s: number): number {
-  return fact(t) / (fact(s)*fact(t - s)) * p**s * (1 - p)**(t - s); 
+  return fact(t) / (fact(s) * fact(t - s)) * p ** s * (1 - p) ** (t - s);
 }
 
 export function multinomialProbability(probs: number[], events: number[]): number {
@@ -15,8 +15,8 @@ export function multinomialProbability(probs: number[], events: number[]): numbe
     throw new Error("multinomialProbability: probs and events must be arrays of the same length");
   }
   const total = events.reduce((prev, cur) => prev + cur);
-  const factorialSide = fact(total) / (events.reduce((prev, cur) => prev*fact(cur || 1), 1));
-  const oddsSide = probs.reduce((prev, cur, curInd) => prev * cur**events[curInd], 1);
+  const factorialSide = fact(total) / (events.reduce((prev, cur) => prev * fact(cur || 1), 1));
+  const oddsSide = probs.reduce((prev, cur, curInd) => prev * cur ** events[curInd], 1);
   return factorialSide * oddsSide;
 }
 
@@ -31,11 +31,11 @@ export function diceProbDist(n: number, target: number, rerolls: number = 0): nu
     result.push(binomialProbability(n, (7 - target) / 6, i));
   }
   if (rerolls > 0) {
-    let rerolledResult = new Array(result.length).fill(0);
+    const rerolledResult = new Array(result.length).fill(0);
     for (let i = 0; i < result.length; i++) {
-      let rerollDist = diceProbDist(Math.min(rerolls, result.length - i - 1), target, 0);
+      const rerollDist = diceProbDist(Math.min(rerolls, result.length - i - 1), target, 0);
       rerollDist.forEach((val, j) => {
-        rerolledResult[i + j] = rerolledResult[i+j] + result[i] * val;
+        rerolledResult[i + j] = rerolledResult[i + j] + result[i] * val;
       });
     }
     result = rerolledResult;
@@ -45,19 +45,19 @@ export function diceProbDist(n: number, target: number, rerolls: number = 0): nu
 
 export function critProbDist(n: number, target: number, rerolls: number = 0): number[][] {
   let result: number[][] = [];
-  const regHitOdds = (6 - target) / 6
+  const regHitOdds = (6 - target) / 6;
   for (let crits = 0; crits <= n; crits++) {
     result.push([]);
     for (let hits = 0; hits <= n - crits; hits++) {
-      result[crits].push(multinomialProbability([1/6, regHitOdds, 1 - regHitOdds - 1/6], [crits, hits, n - crits - hits]));
+      result[crits].push(multinomialProbability([1 / 6, regHitOdds, 1 - regHitOdds - 1 / 6], [crits, hits, n - crits - hits]));
     }
   }
   if (rerolls > 0) {
-    let rerolledResult = new Array(result.length).fill([]);
+    const rerolledResult = new Array(result.length).fill([]);
     result.forEach((row, i) => rerolledResult[i] = (new Array(row.length).fill(0)));
     for (let i = 0; i < result.length; i++) {
       for (let j = 0; j < result[i].length; j++) {
-        let rerollDist = critProbDist(Math.min(rerolls, result.length - j-i-1), target, 0);
+        const rerollDist = critProbDist(Math.min(rerolls, result.length - j - i - 1), target, 0);
         rerollDist.forEach((rerollRow, r_i) => {
           rerollRow.forEach((val, r_j) => {
             rerolledResult[i + r_i][j + r_j] = rerolledResult[i + r_i][j + r_j] + result[i][j] * val;
@@ -74,7 +74,7 @@ export function critProbDist(n: number, target: number, rerolls: number = 0): nu
  * Does matrix multiplication between two arrays.
  */
 export function arrayMult(arr1: number[], arr2: number[]): number[][] {
-  let result: number[][] = [];
+  const result: number[][] = [];
   for (let i = 0; i < arr1.length; i++) {
     result.push([]);
     for (let j = 0; j < arr2.length; j++) {
