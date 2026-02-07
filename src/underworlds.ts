@@ -38,7 +38,7 @@ export interface uwCombatResult {
   critWinner: CombatWinner;
 }
 
-// Counts of outcomes for a batch of simluations
+// Counts of outcomes for a batch of simulations
 export interface simulationResults {
   attackerWins: {
     count: number;

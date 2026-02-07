@@ -223,6 +223,24 @@ td:last-child {
   text-align: right;
 }
 
+#monteCarloToggle {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  border: 1px #383838 solid;
+  border-radius: 3px;
+  background: #bebebe;
+
+  &.toMonteCarlo {
+    background-image: url('../images/dice.png');
+  }
+  
+  &.toCalculation {
+    background-image: url('../images/sigma.png');
+  }
+}
+
+
 #legal-footer {
   font-size: 10px;
   color: #616161;

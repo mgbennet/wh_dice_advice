@@ -76,16 +76,18 @@ for (let i = 0; i < inputNames.length; i++) {
 monteCarloToggle?.addEventListener("click", () => {
   monteCarlo = !monteCarlo;
   if (monteCarlo) {
-    monteCarloToggle.textContent = "Use binomal calculation";
+    monteCarloToggle.title = "Use calculation";
+    monteCarloToggle.setAttribute("class", "toCalculation");
     document.querySelector("#monteCarloSection")?.setAttribute("style", "display: block");
   } else {
-    monteCarloToggle.textContent = "Use Monte Carlo simulation";
+    monteCarloToggle.title = "Use Monte Carlo simulation";
+    monteCarloToggle.setAttribute("class", "toMonteCarlo");
     document.querySelector("#monteCarloSection")?.setAttribute("style", "display: none");
     document.querySelector("input")?.dispatchEvent(new Event("change"));
   }
 });
 
-// automatic triggers calcuation when not using monte carlo
+// automatic triggers calculation when not using monte carlo
 const inputs = document.querySelectorAll<HTMLInputElement | HTMLSelectElement>("#inputs-wrapper input,#inputs-wrapper select");
 inputs.forEach((element) => {
   element.addEventListener("change", () => {
@@ -160,8 +162,8 @@ const calcResultsToTableData = (results: uwCombatCalcResult): ResultTableData =>
 
 const simResultsToTableData = (results: simulationResults): ResultTableData => {
   const pushOverruns = results.attackerWins.attackerCritWins + results.ties.attackerCritWins;
-  const noPushs = results.attackerWins.defenderCritWins + results.ties.defenderCritWins + results.defenderWins.count;
-  const pushs = results.numSimulations - noPushs;
+  const noPushes = results.attackerWins.defenderCritWins + results.ties.defenderCritWins + results.defenderWins.count;
+  const pushes = results.numSimulations - noPushes;
   return [
     { name: "success", value: results.attackerWins.count / results.numSimulations },
     { name: "success-overrun", value: results.attackerWins.attackerCritWins / results.numSimulations },
@@ -170,11 +172,11 @@ const simResultsToTableData = (results: simulationResults): ResultTableData => {
     { name: "tie-overrun", value: results.ties.attackerCritWins / results.numSimulations },
     { name: "tie-standfast", value: results.ties.defenderCritWins / results.numSimulations },
     { name: "failure", value: results.defenderWins.count / results.numSimulations },
-    { name: "push", value: pushs / results.numSimulations },
+    { name: "push", value: pushes / results.numSimulations },
     { name: "push-overrun", value: pushOverruns / results.numSimulations },
-    { name: "no-push", value: noPushs / results.numSimulations },
+    { name: "no-push", value: noPushes / results.numSimulations },
   ];
 };
 
-// on intial load, trigger a draw from current/saved inputs.
+// on initial load, trigger a draw from current/saved inputs.
 inputs[0].dispatchEvent(new Event("change"));
