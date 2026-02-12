@@ -43,7 +43,7 @@ export function diceProbDist(n: number, target: number, rerolls: number = 0): nu
   return result;
 }
 
-export function critProbDist(n: number, target: number, rerolls: number = 0): number[][] {
+export function critProbDist(n: number, target: number, rerolls = 0, raging = false): number[][] {
   let result: number[][] = [];
   const regHitOdds = (6 - target) / 6;
   for (let crits = 0; crits <= n; crits++) {
@@ -66,6 +66,14 @@ export function critProbDist(n: number, target: number, rerolls: number = 0): nu
       }
     }
     result = rerolledResult;
+  }
+  if (raging) {
+    for (let critI = result.length - 2; critI >= 0; critI--) {
+      for (let hitI = 1; hitI < result[critI].length; hitI++) {
+        result[critI + 1][hitI - 1] += result[critI][hitI];
+        result[critI][hitI] = 0;
+      }
+    }
   }
   return result;
 }

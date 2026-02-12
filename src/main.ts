@@ -37,7 +37,6 @@ const table = new UWCombatTable("results-table");
 
 // Button actions
 rollBtn.addEventListener("click", () => {
-  console.log(attackerRagingInp.checked);
   const results = simulateUWAttacks({
     simulations: parseInt(numSimulationsInp.value),
     attackerDice: parseInt(attackerDiceInp.value),

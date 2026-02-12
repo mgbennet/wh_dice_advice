@@ -142,8 +142,8 @@ export function calculateUWAttack(combatDef: uwCombatDef): uwCombatCalcResult {
   const attackerOdds = diceProbDist(combatDef.attackerDice, combatDef.attackerSuccess, combatDef.attackerRerolls);
   const defenderOdds = diceProbDist(combatDef.defenderDice, combatDef.defenderSuccess, combatDef.defenderRerolls);
   const outcomeOdds = arrayMult(attackerOdds, defenderOdds);
-  const attackerCritsOdds = critProbDist(combatDef.attackerDice, combatDef.attackerSuccess, combatDef.attackerRerolls);
-  const defenderCritsOdds = critProbDist(combatDef.defenderDice, combatDef.defenderSuccess, combatDef.defenderRerolls);
+  const attackerCritsOdds = critProbDist(combatDef.attackerDice, combatDef.attackerSuccess, combatDef.attackerRerolls, combatDef.attackerRaging);
+  const defenderCritsOdds = critProbDist(combatDef.defenderDice, combatDef.defenderSuccess, combatDef.defenderRerolls, false);
 
   let successOdds = 0, tieOdds = 0, failureOdds = 0;
   for (let attackerHits = 0; attackerHits < outcomeOdds.length; attackerHits++) {
