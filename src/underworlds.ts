@@ -6,6 +6,7 @@ export interface uwCombatDef {
   attackerDice: number;
   attackerSuccess: number;
   attackerRerolls: number;
+  attackerRaging: boolean;
   defenderDice: number;
   defenderSuccess: number;
   defenderRerolls: number;
@@ -66,6 +67,14 @@ export function simulateUWAttacks(simulation: uwCombatSim): simulationResults {
   const results = [];
   for (let i = 0; i < simulation.simulations; i++) {
     const attackDice = reroll(dicePool(simulation.attackerDice), simulation.attackerSuccess, simulation.attackerRerolls);
+    if (simulation.attackerRaging) {
+      for (let i = 0; i < attackDice.length; i++) {
+        if (attackDice[i] >= simulation.attackerSuccess && attackDice[i] !== 6) {
+          attackDice[i] = 6;
+          break;
+        }
+      }
+    }
     const defenseDice = reroll(dicePool(simulation.defenderDice), simulation.defenderSuccess, simulation.defenderRerolls);
     results.push(evaluateCombat(attackDice, simulation.attackerSuccess, defenseDice, simulation.defenderSuccess));
   }
@@ -105,7 +114,12 @@ export function simulateUWAttacks(simulation: uwCombatSim): simulationResults {
  * @param defenseSuccess Hit requirements of the defender
  * @returns {uwCombatResult} Computed result of the combat
  */
-function evaluateCombat(attackDice: number[], attackSuccess: number, defenseDice: number[], defenseSuccess: number): uwCombatResult {
+function evaluateCombat(
+  attackDice: number[],
+  attackSuccess: number,
+  defenseDice: number[],
+  defenseSuccess: number,
+): uwCombatResult {
   const attackSuccesses = attackDice.reduce((wins, cur) => cur >= attackSuccess ? wins + 1 : wins, 0);
   const attackCrits = attackDice.reduce((wins, cur) => cur === 6 ? wins + 1 : wins, 0);
   const defenseSuccesses = defenseDice.reduce((wins, cur) => cur >= defenseSuccess ? wins + 1 : wins, 0);

@@ -17,6 +17,7 @@ const inputNames = [
 const attackerDiceInp = document.querySelector<HTMLInputElement>("#attacker-dice")!;
 const attackerTargetInp = document.querySelector<HTMLInputElement>("#attacker-target")!;
 const attackerRerollInp = document.querySelector<HTMLInputElement>("#attacker-rerolls")!;
+const attackerRagingInp = document.querySelector<HTMLInputElement>("#attacker-raging")!;
 const defenderDiceInp = document.querySelector<HTMLInputElement>("#defender-dice")!;
 const defenderTargetInp = document.querySelector<HTMLInputElement>("#defender-target")!;
 const defenderRerollInp = document.querySelector<HTMLInputElement>("#defender-rerolls")!;
@@ -36,11 +37,13 @@ const table = new UWCombatTable("results-table");
 
 // Button actions
 rollBtn.addEventListener("click", () => {
+  console.log(attackerRagingInp.checked);
   const results = simulateUWAttacks({
     simulations: parseInt(numSimulationsInp.value),
     attackerDice: parseInt(attackerDiceInp.value),
     attackerSuccess: parseInt(attackerTargetInp.value),
     attackerRerolls: parseInt(attackerRerollInp.value),
+    attackerRaging: attackerRagingInp.checked,
     defenderDice: parseInt(defenderDiceInp.value),
     defenderSuccess: parseInt(defenderTargetInp.value),
     defenderRerolls: parseInt(defenderRerollInp.value),
@@ -108,6 +111,7 @@ inputs.forEach((element) => {
         attackerDice: parseInt(attackerDiceInp.value),
         attackerSuccess: parseInt(attackerTargetInp.value),
         attackerRerolls: parseInt(attackerRerollInp.value),
+        attackerRaging: attackerRagingInp.checked,
         defenderDice: parseInt(defenderDiceInp.value),
         defenderSuccess: parseInt(defenderTargetInp.value),
         defenderRerolls: parseInt(defenderRerollInp.value),
