@@ -73,6 +73,18 @@ for (let i = 0; i < inputNames.length; i++) {
   });
 }
 
+// info dialogs
+const dialogs = document.querySelectorAll("dialog");
+const closeDialogs = () => {
+  dialogs.forEach(dialog => dialog.close());
+};
+document.querySelector("#toggle-raging-info")?.addEventListener("click", () => {
+  document.querySelector<HTMLDialogElement>("#raging-info-dialog")?.showModal();
+});
+document.querySelectorAll<HTMLButtonElement>(".close-dialog-btn").forEach((btn) => {
+  btn.addEventListener("click", closeDialogs);
+});
+
 monteCarloToggle?.addEventListener("click", () => {
   monteCarlo = !monteCarlo;
   if (monteCarlo) {

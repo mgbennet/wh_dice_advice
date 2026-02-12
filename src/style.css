@@ -92,6 +92,10 @@ h3 {
   color: #6d60faff;
 }
 
+button {
+  cursor: pointer;
+}
+
 #inputs-wrapper {
   display: flex;
   justify-content: space-evenly;
@@ -106,17 +110,45 @@ h3 {
   display: flex;
   justify-content: space-between;
   gap: 12px;
+  text-align: left;
 }
 
 .input-elements-div {
   display: flex;
   height: 20px;
+  width: 78px;
   padding-top: 2px;
   gap: 1px;
 }
 
 input {
   width: 34px;
+}
+
+input[type="checkbox"] {
+  margin: auto;
+  cursor: pointer;
+}
+
+.info-toggle-btn {
+  width: 14px;
+  height: 14px;
+  border-radius: 6px;
+  border: 1px white solid;
+  background-color: #0000;
+  color: #f1f1f1;
+  font-size: 10px;
+}
+
+dialog {
+  border-radius: 6px;
+  border: #999 solid 2px;
+  background: #eee;
+  font-size: 12px;
+}
+
+.close-dialog-btn {
+  float: right;
 }
 
 .individual-input-line {
@@ -226,7 +258,6 @@ td:last-child {
 #monteCarloToggle {
   width: 18px;
   height: 18px;
-  cursor: pointer;
   border: 1px #383838 solid;
   border-radius: 3px;
   background: #bebebe;
@@ -239,7 +270,6 @@ td:last-child {
     background-image: url('../images/sigma.png');
   }
 }
-
 
 #legal-footer {
   font-size: 10px;
