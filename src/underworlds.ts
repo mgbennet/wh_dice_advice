@@ -16,6 +16,8 @@ export interface uwCombatSim extends uwCombatDef {
   simulations: number;
 }
 
+// Odds for each possibility of a given UWs combat.
+// Each number is between 0 and 1.0. success + tie + failure = 1.0
 export interface uwCombatCalcResult {
   success: number;
   successOverrun: number;
@@ -33,7 +35,7 @@ export enum CombatWinner {
   Tie = "tie",
 }
 
-// Relevant results of a UWs combat
+// Relevant results of a single UWs combat
 export interface uwCombatResult {
   winner: CombatWinner;
   critWinner: CombatWinner;
@@ -60,7 +62,7 @@ export interface simulationResults {
 }
 
 /**
- * Does a Monte Carlo simulation of an Underworlds combat.
+ * Runs a Monte Carlo simulation of an Underworlds combat.
  */
 export function simulateUWAttacks(simulation: uwCombatSim): simulationResults {
   // roll the dice
@@ -138,6 +140,11 @@ function evaluateCombat(
   };
 }
 
+/**
+ * Precisly calculates the probable outcomes for an UWs combat.
+ * @param combatDef Object containing all parameters of an UWs combat
+ * @returns Odds for each possible outcome of the combat
+ */
 export function calculateUWAttack(combatDef: uwCombatDef): uwCombatCalcResult {
   const attackerOdds = diceProbDist(combatDef.attackerDice, combatDef.attackerSuccess, combatDef.attackerRerolls);
   const defenderOdds = diceProbDist(combatDef.defenderDice, combatDef.defenderSuccess, combatDef.defenderRerolls);

@@ -1,6 +1,8 @@
 /**
  * The probability mass function. Given t trials with p probability of success,
  * returns the odds of getting s successes.
+ * For example, to calculate the odds of getting 3 successes on 4 dice hitting on
+ * a 4+, call binomialProbability(4, .5, 3)
  * @param t Number of trials
  * @param p Probability of success, from 0 to 1.0
  * @param s The target number of successes to get
@@ -10,6 +12,15 @@ export function binomialProbability(t: number, p: number, s: number): number {
   return fact(t) / (fact(s) * fact(t - s)) * p ** s * (1 - p) ** (t - s);
 }
 
+/**
+ * The probability mass function for multiple events. Calculated the probability of
+ * a specific spread of outcomes.
+ * For example, to calculate the odds of getting 2 success and 1 crit on 4 dice hitting
+ * on a 4+, call multinomialProbability([1, 2, 1], [(1/6), (2/6), (3/6)])
+ * @param probs Probabilities of each outcome possibility. Should add up to 1.0
+ * @param events Number of events for each outcome possibility.
+ * @returns The calculated odds of these outcomes occuring
+ */
 export function multinomialProbability(probs: number[], events: number[]): number {
   if (probs.length !== events.length) {
     throw new Error("multinomialProbability: probs and events must be arrays of the same length");
@@ -25,6 +36,14 @@ export function fact(n: number): number {
   return n > 1 ? n * fact(n - 1) : 1;
 }
 
+/**
+ * Calculates the odds for each possible outcome from rolling n dice and trying to get
+ * target or higher, rerolling misses once up to rerolls times.
+ * @param n Number of dice
+ * @param target Success target, out of 6
+ * @param rerolls Number of rerolls. No rerolling rerolled dice
+ * @returns Array of odds for each possible outcome
+ */
 export function diceProbDist(n: number, target: number, rerolls: number = 0): number[] {
   let result: number[] = [];
   for (let i = 0; i <= n; i++) {
@@ -43,13 +62,29 @@ export function diceProbDist(n: number, target: number, rerolls: number = 0): nu
   return result;
 }
 
+/**
+ * Calculates the odds of each possible outcome of rolling n dice and trying to get
+ * target or higher, rerolling misses once up to rerolls times. Gives a break down of
+ * the number of crits vs the number of regular hits.
+ * @param n Number of dice
+ * @param target Success target, out of 6
+ * @param rerolls Number of rerolls. No rerolling rerolled dice.
+ * @param raging Can a normal hit be changed to a crit
+ * @returns Trianglular shaped matrix of odds for each combination of crits, hits,
+ * and misses. x axis is number of crits, y is number of hits.
+ */
 export function critProbDist(n: number, target: number, rerolls = 0, raging = false): number[][] {
   let result: number[][] = [];
   const regHitOdds = (6 - target) / 6;
   for (let crits = 0; crits <= n; crits++) {
     result.push([]);
     for (let hits = 0; hits <= n - crits; hits++) {
-      result[crits].push(multinomialProbability([1 / 6, regHitOdds, 1 - regHitOdds - 1 / 6], [crits, hits, n - crits - hits]));
+      result[crits].push(
+        multinomialProbability(
+          [1 / 6, regHitOdds, 1 - regHitOdds - 1 / 6],
+          [crits, hits, n - crits - hits],
+        ),
+      );
     }
   }
   if (rerolls > 0) {
