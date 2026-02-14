@@ -24,9 +24,9 @@
 </svg>
   <div id="app">
     <div id="main-content">
-      <dialog id="raging-info-dialog">
+      <dialog id="hitstocrits-info-dialog">
         <button autofocus class="close-dialog-btn">Close</button>
-        <p>If selected, one success will be changed to a critical success.</p>
+        <p>After rolling and rerolls, change successes to critical successes. Fighters with the Enraged ability from Raging Slayers should set this to&nbsp;1.</p>
       </dialog>
       <h1><span>Dice Advice</span><br><span>for</span><br><span>Warhammer Underworlds</span></h1>
       <div id="description-block">
@@ -73,13 +73,18 @@
               <button class="dec-btn" id="attacker-rerolls-dec">-</button>
             </div>
           </div>
-          <div class="input-line">
-            <label for="attacker-raging">
-              Enraged
-              <button class="info-toggle-btn" id="toggle-raging-info">?</button>
-            </label>
-            <div class="input-elements-div">
-              <input type="checkbox" id="attacker-raging" value="false"/>
+          <button class="advanced-toggle" id="attacker-advanced-toggle">Advanced inputs</button>
+          <div id="attacker-advanced-section" style="display:none">
+            <div class="input-line">
+              <label for="attacker-hitstocrits">
+                Hits to crits
+                <button class="info-toggle-btn toggle-hitstocrits-info">?</button>
+              </label>
+              <div class="input-elements-div">
+                <button class="inc-btn" id="attacker-hitstocrits-inc">+</button>
+                <input type="number" id="attacker-hitstocrits" min="0" value="0"/>
+                <button class="dec-btn" id="attacker-hitstocrits-dec">-</button>
+              </div>
             </div>
           </div>
         </div>

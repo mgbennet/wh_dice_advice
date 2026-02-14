@@ -141,10 +141,16 @@ input[type="checkbox"] {
 }
 
 dialog {
+  max-width: 400px;
   border-radius: 6px;
   border: #999 solid 2px;
   background: #eee;
   font-size: 12px;
+
+  p {
+    clear: both;
+    margin: 0;
+  }
 }
 
 .close-dialog-btn {

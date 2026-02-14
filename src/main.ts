@@ -10,6 +10,7 @@ const inputNames = [
   "attacker-dice",
   "attacker-target",
   "attacker-rerolls",
+  "attacker-hitstocrits",
   "defender-dice",
   "defender-target",
   "defender-rerolls",
@@ -17,11 +18,12 @@ const inputNames = [
 const attackerDiceInp = document.querySelector<HTMLInputElement>("#attacker-dice")!;
 const attackerTargetInp = document.querySelector<HTMLInputElement>("#attacker-target")!;
 const attackerRerollInp = document.querySelector<HTMLInputElement>("#attacker-rerolls")!;
-const attackerRagingInp = document.querySelector<HTMLInputElement>("#attacker-raging")!;
+const attackerHitstocritsInp = document.querySelector<HTMLInputElement>("#attacker-hitstocrits")!;
 const defenderDiceInp = document.querySelector<HTMLInputElement>("#defender-dice")!;
 const defenderTargetInp = document.querySelector<HTMLInputElement>("#defender-target")!;
 const defenderRerollInp = document.querySelector<HTMLInputElement>("#defender-rerolls")!;
 
+const attackerAdvancedToggle = document.querySelector<HTMLButtonElement>("#attacker-advanced-toggle");
 let monteCarlo = false;
 const monteCarloToggle = document.querySelector<HTMLButtonElement>("#monteCarloToggle");
 
@@ -42,7 +44,7 @@ rollBtn.addEventListener("click", () => {
     attackerDice: parseInt(attackerDiceInp.value),
     attackerSuccess: parseInt(attackerTargetInp.value),
     attackerRerolls: parseInt(attackerRerollInp.value),
-    attackerRaging: attackerRagingInp.checked,
+    attackerHitsToCrit: parseInt(attackerHitstocritsInp.value),
     defenderDice: parseInt(defenderDiceInp.value),
     defenderSuccess: parseInt(defenderTargetInp.value),
     defenderRerolls: parseInt(defenderRerollInp.value),
@@ -80,11 +82,20 @@ const dialogs = document.querySelectorAll("dialog");
 const closeDialogs = () => {
   dialogs.forEach(dialog => dialog.close());
 };
-document.querySelector("#toggle-raging-info")?.addEventListener("click", () => {
-  document.querySelector<HTMLDialogElement>("#raging-info-dialog")?.showModal();
+document.querySelector(".toggle-hitstocrits-info")?.addEventListener("click", () => {
+  document.querySelector<HTMLDialogElement>("#hitstocrits-info-dialog")?.showModal();
 });
 document.querySelectorAll<HTMLButtonElement>(".close-dialog-btn").forEach((btn) => {
   btn.addEventListener("click", closeDialogs);
+});
+
+attackerAdvancedToggle?.addEventListener("click", () => {
+  const advancedSettingsSection = document.querySelector<HTMLDivElement>("#attacker-advanced-section")!;
+  if (advancedSettingsSection.style.display === "none") {
+    advancedSettingsSection.style.display = "block";
+  } else {
+    advancedSettingsSection.style.display = "none";
+  }
 });
 
 monteCarloToggle?.addEventListener("click", () => {
@@ -110,7 +121,7 @@ inputs.forEach((element) => {
         attackerDice: parseInt(attackerDiceInp.value),
         attackerSuccess: parseInt(attackerTargetInp.value),
         attackerRerolls: parseInt(attackerRerollInp.value),
-        attackerRaging: attackerRagingInp.checked,
+        attackerHitsToCrit: parseInt(attackerHitstocritsInp.value),
         defenderDice: parseInt(defenderDiceInp.value),
         defenderSuccess: parseInt(defenderTargetInp.value),
         defenderRerolls: parseInt(defenderRerollInp.value),

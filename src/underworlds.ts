@@ -6,7 +6,7 @@ export interface uwCombatDef {
   attackerDice: number;
   attackerSuccess: number;
   attackerRerolls: number;
-  attackerRaging: boolean;
+  attackerHitsToCrit: number;
   defenderDice: number;
   defenderSuccess: number;
   defenderRerolls: number;
@@ -69,11 +69,13 @@ export function simulateUWAttacks(simulation: uwCombatSim): simulationResults {
   const results = [];
   for (let i = 0; i < simulation.simulations; i++) {
     const attackDice = reroll(dicePool(simulation.attackerDice), simulation.attackerSuccess, simulation.attackerRerolls);
-    if (simulation.attackerRaging) {
+    if (simulation.attackerHitsToCrit) {
+      let changedCount = 0;
       for (let i = 0; i < attackDice.length; i++) {
         if (attackDice[i] >= simulation.attackerSuccess && attackDice[i] !== 6) {
           attackDice[i] = 6;
-          break;
+          if (++changedCount >= simulation.attackerHitsToCrit)
+            break;
         }
       }
     }
@@ -149,8 +151,8 @@ export function calculateUWAttack(combatDef: uwCombatDef): uwCombatCalcResult {
   const attackerOdds = diceProbDist(combatDef.attackerDice, combatDef.attackerSuccess, combatDef.attackerRerolls);
   const defenderOdds = diceProbDist(combatDef.defenderDice, combatDef.defenderSuccess, combatDef.defenderRerolls);
   const outcomeOdds = arrayMult(attackerOdds, defenderOdds);
-  const attackerCritsOdds = critProbDist(combatDef.attackerDice, combatDef.attackerSuccess, combatDef.attackerRerolls, combatDef.attackerRaging);
-  const defenderCritsOdds = critProbDist(combatDef.defenderDice, combatDef.defenderSuccess, combatDef.defenderRerolls, false);
+  const attackerCritsOdds = critProbDist(combatDef.attackerDice, combatDef.attackerSuccess, combatDef.attackerRerolls, combatDef.attackerHitsToCrit);
+  const defenderCritsOdds = critProbDist(combatDef.defenderDice, combatDef.defenderSuccess, combatDef.defenderRerolls, 0);
 
   let successOdds = 0, tieOdds = 0, failureOdds = 0;
   for (let attackerHits = 0; attackerHits < outcomeOdds.length; attackerHits++) {

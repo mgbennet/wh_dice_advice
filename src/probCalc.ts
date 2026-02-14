@@ -19,7 +19,7 @@ export function binomialProbability(t: number, p: number, s: number): number {
  * on a 4+, call multinomialProbability([1, 2, 1], [(1/6), (2/6), (3/6)])
  * @param probs Probabilities of each outcome possibility. Should add up to 1.0
  * @param events Number of events for each outcome possibility.
- * @returns The calculated odds of these outcomes occuring
+ * @returns {number} The calculated odds of these outcomes occuring
  */
 export function multinomialProbability(probs: number[], events: number[]): number {
   if (probs.length !== events.length) {
@@ -42,7 +42,7 @@ export function fact(n: number): number {
  * @param n Number of dice
  * @param target Success target, out of 6
  * @param rerolls Number of rerolls. No rerolling rerolled dice
- * @returns Array of odds for each possible outcome
+ * @returns {number[]} Array of odds for each possible outcome
  */
 export function diceProbDist(n: number, target: number, rerolls: number = 0): number[] {
   let result: number[] = [];
@@ -69,11 +69,11 @@ export function diceProbDist(n: number, target: number, rerolls: number = 0): nu
  * @param n Number of dice
  * @param target Success target, out of 6
  * @param rerolls Number of rerolls. No rerolling rerolled dice.
- * @param raging Can a normal hit be changed to a crit
- * @returns Trianglular shaped matrix of odds for each combination of crits, hits,
+ * @param hitsToCrits Can a normal hit be changed to a crit
+ * @returns {number[][]} Trianglular shaped matrix of odds for each combination of crits, hits,
  * and misses. x axis is number of crits, y is number of hits.
  */
-export function critProbDist(n: number, target: number, rerolls = 0, raging = false): number[][] {
+export function critProbDist(n: number, target: number, rerolls = 0, hitsToCrits = 0): number[][] {
   let result: number[][] = [];
   const regHitOdds = (6 - target) / 6;
   for (let crits = 0; crits <= n; crits++) {
@@ -102,10 +102,11 @@ export function critProbDist(n: number, target: number, rerolls = 0, raging = fa
     }
     result = rerolledResult;
   }
-  if (raging) {
+  if (hitsToCrits) {
     for (let critI = result.length - 2; critI >= 0; critI--) {
       for (let hitI = 1; hitI < result[critI].length; hitI++) {
-        result[critI + 1][hitI - 1] += result[critI][hitI];
+        const shiftBy = Math.min(hitsToCrits, hitI);
+        result[critI + shiftBy][hitI - shiftBy] += result[critI][hitI];
         result[critI][hitI] = 0;
       }
     }
