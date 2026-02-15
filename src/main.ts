@@ -25,7 +25,7 @@ const defenderDiceInp = document.querySelector<HTMLInputElement>("#defender-dice
 const defenderTargetInp = document.querySelector<HTMLInputElement>("#defender-target")!;
 const defenderRerollInp = document.querySelector<HTMLInputElement>("#defender-rerolls")!;
 
-const attackerAdvancedToggle = document.querySelector<HTMLButtonElement>("#attacker-advanced-toggle");
+// const attackerAdvancedToggle = document.querySelector<HTMLButtonElement>("#attacker-advanced-toggle");
 let monteCarlo = false;
 const monteCarloToggle = document.querySelector<HTMLButtonElement>("#monteCarloToggle");
 
@@ -95,14 +95,14 @@ document.querySelectorAll<HTMLButtonElement>(".close-dialog-btn").forEach((btn) 
   btn.addEventListener("click", closeDialogs);
 });
 
-attackerAdvancedToggle?.addEventListener("click", () => {
-  const advancedSettingsSection = document.querySelector<HTMLDivElement>("#attacker-advanced-section")!;
-  if (advancedSettingsSection.style.display === "none") {
-    advancedSettingsSection.style.display = "block";
-  } else {
-    advancedSettingsSection.style.display = "none";
-  }
-});
+// attackerAdvancedToggle?.addEventListener("click", () => {
+//   const advancedSettingsSection = document.querySelector<HTMLDivElement>("#attacker-advanced-section")!;
+//   if (advancedSettingsSection.style.display === "none") {
+//     advancedSettingsSection.style.display = "block";
+//   } else {
+//     advancedSettingsSection.style.display = "none";
+//   }
+// });
 
 monteCarloToggle?.addEventListener("click", () => {
   monteCarlo = !monteCarlo;
