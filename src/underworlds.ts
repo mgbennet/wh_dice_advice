@@ -7,6 +7,7 @@ export interface uwCombatDef {
   attackerSuccess: number;
   attackerRerolls: number;
   attackerHitsToCrit: number;
+  attackerMissesToHits: number;
   defenderDice: number;
   defenderSuccess: number;
   defenderRerolls: number;
@@ -75,6 +76,16 @@ export function simulateUWAttacks(simulation: uwCombatSim): simulationResults {
         if (attackDice[i] >= simulation.attackerSuccess && attackDice[i] !== 6) {
           attackDice[i] = 6;
           if (++changedCount >= simulation.attackerHitsToCrit)
+            break;
+        }
+      }
+    }
+    if (simulation.attackerMissesToHits) {
+      let changedCount = 0;
+      for (let i = 0; i < attackDice.length; i++) {
+        if (attackDice[i] < simulation.attackerSuccess) {
+          attackDice[i] = simulation.attackerSuccess;
+          if (++changedCount >= simulation.attackerMissesToHits)
             break;
         }
       }
@@ -148,11 +159,22 @@ function evaluateCombat(
  * @returns Odds for each possible outcome of the combat
  */
 export function calculateUWAttack(combatDef: uwCombatDef): uwCombatCalcResult {
-  const attackerOdds = diceProbDist(combatDef.attackerDice, combatDef.attackerSuccess, combatDef.attackerRerolls);
-  const defenderOdds = diceProbDist(combatDef.defenderDice, combatDef.defenderSuccess, combatDef.defenderRerolls);
+  const attackerOdds = diceProbDist(combatDef.attackerDice, combatDef.attackerSuccess, combatDef.attackerRerolls, combatDef.attackerMissesToHits);
+  const defenderOdds = diceProbDist(combatDef.defenderDice, combatDef.defenderSuccess, combatDef.defenderRerolls, 0);
   const outcomeOdds = arrayMult(attackerOdds, defenderOdds);
-  const attackerCritsOdds = critProbDist(combatDef.attackerDice, combatDef.attackerSuccess, combatDef.attackerRerolls, combatDef.attackerHitsToCrit);
-  const defenderCritsOdds = critProbDist(combatDef.defenderDice, combatDef.defenderSuccess, combatDef.defenderRerolls, 0);
+  const attackerCritsOdds = critProbDist(
+    combatDef.attackerDice,
+    combatDef.attackerSuccess,
+    combatDef.attackerRerolls,
+    combatDef.attackerHitsToCrit,
+    combatDef.attackerMissesToHits,
+  );
+  const defenderCritsOdds = critProbDist(
+    combatDef.defenderDice,
+    combatDef.defenderSuccess,
+    combatDef.defenderRerolls,
+    0,
+  );
 
   let successOdds = 0, tieOdds = 0, failureOdds = 0;
   for (let attackerHits = 0; attackerHits < outcomeOdds.length; attackerHits++) {

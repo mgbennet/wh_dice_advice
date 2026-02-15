@@ -10,6 +10,7 @@ const inputNames = [
   "attacker-dice",
   "attacker-target",
   "attacker-rerolls",
+  "attacker-missestohits",
   "attacker-hitstocrits",
   "defender-dice",
   "defender-target",
@@ -18,6 +19,7 @@ const inputNames = [
 const attackerDiceInp = document.querySelector<HTMLInputElement>("#attacker-dice")!;
 const attackerTargetInp = document.querySelector<HTMLInputElement>("#attacker-target")!;
 const attackerRerollInp = document.querySelector<HTMLInputElement>("#attacker-rerolls")!;
+const attackerMissestohitsInp = document.querySelector<HTMLInputElement>("#attacker-missestohits")!;
 const attackerHitstocritsInp = document.querySelector<HTMLInputElement>("#attacker-hitstocrits")!;
 const defenderDiceInp = document.querySelector<HTMLInputElement>("#defender-dice")!;
 const defenderTargetInp = document.querySelector<HTMLInputElement>("#defender-target")!;
@@ -45,6 +47,7 @@ rollBtn.addEventListener("click", () => {
     attackerSuccess: parseInt(attackerTargetInp.value),
     attackerRerolls: parseInt(attackerRerollInp.value),
     attackerHitsToCrit: parseInt(attackerHitstocritsInp.value),
+    attackerMissesToHits: parseInt(attackerMissestohitsInp.value),
     defenderDice: parseInt(defenderDiceInp.value),
     defenderSuccess: parseInt(defenderTargetInp.value),
     defenderRerolls: parseInt(defenderRerollInp.value),
@@ -85,6 +88,9 @@ const closeDialogs = () => {
 document.querySelector(".toggle-hitstocrits-info")?.addEventListener("click", () => {
   document.querySelector<HTMLDialogElement>("#hitstocrits-info-dialog")?.showModal();
 });
+document.querySelector(".toggle-missestohits-info")?.addEventListener("click", () => {
+  document.querySelector<HTMLDialogElement>("#missestohits-info-dialog")?.showModal();
+});
 document.querySelectorAll<HTMLButtonElement>(".close-dialog-btn").forEach((btn) => {
   btn.addEventListener("click", closeDialogs);
 });
@@ -122,6 +128,7 @@ inputs.forEach((element) => {
         attackerSuccess: parseInt(attackerTargetInp.value),
         attackerRerolls: parseInt(attackerRerollInp.value),
         attackerHitsToCrit: parseInt(attackerHitstocritsInp.value),
+        attackerMissesToHits: parseInt(attackerMissestohitsInp.value),
         defenderDice: parseInt(defenderDiceInp.value),
         defenderSuccess: parseInt(defenderTargetInp.value),
         defenderRerolls: parseInt(defenderRerollInp.value),

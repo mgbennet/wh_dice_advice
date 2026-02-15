@@ -28,6 +28,10 @@
         <button autofocus class="close-dialog-btn">Close</button>
         <p>After rolling and rerolls, change successes to critical successes. Fighters with the Enraged ability from Raging Slayers should set this to&nbsp;1.</p>
       </dialog>
+      <dialog id="missestohits-info-dialog">
+        <button autofocus class="close-dialog-btn">Close</button>
+        <p>After rolling and rerolls, change misses to successes. The effects of cards like Out of Nowhere or Henchman can be modeled with this.</p>
+      </dialog>
       <h1><span>Dice Advice</span><br><span>for</span><br><span>Warhammer Underworlds</span></h1>
       <div id="description-block">
         <details>
@@ -40,15 +44,15 @@
         <div id="attacker-inputs">
           <h3>Attacker</h3>
           <div class="input-line">
-            <label for="attacker-dice">Dice amount</label>
+            <label for="attacker-dice">Dice</label>
             <div class="input-elements-div">
               <button class="inc-btn" id="attacker-dice-inc">+</button>
-              <input type="number" id="attacker-dice" min="1" value="2"/>
+              <input type="number" id="attacker-dice" min="1" max="100" value="2"/>
               <button class="dec-btn" id="attacker-dice-dec">-</button>
             </div>
           </div>
           <div class="input-line">
-            <label for="attacker-target">Success target</label>
+            <label for="attacker-target">Success</label>
             <div class="input-elements-div">
               <button class="inc-btn" id="attacker-target-inc">+</button>
               <select name="attacker-target" id="attacker-target">
@@ -86,20 +90,31 @@
                 <button class="dec-btn" id="attacker-hitstocrits-dec">-</button>
               </div>
             </div>
+            <div class="input-line">
+              <label for="attacker-missestohits">
+                Misses to hits
+                <button class="info-toggle-btn toggle-missestohits-info">?</button>
+              </label>
+              <div class="input-elements-div">
+                <button class="inc-btn" id="attacker-missestohits-inc">+</button>
+                <input type="number" id="attacker-missestohits" min="0" value="0"/>
+                <button class="dec-btn" id="attacker-missestohits-dec">-</button>
+              </div>
+            </div>
           </div>
         </div>
         <div id="defender-inputs">
           <h3>Defender</h3>
           <div class="input-line">
-            <label for="defender-dice">Dice amount</label>
+            <label for="defender-dice">Dice</label>
             <div class="input-elements-div">
               <button class="inc-btn" id="defender-dice-inc">+</button>
-              <input type="number" id="defender-dice" min="1" value="1"/>
+              <input type="number" id="defender-dice" min="1" max="100" value="1"/>
               <button class="dec-btn" id="defender-dice-dec">-</button>
             </div>
           </div>
           <div class="input-line">
-            <label for="defender-target">Success target</label>
+            <label for="defender-target">Success</label>
             <div class="input-elements-div">
               <button class="inc-btn" id="defender-target-inc">+</button>
               <select name="defender-target" id="defender-target">

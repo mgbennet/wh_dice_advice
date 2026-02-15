@@ -42,9 +42,10 @@ export function fact(n: number): number {
  * @param n Number of dice
  * @param target Success target, out of 6
  * @param rerolls Number of rerolls. No rerolling rerolled dice
+ * @param missesToHits Can a miss be changed to a normal hit
  * @returns {number[]} Array of odds for each possible outcome
  */
-export function diceProbDist(n: number, target: number, rerolls: number = 0): number[] {
+export function diceProbDist(n: number, target: number, rerolls = 0, missesToHits = 0): number[] {
   let result: number[] = [];
   for (let i = 0; i <= n; i++) {
     result.push(binomialProbability(n, (7 - target) / 6, i));
@@ -52,12 +53,18 @@ export function diceProbDist(n: number, target: number, rerolls: number = 0): nu
   if (rerolls > 0) {
     const rerolledResult = new Array(result.length).fill(0);
     for (let i = 0; i < result.length; i++) {
-      const rerollDist = diceProbDist(Math.min(rerolls, result.length - i - 1), target, 0);
+      const rerollDist = diceProbDist(Math.min(rerolls, result.length - i - 1), target, 0, 0);
       rerollDist.forEach((val, j) => {
         rerolledResult[i + j] = rerolledResult[i + j] + result[i] * val;
       });
     }
     result = rerolledResult;
+  }
+  if (missesToHits > 0) {
+    for (let i = result.length - 2; i >= 0; i--) {
+      result[Math.min(i + missesToHits, result.length - 1)] += result[i];
+      result[i] = 0;
+    }
   }
   return result;
 }
@@ -70,10 +77,11 @@ export function diceProbDist(n: number, target: number, rerolls: number = 0): nu
  * @param target Success target, out of 6
  * @param rerolls Number of rerolls. No rerolling rerolled dice.
  * @param hitsToCrits Can a normal hit be changed to a crit
+ * @param missesToHits Can a miss be changed to a normal hit
  * @returns {number[][]} Trianglular shaped matrix of odds for each combination of crits, hits,
  * and misses. x axis is number of crits, y is number of hits.
  */
-export function critProbDist(n: number, target: number, rerolls = 0, hitsToCrits = 0): number[][] {
+export function critProbDist(n: number, target: number, rerolls = 0, hitsToCrits = 0, missesToHits = 0): number[][] {
   let result: number[][] = [];
   const regHitOdds = (6 - target) / 6;
   for (let crits = 0; crits <= n; crits++) {
@@ -107,6 +115,16 @@ export function critProbDist(n: number, target: number, rerolls = 0, hitsToCrits
       for (let hitI = 1; hitI < result[critI].length; hitI++) {
         const shiftBy = Math.min(hitsToCrits, hitI);
         result[critI + shiftBy][hitI - shiftBy] += result[critI][hitI];
+        result[critI][hitI] = 0;
+      }
+    }
+  }
+  // misses to hits must happen after crits to hits, assuming a dice can't be changed twice.
+  if (missesToHits) {
+    for (let critI = 0; critI < result.length; critI++) {
+      for (let hitI = result[critI].length - 2; hitI >= 0; hitI--) {
+        const shiftBy = Math.min(missesToHits, result[critI].length - hitI - 1);
+        result[critI][hitI + shiftBy] += result[critI][hitI];
         result[critI][hitI] = 0;
       }
     }
