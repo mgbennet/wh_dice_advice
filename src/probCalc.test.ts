@@ -15,7 +15,7 @@ test("diceProbDist", () => {
     ((5 / 6) * (5 / 6)),
     ((5 / 6) * (1 / 6)) * 2,
     ((1 / 6) * (1 / 6)),
-  ], 0.000001);
+  ], 0.00000001);
 
   expect(pc.diceProbDist(2, 4, 1)).toEqual([0.125, 0.375, 0.5]);
   expect(pc.diceProbDist(2, 4, 2)).toEqual([0.0625, 0.375, 0.5625]);
@@ -27,13 +27,58 @@ test("diceProbDist", () => {
 });
 
 test("critProbDist", () => {
-  const probs = pc.critProbDist(2, 4, 0);
-  const expected = [
-    [0.25, (1 / 3), (1 / 9)],
+  const critProbTest = (result: number[][], expected: number[][]) => {
+    expect(result.length).toEqual(expected.length);
+    for (const i in result) {
+      expect(result[i]).toAlmostEqualArray(expected[i], 0.00000001);
+    }
+  };
+  critProbTest(pc.critProbDist(2, 4, 0), [
+    [(1 / 4), (1 / 3), (1 / 9)],
     [(1 / 6), (1 / 9)],
     [(1 / 36)],
-  ];
-  for (let i = 0; i < probs.length; i++) {
-    expect(probs[i]).toAlmostEqualArray(expected[i], 0.00000001);
-  }
+  ]);
+  critProbTest(pc.critProbDist(2, 4, 1), [
+    [(1 / 8), (1 / 4), (2 / 9)],
+    [(1 / 8), (2 / 9)],
+    [(1 / 18)],
+  ]);
+
+  critProbTest(pc.critProbDist(2, 4, 0, 1), [
+    [(1 / 4), 0, 0],
+    [(1 / 6 + 1 / 3), (1 / 9)],
+    [(1 / 36 + 1 / 9)],
+  ]);
+  critProbTest(pc.critProbDist(2, 4, 0, 2), [
+    [(1 / 4), 0, 0],
+    [(1 / 6 + 1 / 3), 0],
+    [(1 / 36 + 2 / 9)],
+  ]);
+  critProbTest(pc.critProbDist(2, 4, 0, 3), [
+    [(1 / 4), 0, 0],
+    [(1 / 6 + 1 / 3), 0],
+    [(1 / 36 + 2 / 9)],
+  ]);
+
+  critProbTest(pc.critProbDist(2, 4, 0, 0, 1), [
+    [0, (1 / 4), (4 / 9)],
+    [0, (5 / 18)],
+    [(1 / 36)],
+  ]);
+  critProbTest(pc.critProbDist(2, 4, 0, 0, 2), [
+    [0, 0, (25 / 36)],
+    [0, (5 / 18)],
+    [(1 / 36)],
+  ]);
+  critProbTest(pc.critProbDist(2, 4, 0, 0, 3), [
+    [0, 0, (25 / 36)],
+    [0, (5 / 18)],
+    [(1 / 36)],
+  ]);
+
+  critProbTest(pc.critProbDist(2, 4, 0, 1, 1), [
+    [0, (1 / 4), 0],
+    [0, (11 / 18)],
+    [(5 / 36)],
+  ]);
 });

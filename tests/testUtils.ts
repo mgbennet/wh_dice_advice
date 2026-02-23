@@ -14,7 +14,7 @@ expect.extend({
         return {
           pass: false,
           message: () =>
-            `Arrays differ at index ${i}: ${received[i]} !== ${expected[i]} (ε=${epislon})`,
+            `Arrays differ at index ${i}: ${received[i]} !== ${expected[i]} (ε=${epislon})\nRecieved array: ${received}\nExpected array: ${expected}`,
         };
       }
     }
