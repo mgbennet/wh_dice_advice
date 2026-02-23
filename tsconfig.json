@@ -9,5 +9,6 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist"
   },
-  "include": ["src"]
+  "include": ["src", "tests"],
+  "rules": { "@typescript-eslint/no-empty-object-type": "off" }
 }
