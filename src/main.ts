@@ -80,21 +80,6 @@ for (let i = 0; i < inputNames.length; i++) {
   });
 }
 
-// info dialogs
-const dialogs = document.querySelectorAll("dialog");
-const closeDialogs = () => {
-  dialogs.forEach(dialog => dialog.close());
-};
-document.querySelector(".toggle-hitstocrits-info")?.addEventListener("click", () => {
-  document.querySelector<HTMLDialogElement>("#hitstocrits-info-dialog")?.showModal();
-});
-document.querySelector(".toggle-missestohits-info")?.addEventListener("click", () => {
-  document.querySelector<HTMLDialogElement>("#missestohits-info-dialog")?.showModal();
-});
-document.querySelectorAll<HTMLButtonElement>(".close-dialog-btn").forEach((btn) => {
-  btn.addEventListener("click", closeDialogs);
-});
-
 // attackerAdvancedToggle?.addEventListener("click", () => {
 //   const advancedSettingsSection = document.querySelector<HTMLDivElement>("#attacker-advanced-section")!;
 //   if (advancedSettingsSection.style.display === "none") {

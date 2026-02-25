@@ -116,7 +116,7 @@ button {
 .input-elements-div {
   display: flex;
   height: 20px;
-  width: 78px;
+  width: 96px;
   padding-top: 2px;
   gap: 1px;
 }
@@ -130,10 +130,17 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 
+.label-spacer {
+  display: inline-block;
+  width: 18px;
+}
+
 .info-toggle-btn {
   width: 14px;
   height: 14px;
-  border-radius: 6px;
+  border-radius: 7px;
+  margin-top: 3px;
+  margin-left: 4px;
   border: 1px white solid;
   background-color: #0000;
   color: #f1f1f1;
@@ -150,6 +157,9 @@ dialog {
   p {
     clear: both;
     margin: 0;
+  }
+  &::backdrop {
+    background-color: #0009;
   }
 }
 
@@ -181,6 +191,7 @@ select,
 
 select {
   width: 40px;
+  height: 20px;
   padding: 1px 2px;
 }
 

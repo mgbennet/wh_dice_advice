@@ -24,13 +24,13 @@
 </svg>
   <div id="app">
     <div id="main-content">
-      <dialog id="hitstocrits-info-dialog">
-        <button autofocus class="close-dialog-btn">Close</button>
+      <dialog id="hitstocrits-info-dialog" popover>
         <p>After rolling and rerolls, change successes to critical successes. Fighters with the Enraged ability from Raging Slayers should set this to&nbsp;1.</p>
+        <button autofocus class="close-dialog-btn" popovertarget="hitstocrits-info-dialog" popovertargetaction="hide">Close</button>
       </dialog>
-      <dialog id="missestohits-info-dialog">
-        <button autofocus class="close-dialog-btn">Close</button>
+      <dialog id="missestohits-info-dialog" popover>
         <p>After rolling and rerolls, change misses to successes. The effects of cards like Out of Nowhere or Henchman can be modeled with this.</p>
+        <button autofocus class="close-dialog-btn" popovertarget="missestohits-info-dialog" popovertargetaction="hide">Close</button>
       </dialog>
       <h1><span>Dice Advice</span><br><span>for</span><br><span>Warhammer Underworlds</span></h1>
       <div id="description-block">
@@ -44,15 +44,20 @@
         <div id="attacker-inputs">
           <h3>Attacker</h3>
           <div class="input-line">
-            <label for="attacker-dice">Dice</label>
+            <label for="attacker-dice">
+              Dice
+            </label>
             <div class="input-elements-div">
               <button class="inc-btn" id="attacker-dice-inc">+</button>
               <input type="number" id="attacker-dice" min="1" max="100" value="2"/>
               <button class="dec-btn" id="attacker-dice-dec">-</button>
+              <div class="label-spacer"></div>
             </div>
           </div>
           <div class="input-line">
-            <label for="attacker-target">Success</label>
+            <label for="attacker-target">
+              Success
+            </label>
             <div class="input-elements-div">
               <button class="inc-btn" id="attacker-target-inc">+</button>
               <select name="attacker-target" id="attacker-target">
@@ -67,14 +72,18 @@
                 <option value="1"><span class="target-label">1+</span></option>
               </select>
               <button class="dec-btn" id="attacker-target-dec">-</button>
+              <div class="label-spacer"></div>
             </div>
           </div>
           <div class="input-line">
-            <label for="attacker-rerolls">Rerolls</label>
+            <label for="attacker-rerolls">
+              Rerolls
+            </label>
             <div class="input-elements-div">
               <button class="inc-btn" id="attacker-rerolls-inc">+</button>
               <input type="number" id="attacker-rerolls" min="0" value="0"/>
               <button class="dec-btn" id="attacker-rerolls-dec">-</button>
+              <div class="label-spacer"></div>
             </div>
           </div>
           <!-- <button class="advanced-toggle" id="attacker-advanced-toggle">Advanced inputs</button> -->
@@ -82,23 +91,23 @@
             <div class="input-line">
               <label for="attacker-hitstocrits">
                 Hits to crits
-                <button class="info-toggle-btn toggle-hitstocrits-info">?</button>
               </label>
               <div class="input-elements-div">
                 <button class="inc-btn" id="attacker-hitstocrits-inc">+</button>
                 <input type="number" id="attacker-hitstocrits" min="0" value="0"/>
                 <button class="dec-btn" id="attacker-hitstocrits-dec">-</button>
+                <button class="info-toggle-btn toggle-hitstocrits-info" popovertarget="hitstocrits-info-dialog">?</button>
               </div>
             </div>
             <div class="input-line">
               <label for="attacker-missestohits">
                 Misses to hits
-                <button class="info-toggle-btn toggle-missestohits-info">?</button>
               </label>
               <div class="input-elements-div">
                 <button class="inc-btn" id="attacker-missestohits-inc">+</button>
                 <input type="number" id="attacker-missestohits" min="0" value="0"/>
                 <button class="dec-btn" id="attacker-missestohits-dec">-</button>
+                <button class="info-toggle-btn toggle-missestohits-info" popovertarget="missestohits-info-dialog">?</button>
               </div>
             </div>
           </div>
