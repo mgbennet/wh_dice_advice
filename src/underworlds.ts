@@ -3,14 +3,14 @@ import { arrayMult, critProbDist, diceProbDist } from "./probCalc";
 
 // All requirements for defining a UWs combat
 export interface uwCombatDef {
-  attackerDice: number;
-  attackerSuccess: number;
-  attackerRerolls: number;
-  attackerHitsToCrit: number;
-  attackerMissesToHits: number;
-  defenderDice: number;
-  defenderSuccess: number;
-  defenderRerolls: number;
+  atkDice: number;
+  atkSuccess: number;
+  atkRerolls: number;
+  atkHitsToCrit: number;
+  atkMissesToHits: number;
+  defDice: number;
+  defSuccess: number;
+  defRerolls: number;
 }
 
 export interface uwCombatSim extends uwCombatDef {
@@ -69,29 +69,29 @@ export function simulateUWAttacks(simulation: uwCombatSim): simulationResults {
   // roll the dice
   const results = [];
   for (let i = 0; i < simulation.simulations; i++) {
-    const attackDice = reroll(dicePool(simulation.attackerDice), simulation.attackerSuccess, simulation.attackerRerolls);
-    if (simulation.attackerHitsToCrit) {
+    const attackDice = reroll(dicePool(simulation.atkDice), simulation.atkSuccess, simulation.atkRerolls);
+    if (simulation.atkHitsToCrit) {
       let changedCount = 0;
       for (let i = 0; i < attackDice.length; i++) {
-        if (attackDice[i] >= simulation.attackerSuccess && attackDice[i] !== 6) {
+        if (attackDice[i] >= simulation.atkSuccess && attackDice[i] !== 6) {
           attackDice[i] = 6;
-          if (++changedCount >= simulation.attackerHitsToCrit)
+          if (++changedCount >= simulation.atkHitsToCrit)
             break;
         }
       }
     }
-    if (simulation.attackerMissesToHits) {
+    if (simulation.atkMissesToHits) {
       let changedCount = 0;
       for (let i = 0; i < attackDice.length; i++) {
-        if (attackDice[i] < simulation.attackerSuccess) {
-          attackDice[i] = simulation.attackerSuccess;
-          if (++changedCount >= simulation.attackerMissesToHits)
+        if (attackDice[i] < simulation.atkSuccess) {
+          attackDice[i] = simulation.atkSuccess;
+          if (++changedCount >= simulation.atkMissesToHits)
             break;
         }
       }
     }
-    const defenseDice = reroll(dicePool(simulation.defenderDice), simulation.defenderSuccess, simulation.defenderRerolls);
-    results.push(evaluateCombat(attackDice, simulation.attackerSuccess, defenseDice, simulation.defenderSuccess));
+    const defenseDice = reroll(dicePool(simulation.defDice), simulation.defSuccess, simulation.defRerolls);
+    results.push(evaluateCombat(attackDice, simulation.atkSuccess, defenseDice, simulation.defSuccess));
   }
 
   // summarize the results
@@ -123,31 +123,31 @@ export function simulateUWAttacks(simulation: uwCombatSim): simulationResults {
  * Given the dice rolls of a combat and the success requirements, computes the result of the combat.
  * Whichever side rolls more dice above their success target wins. Attack must roll at least one success
  * to earn a tie; if both players roll zero successes the defender wins. Rolling more crits also matters.
- * @param attackDice Dice rolls of the attacker
- * @param attackSuccess Hit requirement of the attacker
- * @param defenseDice Dice rolls of the defender
- * @param defenseSuccess Hit requirements of the defender
+ * @param atkDice Dice rolls of the attacker
+ * @param atkSuccess Hit requirement of the attacker
+ * @param defDice Dice rolls of the defender
+ * @param defSuccess Hit requirements of the defender
  * @returns {uwCombatResult} Computed result of the combat
  */
 function evaluateCombat(
-  attackDice: number[],
-  attackSuccess: number,
-  defenseDice: number[],
-  defenseSuccess: number,
+  atkDice: number[],
+  atkSuccess: number,
+  defDice: number[],
+  defSuccess: number,
 ): uwCombatResult {
-  const attackSuccesses = attackDice.reduce((wins, cur) => cur >= attackSuccess ? wins + 1 : wins, 0);
-  const attackCrits = attackDice.reduce((wins, cur) => cur === 6 ? wins + 1 : wins, 0);
-  const defenseSuccesses = defenseDice.reduce((wins, cur) => cur >= defenseSuccess ? wins + 1 : wins, 0);
-  const defenseCrits = defenseDice.reduce((wins, cur) => cur === 6 ? wins + 1 : wins, 0);
+  const atkSuccesses = atkDice.reduce((wins, cur) => cur >= atkSuccess ? wins + 1 : wins, 0);
+  const atkCrits = atkDice.reduce((wins, cur) => cur === 6 ? wins + 1 : wins, 0);
+  const defSuccesses = defDice.reduce((wins, cur) => cur >= defSuccess ? wins + 1 : wins, 0);
+  const defCrits = defDice.reduce((wins, cur) => cur === 6 ? wins + 1 : wins, 0);
   return {
-    winner: attackSuccesses == defenseSuccesses && attackSuccesses > 0
+    winner: atkSuccesses == defSuccesses && atkSuccesses > 0
       ? CombatWinner.Tie
-      : attackSuccesses > defenseSuccesses
+      : atkSuccesses > defSuccesses
         ? CombatWinner.Attacker
         : CombatWinner.Defender,
-    critWinner: attackCrits == defenseCrits
+    critWinner: atkCrits == defCrits
       ? CombatWinner.Tie
-      : attackCrits > defenseCrits
+      : atkCrits > defCrits
         ? CombatWinner.Attacker
         : CombatWinner.Defender,
   };
@@ -159,20 +159,20 @@ function evaluateCombat(
  * @returns Odds for each possible outcome of the combat
  */
 export function calculateUWAttack(combatDef: uwCombatDef): uwCombatCalcResult {
-  const attackerOdds = diceProbDist(combatDef.attackerDice, combatDef.attackerSuccess, combatDef.attackerRerolls, combatDef.attackerMissesToHits);
-  const defenderOdds = diceProbDist(combatDef.defenderDice, combatDef.defenderSuccess, combatDef.defenderRerolls, 0);
+  const attackerOdds = diceProbDist(combatDef.atkDice, combatDef.atkSuccess, combatDef.atkRerolls, combatDef.atkMissesToHits);
+  const defenderOdds = diceProbDist(combatDef.defDice, combatDef.defSuccess, combatDef.defRerolls, 0);
   const outcomeOdds = arrayMult(attackerOdds, defenderOdds);
   const attackerCritsOdds = critProbDist(
-    combatDef.attackerDice,
-    combatDef.attackerSuccess,
-    combatDef.attackerRerolls,
-    combatDef.attackerHitsToCrit,
-    combatDef.attackerMissesToHits,
+    combatDef.atkDice,
+    combatDef.atkSuccess,
+    combatDef.atkRerolls,
+    combatDef.atkHitsToCrit,
+    combatDef.atkMissesToHits,
   );
   const defenderCritsOdds = critProbDist(
-    combatDef.defenderDice,
-    combatDef.defenderSuccess,
-    combatDef.defenderRerolls,
+    combatDef.defDice,
+    combatDef.defSuccess,
+    combatDef.defRerolls,
     0,
   );
 

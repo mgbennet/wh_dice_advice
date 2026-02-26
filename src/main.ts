@@ -4,8 +4,8 @@ import { UWCombatPie, ResultData } from "./uwCombatPie";
 import * as d3 from "d3";
 import { ResultTableData, UWCombatTable } from "./uwCombatTable";
 
-const rollBtn = document.querySelector<HTMLButtonElement>("#roll-btn")!;
-const numSimulationsInp = document.querySelector<HTMLInputElement>("#num-simulations")!;
+const rollBtn = <HTMLButtonElement>document.getElementById("roll-btn")!;
+const numSimulationsInp = <HTMLInputElement>document.getElementById("num-simulations")!;
 const inputNames = [
   "attacker-dice",
   "attacker-target",
@@ -16,18 +16,18 @@ const inputNames = [
   "defender-target",
   "defender-rerolls",
 ];
-const attackerDiceInp = document.querySelector<HTMLInputElement>("#attacker-dice")!;
-const attackerTargetInp = document.querySelector<HTMLInputElement>("#attacker-target")!;
-const attackerRerollInp = document.querySelector<HTMLInputElement>("#attacker-rerolls")!;
-const attackerMissestohitsInp = document.querySelector<HTMLInputElement>("#attacker-missestohits")!;
-const attackerHitstocritsInp = document.querySelector<HTMLInputElement>("#attacker-hitstocrits")!;
-const defenderDiceInp = document.querySelector<HTMLInputElement>("#defender-dice")!;
-const defenderTargetInp = document.querySelector<HTMLInputElement>("#defender-target")!;
-const defenderRerollInp = document.querySelector<HTMLInputElement>("#defender-rerolls")!;
+const atkDiceInp = <HTMLInputElement>document.getElementById("attacker-dice")!;
+const atkTargetInp = <HTMLInputElement>document.getElementById("attacker-target")!;
+const atkRerollInp = <HTMLInputElement>document.getElementById("attacker-rerolls")!;
+const atkMissestohitsInp = <HTMLInputElement>document.getElementById("attacker-missestohits")!;
+const atkHitstocritsInp = <HTMLInputElement>document.getElementById("attacker-hitstocrits")!;
+const defDiceInp = <HTMLInputElement>document.getElementById("defender-dice")!;
+const defTargetInp = <HTMLInputElement>document.getElementById("defender-target")!;
+const defRerollInp = <HTMLInputElement>document.getElementById("defender-rerolls")!;
 
 // const attackerAdvancedToggle = document.querySelector<HTMLButtonElement>("#attacker-advanced-toggle");
 let monteCarlo = false;
-const monteCarloToggle = document.querySelector<HTMLButtonElement>("#monteCarloToggle");
+const monteCarloToggle = <HTMLButtonElement>document.getElementById("monteCarloToggle");
 
 const canvasSize = 300,
   svgId = "chartSvg";
@@ -43,14 +43,14 @@ const table = new UWCombatTable("results-table");
 rollBtn.addEventListener("click", () => {
   const results = simulateUWAttacks({
     simulations: parseInt(numSimulationsInp.value),
-    attackerDice: parseInt(attackerDiceInp.value),
-    attackerSuccess: parseInt(attackerTargetInp.value),
-    attackerRerolls: parseInt(attackerRerollInp.value),
-    attackerHitsToCrit: parseInt(attackerHitstocritsInp.value),
-    attackerMissesToHits: parseInt(attackerMissestohitsInp.value),
-    defenderDice: parseInt(defenderDiceInp.value),
-    defenderSuccess: parseInt(defenderTargetInp.value),
-    defenderRerolls: parseInt(defenderRerollInp.value),
+    atkDice: parseInt(atkDiceInp.value),
+    atkSuccess: parseInt(atkTargetInp.value),
+    atkRerolls: parseInt(atkRerollInp.value),
+    atkHitsToCrit: parseInt(atkHitstocritsInp.value),
+    atkMissesToHits: parseInt(atkMissestohitsInp.value),
+    defDice: parseInt(defDiceInp.value),
+    defSuccess: parseInt(defTargetInp.value),
+    defRerolls: parseInt(defRerollInp.value),
   });
   pieChart.update(simResultsToPieData(results));
   table.draw(simResultsToTableData(results));
@@ -58,8 +58,8 @@ rollBtn.addEventListener("click", () => {
 
 for (let i = 0; i < inputNames.length; i++) {
   const name = inputNames[i];
-  document.querySelector<HTMLDivElement>(`#${name}-inc`)!.addEventListener("click", () => {
-    const input = document.querySelector<HTMLInputElement>(`#${name}`)!;
+  document.getElementById(`${name}-inc`)!.addEventListener("click", () => {
+    const input = <HTMLInputElement>document.getElementById(`${name}`)!;
     if (name.includes("target")) {
       if (input.value !== "6")
         input.value = (parseInt(input.value) + 1).toString();
@@ -68,8 +68,8 @@ for (let i = 0; i < inputNames.length; i++) {
     }
     input.dispatchEvent(new Event("change"));
   });
-  document.querySelector<HTMLDivElement>(`#${name}-dec`)!.addEventListener("click", () => {
-    const input = document.querySelector<HTMLInputElement>(`#${name}`)!;
+  document.getElementById(`${name}-dec`)!.addEventListener("click", () => {
+    const input = <HTMLInputElement>document.getElementById(`${name}`)!;
     if (name.includes("target")) {
       if (input.value !== "1")
         input.value = (parseInt(input.value) - 1).toString();
@@ -94,11 +94,11 @@ monteCarloToggle?.addEventListener("click", () => {
   if (monteCarlo) {
     monteCarloToggle.title = "Use calculation";
     monteCarloToggle.setAttribute("class", "toCalculation");
-    document.querySelector("#monteCarloSection")?.setAttribute("style", "display: block");
+    document.getElementById("monteCarloSection")?.setAttribute("style", "display: block");
   } else {
     monteCarloToggle.title = "Use Monte Carlo simulation";
     monteCarloToggle.setAttribute("class", "toMonteCarlo");
-    document.querySelector("#monteCarloSection")?.setAttribute("style", "display: none");
+    document.getElementById("monteCarloSection")?.setAttribute("style", "display: none");
     document.querySelector("input")?.dispatchEvent(new Event("change"));
   }
 });
@@ -109,14 +109,14 @@ inputs.forEach((element) => {
   element.addEventListener("change", () => {
     if (!monteCarlo) {
       const results = calculateUWAttack({
-        attackerDice: parseInt(attackerDiceInp.value),
-        attackerSuccess: parseInt(attackerTargetInp.value),
-        attackerRerolls: parseInt(attackerRerollInp.value),
-        attackerHitsToCrit: parseInt(attackerHitstocritsInp.value),
-        attackerMissesToHits: parseInt(attackerMissestohitsInp.value),
-        defenderDice: parseInt(defenderDiceInp.value),
-        defenderSuccess: parseInt(defenderTargetInp.value),
-        defenderRerolls: parseInt(defenderRerollInp.value),
+        atkDice: parseInt(atkDiceInp.value),
+        atkSuccess: parseInt(atkTargetInp.value),
+        atkRerolls: parseInt(atkRerollInp.value),
+        atkHitsToCrit: parseInt(atkHitstocritsInp.value),
+        atkMissesToHits: parseInt(atkMissestohitsInp.value),
+        defDice: parseInt(defDiceInp.value),
+        defSuccess: parseInt(defTargetInp.value),
+        defRerolls: parseInt(defRerollInp.value),
       });
       pieChart.update(calcResultsToPieData(results));
       table.draw(calcResultsToTableData(results));
