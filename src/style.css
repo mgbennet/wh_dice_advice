@@ -130,17 +130,12 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 
-.label-spacer {
-  display: inline-block;
-  width: 18px;
-}
-
 .info-toggle-btn {
   width: 14px;
   height: 14px;
   border-radius: 7px;
   margin-top: 3px;
-  margin-left: 4px;
+  margin-left: 3px;
   padding: 0px;
   border: 1px white solid;
   background-color: #0000;
