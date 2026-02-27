@@ -123,6 +123,7 @@ button {
 
 input {
   width: 34px;
+  appearance: textfield;
 }
 
 input[type="checkbox"] {
@@ -205,6 +206,36 @@ selectedcontent .target-helper {
   border-radius: 3px;
   padding: 0;
   background-color: #dedcea;
+}
+
+.dice-btn {
+  height: 20px;
+  width: 20px;
+  border: none;
+  border-radius: 4px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.crit-btn {
+  background-image: url('../images/critical-hit.png');
+}
+.hammer-btn {
+  background-image: url('../images/hammer.png');
+}
+.sword-btn {
+  background-image: url('../images/sword.png');
+}
+.shield-btn {
+  background-image: url('../images/dodge.png');
+}
+.dodge-btn {
+  background-image: url('../images/shield.png');
+}
+.flanked-btn {
+  background-image: url('../images/single-support.png');
+}
+.surrounded-btn {
+  background-image: url('../images/double-support.png');
 }
 
 #roll-btn {

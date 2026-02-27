@@ -53,25 +53,34 @@
               <button class="dec-btn" id="attacker-dice-dec">-</button>
             </div>
           </div>
-          <div class="input-line">
-            <label for="attacker-target">
-              Success
-            </label>
-            <div class="input-elements-div">
-              <button class="inc-btn" id="attacker-target-inc">+</button>
-              <select name="attacker-target" id="attacker-target">
-                <button>
-                  <selectedcontent></selectedcontent>
-                </button>
-                <option value="6"><span class="target-label">6+</span></option>
-                <option value="5"><span class="target-label">5+</span> <span class="target-helper">(swords)</span></option>
-                <option value="4" selected><span class="target-label">4+</span> <span class="target-helper">(hammers)</span></option>
-                <option value="3"><span class="target-label">3+</span></option>
-                <option value="2"><span class="target-label">2+</span></option>
-                <option value="1"><span class="target-label">1+</span></option>
-              </select>
-              <button class="dec-btn" id="attacker-target-dec">-</button>
+          <div>
+            <div class="input-line">
+              <label for="attacker-target">
+                Success
+              </label>
+              <div class="input-elements-div">
+                <button class="inc-btn" id="attacker-target-inc">+</button>
+                <select name="attacker-target" id="attacker-target">
+                  <button>
+                    <selectedcontent></selectedcontent>
+                  </button>
+                  <option value="6"><span class="target-label">6+</span></option>
+                  <option value="5"><span class="target-label">5+</span> <span class="target-helper">(swords)</span></option>
+                  <option value="4" selected><span class="target-label">4+</span> <span class="target-helper">(hammers)</span></option>
+                  <option value="3"><span class="target-label">3+</span></option>
+                  <option value="2"><span class="target-label">2+</span></option>
+                  <option value="1"><span class="target-label">1+</span></option>
+                </select>
+                <button class="dec-btn" id="attacker-target-dec">-</button>
+              </div>
             </div>
+            <!-- <div class="input-line">
+              <button class="dice-btn crit-btn" aria-label="Critical attack"></button>
+              <button class="dice-btn hammer-btn" aria-label="Hammers"></button>
+              <button class="dice-btn sword-btn" aria-label="Swords"></button>
+              <button class="dice-btn flanked-btn" aria-label="Flanked"></button>
+              <button class="dice-btn surrounded-btn" aria-label="Surrounded"></button>
+            </div> -->
           </div>
           <div class="input-line">
             <label for="attacker-rerolls">
@@ -119,23 +128,32 @@
               <button class="dec-btn" id="defender-dice-dec">-</button>
             </div>
           </div>
-          <div class="input-line">
-            <label for="defender-target">Success</label>
-            <div class="input-elements-div">
-              <button class="inc-btn" id="defender-target-inc">+</button>
-              <select name="defender-target" id="defender-target">
-                <button>
-                  <selectedcontent></selectedcontent>
-                </button>
-                <option value="6"><span class="target-label">6+</span></option>
-                <option value="5"><span class="target-label">5+</span> <span class="target-helper">(dodge)</span></option>
-                <option value="4" selected><span class="target-label">4+</span> <span class="target-helper">(block)</span></option>
-                <option value="3"><span class="target-label">3+</span></option>
-                <option value="2"><span class="target-label">2+</span></option>
-                <option value="1"><span class="target-label">1+</span></option>
-              </select>
-              <button class="dec-btn" id="defender-target-dec">-</button>
+          <div>
+            <div class="input-line">
+              <label for="defender-target">Success</label>
+              <div class="input-elements-div">
+                <button class="inc-btn" id="defender-target-inc">+</button>
+                <select name="defender-target" id="defender-target">
+                  <button>
+                    <selectedcontent></selectedcontent>
+                  </button>
+                  <option value="6"><span class="target-label">6+</span></option>
+                  <option value="5"><span class="target-label">5+</span> <span class="target-helper">(dodge)</span></option>
+                  <option value="4" selected><span class="target-label">4+</span> <span class="target-helper">(block)</span></option>
+                  <option value="3"><span class="target-label">3+</span></option>
+                  <option value="2"><span class="target-label">2+</span></option>
+                  <option value="1"><span class="target-label">1+</span></option>
+                </select>
+                <button class="dec-btn" id="defender-target-dec">-</button>
+              </div>
             </div>
+            <!-- <div class="input-line">
+              <button class="dice-btn crit-btn" aria-label="Critical attack"></button>
+              <button class="dice-btn shield-btn" aria-label="Shields"></button>
+              <button class="dice-btn dodge-btn" aria-label="Dodges"></button>
+              <button class="dice-btn flanked-btn" aria-label="Flanked"></button>
+              <button class="dice-btn surrounded-btn" aria-label="Surrounded"></button>
+            </div> -->
           </div>
           <div class="input-line">
             <label for="defender-rerolls">Rerolls</label>
