@@ -80,6 +80,14 @@ for (let i = 0; i < inputNames.length; i++) {
   });
 }
 
+document.querySelectorAll<HTMLButtonElement>(".double-line-toggle").forEach((toggleBtn) => {
+  toggleBtn.addEventListener("click", () => {
+    const secondLine = toggleBtn.parentElement?.querySelector<HTMLElement>(".second-line");
+    if (secondLine)
+      toggleElementVisibility(secondLine, "flex");
+  });
+});
+
 // attackerAdvancedToggle?.addEventListener("click", () => {
 //   const advancedSettingsSection = document.querySelector<HTMLDivElement>("#attacker-advanced-section")!;
 //   if (advancedSettingsSection.style.display === "none") {
@@ -125,6 +133,14 @@ inputs.forEach((element) => {
 });
 
 // utils
+const toggleElementVisibility = (elem: HTMLElement, display = "block") => {
+  if (elem.style.display === "none") {
+    elem.style.display = display;
+  } else {
+    elem.style.display = "none";
+  }
+};
+
 const calcResultsToPieData = (results: uwCombatCalcResult): ResultData => {
   return {
     winners: [
