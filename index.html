@@ -65,6 +65,7 @@
                     <button>
                       <selectedcontent></selectedcontent>
                     </button>
+                    <option value="7"><span class="target-label">7+</span> <span class="target-helper">(no chance)</span></option>
                     <option value="6"><span class="target-label">6+</span></option>
                     <option value="5"><span class="target-label">5+</span> <span class="target-helper">(swords)</span></option>
                     <option value="4" selected><span class="target-label">4+</span> <span class="target-helper">(hammers)</span></option>
@@ -75,7 +76,7 @@
                   <button class="dec-btn" id="attacker-target-dec">-</button>
                 </div>
               </div>
-              <div class="input-line second-line">
+              <div class="input-line second-line" id="attacker-dice-togs">
                 <div class="dice-tog">
                   <input type="checkbox" class="crit-tog" aria-label="Critical attack"></input>
                   <label></label>
@@ -156,6 +157,7 @@
                     <button>
                       <selectedcontent></selectedcontent>
                     </button>
+                    <option value="7"><span class="target-label">7+</span> <span class="target-helper">(no chance)</span></option>
                     <option value="6"><span class="target-label">6+</span></option>
                     <option value="5"><span class="target-label">5+</span> <span class="target-helper">(dodge)</span></option>
                     <option value="4" selected><span class="target-label">4+</span> <span class="target-helper">(block)</span></option>
@@ -166,17 +168,17 @@
                   <button class="dec-btn" id="defender-target-dec">-</button>
                 </div>
               </div>
-              <div class="input-line second-line">
+              <div class="input-line second-line" id="defender-dice-togs">
                 <div class="dice-tog">
                   <input type="checkbox" class="crit-tog" aria-label="Critical attack"></input>
                   <label></label>
                 </div>
                 <div class="dice-tog">
-                  <input type="checkbox" class="shield-tog" aria-label="Shield"></input>
+                  <input type="checkbox" class="dodge-tog" aria-label="Dodge"></input>
                   <label></label>
                 </div>
                 <div class="dice-tog">
-                  <input type="checkbox" class="dodge-tog" aria-label="Dodge"></input>
+                  <input type="checkbox" class="shield-tog" aria-label="Shield"></input>
                   <label></label>
                 </div>
                 <div class="dice-tog">

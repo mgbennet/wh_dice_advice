@@ -88,6 +88,16 @@ document.querySelectorAll<HTMLButtonElement>(".double-line-toggle").forEach((tog
   });
 });
 
+document.querySelectorAll<HTMLInputElement>(".dice-tog input").forEach((diceToggle) => {
+  diceToggle.addEventListener(
+    "change",
+    () => diceButtonsToSelect(diceToggle.parentElement?.parentElement?.id.startsWith("attacker")),
+  );
+});
+
+atkTargetInp.addEventListener("change", () => diceSelectToButtons(true));
+defTargetInp.addEventListener("change", () => diceSelectToButtons(false));
+
 // attackerAdvancedToggle?.addEventListener("click", () => {
 //   const advancedSettingsSection = document.querySelector<HTMLDivElement>("#attacker-advanced-section")!;
 //   if (advancedSettingsSection.style.display === "none") {
@@ -131,6 +141,40 @@ inputs.forEach((element) => {
     }
   });
 });
+
+// dice button state functions
+const diceButtonsToSelect = (isAtker: boolean = true) => {
+  const buttons = document.querySelectorAll<HTMLInputElement>(`#${isAtker ? "attacker" : "defender"}-dice-togs input`);
+  let total = 0;
+  for (const btn of buttons) {
+    if (btn.checked) {
+      if (btn.className.indexOf("hammer") >= 0 || btn.className.indexOf("shield") >= 0) {
+        total++;
+      }
+      total++;
+    }
+  }
+  const targetSelect = isAtker ? atkTargetInp : defTargetInp;
+  targetSelect.value = String(7 - total);
+};
+
+const diceBtnGuide = [
+  [0, 0, 0, 0, 0],
+  [1, 0, 0, 0, 0],
+  [1, 1, 0, 0, 0],
+  [1, 0, 1, 0, 0],
+  [1, 0, 1, 1, 0],
+  [1, 0, 1, 1, 1],
+  [1, 1, 1, 1, 1],
+];
+const diceSelectToButtons = (isAtker: boolean) => {
+  const select = isAtker ? atkTargetInp : defTargetInp;
+  const target = 7 - parseInt(select.value);
+  const buttons = document.querySelectorAll<HTMLInputElement>(`#${isAtker ? "attacker" : "defender"}-dice-togs input`);
+  for (let i = 0; i < 5; i++) {
+    buttons[i].checked = diceBtnGuide[target][i] === 1;
+  }
+};
 
 // utils
 const toggleElementVisibility = (elem: HTMLElement, display = "block") => {
@@ -214,3 +258,5 @@ const simResultsToTableData = (results: simulationResults): ResultTableData => {
 
 // on initial load, trigger a draw from current/saved inputs.
 inputs[0].dispatchEvent(new Event("change"));
+diceSelectToButtons(true);
+diceSelectToButtons(false);

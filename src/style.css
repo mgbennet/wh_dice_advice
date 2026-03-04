@@ -276,10 +276,10 @@ selectedcontent .target-helper {
   background-image: url('../images/sword.png');
 }
 .shield-tog + label {
-  background-image: url('../images/dodge.png');
+  background-image: url('../images/shield.png');
 }
 .dodge-tog + label {
-  background-image: url('../images/shield.png');
+  background-image: url('../images/dodge.png');
 }
 .flanked-tog + label {
   background-image: url('../images/single-support.png');
