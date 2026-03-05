@@ -83,13 +83,14 @@ export function diceProbDist(n: number, target: number, rerolls = 0, missesToHit
  */
 export function critProbDist(n: number, target: number, rerolls = 0, hitsToCrits = 0, missesToHits = 0): number[][] {
   let result: number[][] = [];
-  const regHitOdds = (6 - target) / 6;
+  const critOdds = target <= 6 ? 1 / 6 : 0;
+  const regHitOdds = target <= 6 ? (6 - target) / 6 : 0;
   for (let crits = 0; crits <= n; crits++) {
     result.push([]);
     for (let hits = 0; hits <= n - crits; hits++) {
       result[crits].push(
         multinomialProbability(
-          [1 / 6, regHitOdds, 1 - regHitOdds - 1 / 6],
+          [critOdds, regHitOdds, 1 - regHitOdds - critOdds],
           [crits, hits, n - crits - hits],
         ),
       );

@@ -16,6 +16,8 @@ test("diceProbDist", () => {
     ((5 / 6) * (1 / 6)) * 2,
     ((1 / 6) * (1 / 6)),
   ], 0.00000001);
+  expect(pc.diceProbDist(2, 7, 0)).toEqual([1.0, 0.0, 0.0]);
+  expect(pc.diceProbDist(2, 7, 2)).toEqual([1.0, 0.0, 0.0]);
 
   expect(pc.diceProbDist(2, 4, 1)).toEqual([0.125, 0.375, 0.5]);
   expect(pc.diceProbDist(2, 4, 2)).toEqual([0.0625, 0.375, 0.5625]);
@@ -27,6 +29,7 @@ test("diceProbDist", () => {
 });
 
 test("critProbDist", () => {
+  // helper function for running toAlmostEqualArray on an array of arrays
   const critProbTest = (result: number[][], expected: number[][]) => {
     expect(result.length).toEqual(expected.length);
     for (const i in result) {
@@ -80,5 +83,21 @@ test("critProbDist", () => {
     [0, (1 / 4), 0],
     [0, (11 / 18)],
     [(5 / 36)],
+  ]);
+
+  critProbTest(pc.critProbDist(2, 7, 0, 0, 0), [
+    [1.0, 0, 0],
+    [0, 0],
+    [0],
+  ]);
+  critProbTest(pc.critProbDist(2, 7, 1, 1, 0), [
+    [1.0, 0, 0],
+    [0, 0],
+    [0],
+  ]);
+  critProbTest(pc.critProbDist(2, 7, 1, 0, 1), [
+    [0, 1.0, 0],
+    [0, 0],
+    [0],
   ]);
 });
