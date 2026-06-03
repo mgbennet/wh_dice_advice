@@ -80,14 +80,6 @@ for (let i = 0; i < inputNames.length; i++) {
   });
 }
 
-document.querySelectorAll<HTMLButtonElement>(".double-line-toggle").forEach((toggleBtn) => {
-  toggleBtn.addEventListener("click", () => {
-    const secondLine = toggleBtn.parentElement?.querySelector<HTMLElement>(".second-line");
-    if (secondLine)
-      toggleElementVisibility(secondLine, "flex");
-  });
-});
-
 document.querySelectorAll<HTMLInputElement>(".dice-tog input").forEach((diceToggle) => {
   diceToggle.addEventListener(
     "change",
@@ -97,15 +89,6 @@ document.querySelectorAll<HTMLInputElement>(".dice-tog input").forEach((diceTogg
 
 atkTargetInp.addEventListener("change", () => diceSelectToButtons(true));
 defTargetInp.addEventListener("change", () => diceSelectToButtons(false));
-
-// attackerAdvancedToggle?.addEventListener("click", () => {
-//   const advancedSettingsSection = document.querySelector<HTMLDivElement>("#attacker-advanced-section")!;
-//   if (advancedSettingsSection.style.display === "none") {
-//     advancedSettingsSection.style.display = "block";
-//   } else {
-//     advancedSettingsSection.style.display = "none";
-//   }
-// });
 
 monteCarloToggle?.addEventListener("click", () => {
   monteCarlo = !monteCarlo;

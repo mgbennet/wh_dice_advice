@@ -113,29 +113,16 @@ button {
   text-align: left;
 }
 
+.dice-toggle-line {
+  padding-right: 18px;
+}
+
 .input-elements-div {
   display: flex;
-  height: 20px;
+  height: 24px;
   width: 96px;
   padding-top: 2px;
   gap: 1px;
-}
-
-.double-input-line {
-  display: flex;
-  gap: 2px;
-
-  .double-line {
-    flex-grow: 1;
-  }
-  .input-elements-div {
-    width: 78px;
-  }
-}
-
-.double-line-toggle {
-  width: 16px;
-  padding: 0px;
 }
 
 input {
@@ -195,17 +182,18 @@ input, select {
   background-color: #fdfdfd;
   border: 1px solid #788878;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 select,
 ::picker(select) {
   appearance: base-select;
+  border-radius: 4px;
 }
 
 select {
   width: 40px;
-  height: 20px;
+  height: 24px;
   padding: 1px 2px;
 }
 
@@ -229,7 +217,7 @@ selectedcontent .target-helper {
   display: flex;
   height: 24px;
   width: 24px;
-  margin: 0;
+  margin: 1px 0 2px;
   opacity: 0;
   position: relative;
   z-index: 10;
