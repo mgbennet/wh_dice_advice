@@ -1,4 +1,3 @@
-import "./style.css";
 import { calculateUWAttack, simulateUWAttacks, simulationResults, uwCombatCalcResult } from "./underworlds";
 import { UWCombatPie, ResultData } from "./uwCombatPie";
 import * as d3 from "d3";
@@ -156,15 +155,6 @@ const diceSelectToButtons = (isAtker: boolean) => {
   const buttons = document.querySelectorAll<HTMLInputElement>(`#${isAtker ? "attacker" : "defender"}-dice-togs input`);
   for (let i = 0; i < 5; i++) {
     buttons[i].checked = diceBtnGuide[target][i] === 1;
-  }
-};
-
-// utils
-const toggleElementVisibility = (elem: HTMLElement, display = "block") => {
-  if (elem.style.display === "none") {
-    elem.style.display = display;
-  } else {
-    elem.style.display = "none";
   }
 };
 

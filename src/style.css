@@ -109,6 +109,7 @@ button {
 .input-line {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 12px;
   text-align: left;
 }
@@ -126,7 +127,7 @@ button {
 }
 
 input {
-  width: 34px;
+  width: 32px;
   appearance: textfield;
 }
 
@@ -149,11 +150,12 @@ input[type="checkbox"] {
 }
 
 dialog {
-  max-width: 400px;
+  max-width: 376px;
   border-radius: 6px;
-  border: #999 solid 2px;
-  background: #eee;
-  font-size: 12px;
+  border: none;
+  background: #fafafa;
+  font-size: 13px;
+  padding: 12px;
 
   p {
     clear: both;
@@ -180,7 +182,7 @@ dialog {
 input, select {
   color: black;
   background-color: #fdfdfd;
-  border: 1px solid #788878;
+  border: none;
   border-radius: 4px;
   font-size: 13px;
 }
@@ -192,7 +194,7 @@ select,
 }
 
 select {
-  width: 40px;
+  width: 36px;
   height: 24px;
   padding: 1px 2px;
 }
@@ -206,11 +208,15 @@ selectedcontent .target-helper {
 }
 
 .inc-btn, .dec-btn {
-  width: 18px;
-  border: 1px solid #788878;
+  width: 20px;
+  border: none;
   border-radius: 3px;
   padding: 0;
   background-color: #dedcea;
+
+  &:hover, &:focus {
+    background-color: #b9b8c9;
+  }
 }
 
 .dice-tog input {
@@ -225,9 +231,8 @@ selectedcontent .target-helper {
 .dice-tog label {
   display: inline-block;
   position: absolute;
-  height: 22px;
-  width: 22px;
-  border: 1px solid #787878;
+  height: 24px;
+  width: 24px;
   margin-top: -24px;
   border-radius: 4px;
   background-color: #999;
@@ -355,7 +360,7 @@ td:last-child {
 
 #legal-footer {
   font-size: 10px;
-  color: #616161;
+  color: #888;
   margin-top: 2rem;
   line-height: 1.0;
 }
