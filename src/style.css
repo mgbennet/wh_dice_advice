@@ -184,6 +184,7 @@ input, select {
   background-color: #fdfdfd;
   border: none;
   border-radius: 4px;
+  text-align: center;
   font-size: 13px;
 }
 
@@ -298,9 +299,16 @@ selectedcontent .target-helper {
   margin: 0 auto;
 }
 
-.space-filler {
+#history {
   width: 214px;
+  border: solid #000 1px;
 }
+
+#history-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
 @media (max-width: 900px) {
   .space-filler {
     display: none;
