@@ -301,12 +301,86 @@ selectedcontent .target-helper {
 
 #history {
   width: 214px;
-  border: solid #000 1px;
+  display: flex;
+  flex-direction: column;
+}
+
+#history h4 {
+  margin: 6px 8px 4px;
 }
 
 #history-list {
-  max-height: 300px;
+  border: solid #000 1px;
+  max-height: 280px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px;
+}
+
+.history-tile {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 6px 8px;
+  background: #f5f0e8;
+  border: 1px solid #999;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.85em;
+  width: 100%;
+}
+
+.history-tile:hover {
+  background: #e8e0d0;
+  border-color: #555;
+}
+
+.history-pie {
+  width: 30px;
+  height: 30px;
+  background-color: blue;
+}
+
+.history-text {
+  flex-grow: 1;
+}
+
+.history-tile-atk,
+.history-tile-def {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.history-tile-atk {
+  color: #ca5252ff;
+}
+
+.history-tile-def {
+  color: #6d60faff;
+}
+
+.history-tile-label {
+  font-weight: bold;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  color: #555;
+}
+
+.delete-saved-combat {
+  border: none;
+}
+
+#save-combat {
+  margin: 6px 8px;
+  align-self: flex-start;
+}
+
+.space-filler {
+  width: 214px;
 }
 
 @media (max-width: 900px) {

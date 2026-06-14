@@ -17,6 +17,11 @@ export interface uwCombatSim extends uwCombatDef {
   simulations: number;
 }
 
+export interface savedCombat extends uwCombatDef {
+  label: string;
+  simuulations?: number;
+}
+
 // Odds for each possibility of a given UWs combat.
 // Each number is between 0 and 1.0. success + tie + failure = 1.0
 export interface uwCombatCalcResult {

@@ -1,4 +1,10 @@
-import { calculateUWAttack, simulateUWAttacks, simulationResults, uwCombatCalcResult } from "./underworlds";
+import {
+  calculateUWAttack,
+  savedCombat,
+  simulateUWAttacks,
+  simulationResults,
+  uwCombatCalcResult,
+} from "./underworlds";
 import { UWCombatPie, ResultData } from "./uwCombatPie";
 import * as d3 from "d3";
 import { ResultTableData, UWCombatTable } from "./uwCombatTable";
@@ -23,6 +29,9 @@ const atkHitstocritsInp = <HTMLInputElement>document.getElementById("attacker-hi
 const defDiceInp = <HTMLInputElement>document.getElementById("defender-dice")!;
 const defTargetInp = <HTMLInputElement>document.getElementById("defender-target")!;
 const defRerollInp = <HTMLInputElement>document.getElementById("defender-rerolls")!;
+
+const saveCombatBtn = <HTMLButtonElement>document.getElementById("save-combat")!;
+const historyList = <HTMLDivElement>document.getElementById("history-list")!;
 
 // const attackerAdvancedToggle = document.querySelector<HTMLButtonElement>("#attacker-advanced-toggle");
 let monteCarlo = false;
@@ -149,10 +158,10 @@ const diceBtnGuide = [
   [1, 0, 1, 1, 1],
   [1, 1, 1, 1, 1],
 ];
-const diceSelectToButtons = (isAtker: boolean) => {
-  const select = isAtker ? atkTargetInp : defTargetInp;
+const diceSelectToButtons = (setAtker: boolean) => {
+  const select = setAtker ? atkTargetInp : defTargetInp;
   const target = 7 - parseInt(select.value);
-  const buttons = document.querySelectorAll<HTMLInputElement>(`#${isAtker ? "attacker" : "defender"}-dice-togs input`);
+  const buttons = document.querySelectorAll<HTMLInputElement>(`#${setAtker ? "attacker" : "defender"}-dice-togs input`);
   for (let i = 0; i < 5; i++) {
     buttons[i].checked = diceBtnGuide[target][i] === 1;
   }
@@ -233,3 +242,65 @@ const simResultsToTableData = (results: simulationResults): ResultTableData => {
 inputs[0].dispatchEvent(new Event("change"));
 diceSelectToButtons(true);
 diceSelectToButtons(false);
+
+const savedCombats: savedCombat[] = [];
+
+function getCurrentInputs(): savedCombat {
+  return {
+    label: `Atk ${atkDiceInp.value}d ${atkTargetInp.value}+ ${atkRerollInp.value}rr / Def ${defDiceInp.value}d ${defTargetInp.value}+ ${defRerollInp.value}rr`,
+    atkDice: parseInt(atkDiceInp.value),
+    atkSuccess: parseInt(atkTargetInp.value),
+    atkRerolls: parseInt(atkRerollInp.value),
+    atkHitsToCrit: parseInt(atkHitstocritsInp.value),
+    atkMissesToHits: parseInt(atkMissestohitsInp.value),
+    defDice: parseInt(defDiceInp.value),
+    defSuccess: parseInt(defTargetInp.value),
+    defRerolls: parseInt(defRerollInp.value),
+  };
+}
+
+function loadCombat(combat: savedCombat) {
+  atkDiceInp.value = String(combat.atkDice);
+  atkTargetInp.value = String(combat.atkSuccess);
+  atkRerollInp.value = String(combat.atkRerolls);
+  atkHitstocritsInp.value = String(combat.atkHitsToCrit);
+  atkMissestohitsInp.value = String(combat.atkMissesToHits);
+  defDiceInp.value = String(combat.defDice);
+  defTargetInp.value = String(combat.defSuccess);
+  defRerollInp.value = String(combat.defRerolls);
+  diceSelectToButtons(true);
+  diceSelectToButtons(false);
+  // trigger recalc
+  inputs[0].dispatchEvent(new Event("change"));
+}
+
+function renderHistoryList() {
+  historyList.innerHTML = "";
+  savedCombats.forEach((combat) => {
+    const tile = document.createElement("button");
+    tile.className = "history-tile";
+    tile.innerHTML = `
+        <div class="history-pie"></div>
+        <div class="history-text">
+          <div class="history-tile-atk">
+            <span>D: ${combat.atkDice}</span>
+            <span>${combat.atkSuccess}+</span>
+            <span>RR: ${combat.atkRerolls}</span>
+          </div>
+          <div class="history-tile-def">
+            <span>D: ${combat.defDice}</span>
+            <span>${combat.defSuccess}+</span>
+            <span>RR: ${combat.defRerolls}</span>
+          </div>
+        </div>
+      <button class="delete-saved-combat">Del</button>
+    `;
+    tile.addEventListener("click", () => loadCombat(combat));
+    historyList.appendChild(tile);
+  });
+}
+
+saveCombatBtn.addEventListener("click", () => {
+  savedCombats.push(getCurrentInputs());
+  renderHistoryList();
+});
