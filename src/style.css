@@ -328,10 +328,9 @@ selectedcontent .target-helper {
 .history-tile {
   display: flex;
   justify-content: space-between;
-  gap: 6px;
-  padding: 6px 8px;
+  padding: 0;
   background: #f5f0e8;
-  border: 1px solid #999;
+  border: none;
   border-radius: 4px;
   cursor: pointer;
   text-align: left;
@@ -342,6 +341,15 @@ selectedcontent .target-helper {
 .history-tile:hover {
   background: #e8e0d0;
   border-color: #555;
+}
+
+.load-history-btn {
+  display: flex;
+  padding: 4px 6px;
+  gap: 6px;
+  border: none;
+  flex-grow: 1;
+  border-radius: 4px;
 }
 
 .history-pie {
@@ -378,6 +386,7 @@ selectedcontent .target-helper {
 .delete-saved-combat {
   border: none;
   width: 26px;
+  margin: 0px 4px;
   background-size: 65%;
   background-color: transparent;
   background-image: url('../images/trash-can.svg');

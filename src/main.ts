@@ -263,26 +263,29 @@ function loadCombat(combat: savedCombat) {
 function renderHistoryList() {
   historyList.innerHTML = "";
   savedCombats.forEach((combat) => {
-    const tile = document.createElement("button");
+    const tile = document.createElement("div");
     tile.className = "history-tile";
-    tile.innerHTML = `
-        <div class="history-pie">
-          ${combat.pieChart && `<svg viewbox=${[-canvasSize / 2, -canvasSize / 2, canvasSize, canvasSize]}>${combat.pieChart?.html()}</svg>`}
+    const tileBtn = document.createElement("button");
+    tileBtn.className = "load-history-btn";
+    tileBtn.innerHTML = `
+      <div class="history-pie">
+        ${combat.pieChart && `<svg viewbox=${[-canvasSize / 2, -canvasSize / 2, canvasSize, canvasSize]}>${combat.pieChart?.html()}</svg>`}
+      </div>
+      <div class="history-text">
+        <div class="history-tile-atk">
+          <span>D: ${combat.atkDice}</span>
+          <span>${combat.atkSuccess}+</span>
+          <span>RR: ${combat.atkRerolls}</span>
         </div>
-        <div class="history-text">
-          <div class="history-tile-atk">
-            <span>D: ${combat.atkDice}</span>
-            <span>${combat.atkSuccess}+</span>
-            <span>RR: ${combat.atkRerolls}</span>
-          </div>
-          <div class="history-tile-def">
-            <span>D: ${combat.defDice}</span>
-            <span>${combat.defSuccess}+</span>
-            <span>RR: ${combat.defRerolls}</span>
-          </div>
+        <div class="history-tile-def">
+          <span>D: ${combat.defDice}</span>
+          <span>${combat.defSuccess}+</span>
+          <span>RR: ${combat.defRerolls}</span>
         </div>
+      </div>
     `;
-    tile.addEventListener("click", () => loadCombat(combat));
+    tileBtn.addEventListener("click", () => loadCombat(combat));
+    tile.appendChild(tileBtn);
     const delBtn = document.createElement("button");
     delBtn.className = "delete-saved-combat";
     delBtn.ariaLabel = "Delete";
@@ -308,9 +311,9 @@ saveCombatBtn.addEventListener("click", () => {
     defSuccess: parseInt(defTargetInp.value),
     defRerolls: parseInt(defRerollInp.value),
   };
-  const results = calculateUWAttack(inputs);
-  const simplePie = pieChart.simplePie(calcResultsToPieData(results));
-  console.log(simplePie);
+  const simplePie = pieChart.simplePie(
+    calcResultsToPieData(
+      calculateUWAttack(inputs)));
   inputs.pieChart = simplePie;
   savedCombats.push(inputs);
   renderHistoryList();
