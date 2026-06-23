@@ -293,9 +293,17 @@ function renderHistoryList() {
             <span>RR: ${combat.defRerolls}</span>
           </div>
         </div>
-      <button class="delete-saved-combat">Del</button>
     `;
     tile.addEventListener("click", () => loadCombat(combat));
+    const delBtn = document.createElement("button");
+    delBtn.className = "delete-saved-combat";
+    delBtn.ariaLabel = "Delete";
+    delBtn.title = "Delete";
+    delBtn.addEventListener("click", () => {
+      savedCombats.splice(savedCombats.findIndex(val => val.label === combat.label), 1);
+      renderHistoryList();
+    });
+    tile.appendChild(delBtn);
     historyList.appendChild(tile);
   });
 }

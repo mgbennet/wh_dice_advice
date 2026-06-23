@@ -306,17 +306,23 @@ selectedcontent .target-helper {
 }
 
 #history h4 {
+  text-decoration: underline;
   margin: 6px 8px 4px;
 }
 
 #history-list {
-  border: solid #000 1px;
-  max-height: 280px;
+  max-height: 200px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 4px;
   padding: 4px;
+}
+#history-list:empty::after {
+  content: "Save combats for quick comparisons";
+  margin: 0px;
+  font-size: .7em;
+  font-style: italic;
 }
 
 .history-tile {
@@ -372,11 +378,21 @@ selectedcontent .target-helper {
 
 .delete-saved-combat {
   border: none;
+  width: 26px;
+  background-size: 65%;
+  background-color: transparent;
+  background-image: url('../images/trash-can.svg');
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 #save-combat {
   margin: 6px 8px;
-  align-self: flex-start;
+  border: none;
+  border-radius: 2px;
+  padding: 3px 6px;
+  align-self: flex-end;
+  font-size: 0.8em;
 }
 
 .space-filler {
