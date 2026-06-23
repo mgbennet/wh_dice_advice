@@ -338,11 +338,6 @@ selectedcontent .target-helper {
   width: 100%;
 }
 
-.history-tile:hover {
-  background: #e8e0d0;
-  border-color: #555;
-}
-
 .load-history-btn {
   display: flex;
   padding: 4px 6px;
@@ -352,13 +347,14 @@ selectedcontent .target-helper {
   border-radius: 4px;
 }
 
+.load-history-btn:hover {
+  background: #e8e0d0;
+  border-color: #555;
+}
+
 .history-pie {
   width: 30px;
   height: 30px;
-}
-
-.history-text {
-  flex-grow: 1;
 }
 
 .history-tile-atk,
