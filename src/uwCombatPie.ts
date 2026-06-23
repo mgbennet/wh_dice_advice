@@ -202,4 +202,17 @@ export class UWCombatPie {
         }
       });
   }
+
+  simplePie(data: ResultData) {
+    const winnersArcs = this.pie(data.winners);
+    const svg = d3.create("svg");
+    svg.append("g")
+      .attr("id", "winners")
+      .selectAll("path")
+      .data(winnersArcs)
+      .join("path")
+      .attr("fill", d => color(d.data.name))
+      .attr("d", this.innerArc);
+    return svg;
+  }
 }

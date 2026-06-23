@@ -19,6 +19,7 @@ export interface uwCombatSim extends uwCombatDef {
 
 export interface savedCombat extends uwCombatDef {
   label: string;
+  pieChart?: d3.Selection<SVGSVGElement, undefined, null, undefined>;
   simuulations?: number;
 }
 
@@ -163,7 +164,7 @@ function evaluateCombat(
  * @param combatDef Object containing all parameters of an UWs combat
  * @returns Odds for each possible outcome of the combat
  */
-export function calculateUWAttack(combatDef: uwCombatDef): uwCombatCalcResult {
+export function calculateUWAttack(combatDef: uwCombatDef | uwCombatSim): uwCombatCalcResult {
   const attackerOdds = diceProbDist(combatDef.atkDice, combatDef.atkSuccess, combatDef.atkRerolls, combatDef.atkMissesToHits);
   const defenderOdds = diceProbDist(combatDef.defDice, combatDef.defSuccess, combatDef.defRerolls, 0);
   const outcomeOdds = arrayMult(attackerOdds, defenderOdds);

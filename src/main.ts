@@ -245,20 +245,6 @@ diceSelectToButtons(false);
 
 const savedCombats: savedCombat[] = [];
 
-function getCurrentInputs(): savedCombat {
-  return {
-    label: `Atk ${atkDiceInp.value}d ${atkTargetInp.value}+ ${atkRerollInp.value}rr / Def ${defDiceInp.value}d ${defTargetInp.value}+ ${defRerollInp.value}rr`,
-    atkDice: parseInt(atkDiceInp.value),
-    atkSuccess: parseInt(atkTargetInp.value),
-    atkRerolls: parseInt(atkRerollInp.value),
-    atkHitsToCrit: parseInt(atkHitstocritsInp.value),
-    atkMissesToHits: parseInt(atkMissestohitsInp.value),
-    defDice: parseInt(defDiceInp.value),
-    defSuccess: parseInt(defTargetInp.value),
-    defRerolls: parseInt(defRerollInp.value),
-  };
-}
-
 function loadCombat(combat: savedCombat) {
   atkDiceInp.value = String(combat.atkDice);
   atkTargetInp.value = String(combat.atkSuccess);
@@ -280,7 +266,9 @@ function renderHistoryList() {
     const tile = document.createElement("button");
     tile.className = "history-tile";
     tile.innerHTML = `
-        <div class="history-pie"></div>
+        <div class="history-pie">
+          ${combat.pieChart && `<svg viewbox=${[-canvasSize / 2, -canvasSize / 2, canvasSize, canvasSize]}>${combat.pieChart?.html()}</svg>`}
+        </div>
         <div class="history-text">
           <div class="history-tile-atk">
             <span>D: ${combat.atkDice}</span>
@@ -309,6 +297,21 @@ function renderHistoryList() {
 }
 
 saveCombatBtn.addEventListener("click", () => {
-  savedCombats.push(getCurrentInputs());
+  const inputs: savedCombat = {
+    label: `Atk ${atkDiceInp.value}d ${atkTargetInp.value}+ ${atkRerollInp.value}rr / Def ${defDiceInp.value}d ${defTargetInp.value}+ ${defRerollInp.value}rr`,
+    atkDice: parseInt(atkDiceInp.value),
+    atkSuccess: parseInt(atkTargetInp.value),
+    atkRerolls: parseInt(atkRerollInp.value),
+    atkHitsToCrit: parseInt(atkHitstocritsInp.value),
+    atkMissesToHits: parseInt(atkMissestohitsInp.value),
+    defDice: parseInt(defDiceInp.value),
+    defSuccess: parseInt(defTargetInp.value),
+    defRerolls: parseInt(defRerollInp.value),
+  };
+  const results = calculateUWAttack(inputs);
+  const simplePie = pieChart.simplePie(calcResultsToPieData(results));
+  console.log(simplePie);
+  inputs.pieChart = simplePie;
+  savedCombats.push(inputs);
   renderHistoryList();
 });
