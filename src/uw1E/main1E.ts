@@ -184,7 +184,10 @@ const calcResultsToPieData = (results: calcResult1E): ResultData => {
     winners: [
       { name: "misses", value: results.misses },
       { name: "draws", value: results.draws },
-      { name: "hits", value: results.hits - results.critHits },
+      { name: "hits", value: results.hits },
+    ],
+    crits: [
+      { name: "non-crits", value: 1.0 - results.critHits },
       { name: "hits-crits", value: results.critHits },
     ],
   };
@@ -196,26 +199,29 @@ const simResultsToPieData = (results: simResults1E): ResultData => {
       { name: "misses", value: results.misses / results.numSimulations },
       { name: "draws", value: results.draws / results.numSimulations },
       { name: "hits", value: (results.hits - results.critHits) / results.numSimulations },
-      { name: "hits-crit", value: results.critHits / results.numSimulations },
+    ],
+    crits: [
+      { name: "non-crits", value: (results.numSimulations - results.critHits) / results.numSimulations },
+      { name: "hits-crits", value: results.critHits / results.numSimulations },
     ],
   };
 };
 
 const calcResultsToTableData = (results: calcResult1E): ResultTableData => {
   return [
-    { name: "hit", value: results.hits },
-    { name: "hit-crit", value: results.critHits },
-    { name: "draw", value: results.draws },
-    { name: "miss", value: results.misses },
+    { name: "hits", value: results.hits },
+    { name: "hits-crits", value: results.critHits },
+    { name: "draws", value: results.draws },
+    { name: "misses", value: results.misses },
   ];
 };
 
 const simResultsToTableData = (results: simResults1E): ResultTableData => {
   return [
-    { name: "hit", value: results.hits / results.numSimulations },
-    { name: "hit-crit", value: results.critHits / results.numSimulations },
-    { name: "draw", value: results.draws / results.numSimulations },
-    { name: "miss", value: results.misses / results.numSimulations },
+    { name: "hits", value: results.hits / results.numSimulations },
+    { name: "hits-crits", value: results.critHits / results.numSimulations },
+    { name: "draws", value: results.draws / results.numSimulations },
+    { name: "misss", value: results.misses / results.numSimulations },
   ];
 };
 

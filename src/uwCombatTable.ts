@@ -27,17 +27,17 @@ const tableDef = [
 ];
 
 const initData1E = [
-  { name: "hit", value: 0.5 },
-  { name: "hit-crit", value: 0.204 },
-  { name: "draw", value: 0.25 },
-  { name: "miss", value: 0.25 },
+  { name: "hits", value: 0.5 },
+  { name: "hits-crits", value: 0.204 },
+  { name: "draws", value: 0.25 },
+  { name: "misses", value: 0.25 },
 ];
 
 const tableDef1E = [
-  { title: "Hit", id: "hit-row", iconColor: "#ca5252ff", iconPattern: undefined },
-  { title: "Critical hit", id: "hit-crit-row", iconColor: "#ca5252ff", iconPattern: "diagonal-hatch" },
-  { title: "Draw", id: "draw-row", iconColor: "#9c9c9cff", iconPattern: undefined },
-  { title: "Miss", id: "miss-row", iconColor: "#6d60faff", iconPattern: undefined },
+  { title: "Hit", id: "hits-row", iconColor: "#ca5252ff", iconPattern: undefined },
+  { title: "Critical hit", id: "hits-crits-row", iconColor: "#ca5252ff", iconPattern: "diagonal-hatch" },
+  { title: "Draw", id: "draws-row", iconColor: "#9c9c9cff", iconPattern: undefined },
+  { title: "Miss", id: "misses-row", iconColor: "#6d60faff", iconPattern: undefined },
 ];
 
 export class UWCombatTable {

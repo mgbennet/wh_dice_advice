@@ -1,21 +1,14 @@
 import * as d3 from "d3";
 import { diagonalLinePattern } from "../patterns";
+import { PieData, ResultData } from "../uwCombatPie";
 import { BaseType } from "d3";
-
-export interface ResultData {
-  winners: Array<PieData>;
-}
-
-export interface PieData {
-  name: string;
-  value: number;
-}
 
 const colorDefs = {
   "misses": "#6d60faff",
   "draws": "#9c9c9cff",
   "hits": "#ca5252ff",
-  "hits-crit": "url(#red-diagonal-hatch)",
+  "hits-crits": "url(#diagonal-hatch)",
+  "non-crits": "#0000",
 };
 const color = d3.scaleOrdinal<string>()
   .domain(Object.keys(colorDefs))
@@ -25,16 +18,12 @@ const initData = {
   winners: [
     { name: "misses", value: 0.25 },
     { name: "draws", value: 0.25 },
-    { name: "hits", value: 0.296 },
-    { name: "hits-crit", value: 0.204 },
+    { name: "hits", value: 0.5 },
   ],
-};
-
-const namesToLabels = {
-  "misses": "Misses",
-  "draws": "Draws",
-  "hits": "Hits",
-  "hits-crit": "Crit Hits",
+  crits: [
+    { name: "non-crits", value: 0.796 },
+    { name: "hits-crits", value: 0.204 },
+  ],
 };
 
 export class UW1ECombatPie {
@@ -67,6 +56,7 @@ export class UW1ECombatPie {
     defs.append(() => diagonalLinePattern("red-diagonal-hatch", "#ca5252ff"));
 
     const winnersArcs = this.pie(initData.winners);
+    const critsArcs = this.pie(initData.crits);
 
     svg.append("g")
       .attr("id", "winners")
@@ -75,6 +65,15 @@ export class UW1ECombatPie {
       .join("path")
       .attr("fill", d => color(d.data.name))
       .attr("d", this.innerArc)
+      .each((d) => { this.previous[d.data.name] = d; });
+
+    svg.append("g")
+      .attr("id", "crits")
+      .selectAll("path")
+      .data(critsArcs)
+      .join("path")
+      .attr("d", this.innerArc)
+      .attr("fill", d => color(d.data.name))
       .each((d) => { this.previous[d.data.name] = d; });
 
     // labels
@@ -86,11 +85,11 @@ export class UW1ECombatPie {
       .join("text")
       .attr("transform", d => `translate(${this.labelArc.centroid(d)})`)
       .attr("fill", "#FFF")
-      .call(text => text.append("tspan")
+      .call(text => text.filter(d => (d.endAngle - d.startAngle) > 0.1).append("tspan")
         .attr("class", "labelName")
         .attr("y", "-0.4em")
         .attr("font-weight", "bold")
-        .text(d => namesToLabels[d.data.name]))
+        .text(d => d.data.name))
       .call(text => text.filter(d => (d.endAngle - d.startAngle) > 0.25).append("tspan")
         .attr("class", "percentLabel")
         .attr("x", 0)
@@ -109,11 +108,18 @@ export class UW1ECombatPie {
     };
 
     const winnersArcs = this.pie(data.winners);
+    const critsArcs = this.pie(data.crits);
 
     const svg = d3.select(this.svgId);
     svg.selectAll("#winners")
       .selectAll("path")
       .data(winnersArcs)
+      .transition()
+      .duration(transitionDur)
+      .attrTween("d", arcTween);
+    svg.selectAll("#crits")
+      .selectAll("path")
+      .data(critsArcs)
       .transition()
       .duration(transitionDur)
       .attrTween("d", arcTween);
