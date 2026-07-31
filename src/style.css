@@ -37,6 +37,10 @@ body {
   width: 0;
 }
 
+a {
+  color: #eee;
+}
+
 h1 {
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
   line-height: 1;
@@ -51,6 +55,11 @@ h1 {
   
   span:nth-child(5) {
     font-size: 26px;
+  }
+  
+  span:nth-child(7) {
+    font-size: 16px;
+    font-style: italic;
   }
 }
 
@@ -465,8 +474,4 @@ td:last-child {
   color: #888;
   margin-top: 2rem;
   line-height: 1.0;
-}
-
-#legal-footer a {
-  color: #eee;
 }

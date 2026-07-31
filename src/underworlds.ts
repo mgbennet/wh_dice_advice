@@ -20,7 +20,7 @@ export interface uwCombatSim extends uwCombatDef {
 export interface savedCombat extends uwCombatDef {
   label: string;
   pieChart?: d3.Selection<SVGSVGElement, undefined, null, undefined>;
-  simuulations?: number;
+  simulations?: number;
 }
 
 // Odds for each possibility of a given UWs combat.

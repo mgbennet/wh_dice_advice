@@ -33,13 +33,12 @@
         <p>After rolling and rerolls, change misses to successes. The effects of cards like Out of Nowhere or Henchman can be modeled with this.</p>
         <button autofocus class="close-dialog-btn" popovertarget="missestohits-info-dialog" popovertargetaction="hide">Close</button>
       </dialog>
-      <h1><span>Dice Advice</span><br><span>for</span><br><span>Warhammer Underworlds</span></h1>
+      <h1><span>Dice Advice</span><br><span>for</span><br><span>Warhammer Underworlds</span><br><span>(first edition)</span></h1>
       <div id="description-block">
         <details>
-          <summary>Combat outcome probabilities in Warhammer Underworlds 2nd edition.&nbsp;</summary>
+          <summary>Combat outcome probabilities in Warhammer Underworlds 1st edition.&nbsp;</summary>
           <p>The success target is a conversion of the Underworlds combat dice to a traditional d6; lowering the number improves the accuracy of the attack. For example, lower the number by one for flanking and by two for surrounding.</p>
           <p>Results are calculated with polynomial distributions. You can instead use a Monte Carlo simulation to calculate the results; they should be the same, but it's easier for me to implement the Monte Carlo simulation correctly.</p>
-          <p>For those of you still playing it, try the <a href="/wh_dice_advice/pages/uw_first_ed.html">1st edition attack calculator</a>!</p>
         </details>
       </div>
       <div id="inputs-wrapper">
@@ -213,11 +212,11 @@
     </div>
     <div id="legal-footer">
       <button id="monteCarloToggle" class="toMonteCarlo" title="Use Monte Carlo simulations"></button>
-      <p>Try <a class="edition-link" href="/wh_dice_advice/pages/uw_first_ed.html">Underworlds 1st edition dice advice</a></p>
+      <p>Back to <a class="edition-link" href="/">Underworlds 2nd edition dice advice</a></p>
       <p>Licensed under a <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International</a> License.</p>
       <p>This site is not endorsed by or affiliated with Games Workshop Limited.</p>
     </div>
   </div>
-  <script type="module" src="/src/main.ts"></script>
+  <script type="module" src="/src/uw1E/main1E.ts"></script>
 </body>
 </html>
