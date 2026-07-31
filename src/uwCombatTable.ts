@@ -26,30 +26,46 @@ const tableDef = [
   { title: "No push", id: "no-push-row", iconColor: "#e6f334ff", iconPattern: undefined },
 ];
 
+const initData1E = [
+  { name: "hit", value: 0.5 },
+  { name: "hit-crit", value: 0.204 },
+  { name: "draw", value: 0.25 },
+  { name: "miss", value: 0.25 },
+];
+
+const tableDef1E = [
+  { title: "Hit", id: "hit-row", iconColor: "#ca5252ff", iconPattern: undefined },
+  { title: "Critical hit", id: "hit-crit-row", iconColor: "#ca5252ff", iconPattern: "diagonal-hatch" },
+  { title: "Draw", id: "draw-row", iconColor: "#9c9c9cff", iconPattern: undefined },
+  { title: "Miss", id: "miss-row", iconColor: "#6d60faff", iconPattern: undefined },
+];
+
 export class UWCombatTable {
   divId: string;
 
-  constructor(divId: string) {
+  constructor(divId: string, firstE?: boolean) {
     this.divId = divId;
     const div = document.querySelector(`#${divId}`);
     const table = document.createElement("table");
     const tbody = document.createElement("tbody");
-    for (let i = 0; i < 10; i++) {
+    const numRows = firstE ? tableDef1E.length : tableDef.length;
+    for (let i = 0; i < numRows; i++) {
       const row = document.createElement("tr");
-      row.id = tableDef[i].id;
+      const def = firstE ? tableDef1E[i] : tableDef[i];
+      row.id = def.id;
       const iconCell = document.createElement("td");
       const iconSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      iconSvg.style = `background-color: ${tableDef[i].iconColor}; width: 16px; height: 16px`;
-      if (tableDef[i].iconPattern) {
+      iconSvg.style = `background-color: ${def.iconColor}; width: 16px; height: 16px`;
+      if (def.iconPattern) {
         const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        rect.setAttribute("fill", `url(#${tableDef[i].iconPattern})`);
+        rect.setAttribute("fill", `url(#${def.iconPattern})`);
         rect.setAttribute("width", "16");
         rect.setAttribute("height", "16");
         iconSvg.appendChild(rect);
       }
       iconCell.appendChild(iconSvg);
       const titleCell = document.createElement("td");
-      titleCell.textContent = tableDef[i].title;
+      titleCell.textContent = def.title;
       const numberCell = document.createElement("td");
       numberCell.textContent = "-";
       row.appendChild(iconCell);
@@ -59,7 +75,7 @@ export class UWCombatTable {
     }
     table.appendChild(tbody);
     div?.appendChild(table);
-    this.draw(initData);
+    this.draw(firstE ? initData1E : initData);
   }
 
   draw(data: ResultTableData) {

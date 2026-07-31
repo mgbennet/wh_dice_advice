@@ -2,12 +2,11 @@ import {
   calculateUWAttack,
   savedCombat,
   simulateUWAttacks,
-  simulationResults,
-  uwCombatCalcResult,
 } from "../underworlds";
-import { UWCombatPie, ResultData } from "../uwCombatPie";
+import { UW1ECombatPie, ResultData } from "./uw1ECombatPie";
 import * as d3 from "d3";
 import { ResultTableData, UWCombatTable } from "../uwCombatTable";
+import { calcResult1E, simResults1E } from "./underworlds1E";
 
 const rollBtn = <HTMLButtonElement>document.getElementById("roll-btn")!;
 const numSimulationsInp = <HTMLInputElement>document.getElementById("num-simulations")!;
@@ -43,9 +42,9 @@ d3.select("#chart").append("svg")
   .attr("id", svgId)
   .attr("style", `max-width: ${canvasSize}px; max-height: ${canvasSize}px`)
   .attr("viewBox", [-canvasSize / 2, -canvasSize / 2, canvasSize, canvasSize]);
-const pieChart = new UWCombatPie(`#${svgId}`, canvasSize);
+const pieChart = new UW1ECombatPie(`#${svgId}`, canvasSize);
 
-const table = new UWCombatTable("results-table");
+const table = new UWCombatTable("results-table", true);
 
 // Button actions
 rollBtn.addEventListener("click", () => {
@@ -60,8 +59,15 @@ rollBtn.addEventListener("click", () => {
     defSuccess: parseInt(defTargetInp.value),
     defRerolls: parseInt(defRerollInp.value),
   });
-  pieChart.update(simResultsToPieData(results));
-  table.draw(simResultsToTableData(results));
+  const tempResults = {
+    hits: results.attackerWins.count,
+    critHits: results.attackerWins.attackerCritWins,
+    draws: results.ties.count,
+    misses: results.defenderWins.count,
+    numSimulations: results.numSimulations,
+  };
+  pieChart.update(simResultsToPieData(tempResults));
+  table.draw(simResultsToTableData(tempResults));
 });
 
 for (let i = 0; i < inputNames.length; i++) {
@@ -127,8 +133,14 @@ inputs.forEach((element) => {
         defSuccess: parseInt(defTargetInp.value),
         defRerolls: parseInt(defRerollInp.value),
       });
-      pieChart.update(calcResultsToPieData(results));
-      table.draw(calcResultsToTableData(results));
+      const tempResults = {
+        hits: results.success,
+        critHits: results.successOverrun,
+        draws: results.tie,
+        misses: results.failure,
+      };
+      pieChart.update(calcResultsToPieData(tempResults));
+      table.draw(calcResultsToTableData(tempResults));
     }
   });
 });
@@ -167,74 +179,43 @@ const diceSelectToButtons = (setAtker: boolean) => {
   }
 };
 
-const calcResultsToPieData = (results: uwCombatCalcResult): ResultData => {
+const calcResultsToPieData = (results: calcResult1E): ResultData => {
   return {
     winners: [
-      { name: "failure", value: results.failure },
-      { name: "tie", value: results.tie },
-      { name: "success", value: results.success },
-    ],
-    crits: [
-      { name: "failure-crits", value: results.failure },
-      { name: "tie-standfast", value: results.tieStandfast },
-      { name: "tie-none", value: results.tie - results.tieOverrun - results.tieStandfast },
-      { name: "tie-overrun", value: results.tieOverrun },
-      { name: "success-standfast", value: results.successStandfast },
-      { name: "success-none", value: results.success - results.successOverrun - results.successStandfast },
-      { name: "success-overrun", value: results.successOverrun },
+      { name: "misses", value: results.misses },
+      { name: "draws", value: results.draws },
+      { name: "hits", value: results.hits - results.critHits },
+      { name: "hits-crits", value: results.critHits },
     ],
   };
 };
 
-const simResultsToPieData = (results: simulationResults): ResultData => {
+const simResultsToPieData = (results: simResults1E): ResultData => {
   return {
     winners: [
-      { name: "failure", value: results.defenderWins.count / results.numSimulations },
-      { name: "tie", value: results.ties.count / results.numSimulations },
-      { name: "success", value: results.attackerWins.count / results.numSimulations },
-    ],
-    crits: [
-      { name: "failure-crits", value: results.defenderWins.count / results.numSimulations },
-      { name: "tie-standfast", value: results.ties.defenderCritWins / results.numSimulations },
-      { name: "tie-none", value: (results.ties.count - results.ties.defenderCritWins - results.ties.attackerCritWins) / results.numSimulations },
-      { name: "tie-overrun", value: results.ties.attackerCritWins / results.numSimulations },
-      { name: "success-standfast", value: results.attackerWins.defenderCritWins / results.numSimulations },
-      { name: "success-none", value: (results.attackerWins.count - results.attackerWins.defenderCritWins - results.attackerWins.attackerCritWins) / results.numSimulations },
-      { name: "success-overrun", value: results.attackerWins.attackerCritWins / results.numSimulations },
+      { name: "misses", value: results.misses / results.numSimulations },
+      { name: "draws", value: results.draws / results.numSimulations },
+      { name: "hits", value: (results.hits - results.critHits) / results.numSimulations },
+      { name: "hits-crit", value: results.critHits / results.numSimulations },
     ],
   };
 };
 
-const calcResultsToTableData = (results: uwCombatCalcResult): ResultTableData => {
+const calcResultsToTableData = (results: calcResult1E): ResultTableData => {
   return [
-    { name: "success", value: results.success },
-    { name: "success-overrun", value: results.successOverrun },
-    { name: "success-standfast", value: results.successStandfast },
-    { name: "tie", value: results.tie },
-    { name: "tie-overrun", value: results.tieOverrun },
-    { name: "tie-standfast", value: results.tieStandfast },
-    { name: "failure", value: results.failure },
-    { name: "push", value: results.success + results.tie - results.tieStandfast - results.successStandfast },
-    { name: "push-overrun", value: results.successOverrun + results.tieOverrun },
-    { name: "no-push", value: results.failure + results.tieStandfast + results.successStandfast },
+    { name: "hit", value: results.hits },
+    { name: "hit-crit", value: results.critHits },
+    { name: "draw", value: results.draws },
+    { name: "miss", value: results.misses },
   ];
 };
 
-const simResultsToTableData = (results: simulationResults): ResultTableData => {
-  const pushOverruns = results.attackerWins.attackerCritWins + results.ties.attackerCritWins;
-  const noPushes = results.attackerWins.defenderCritWins + results.ties.defenderCritWins + results.defenderWins.count;
-  const pushes = results.numSimulations - noPushes;
+const simResultsToTableData = (results: simResults1E): ResultTableData => {
   return [
-    { name: "success", value: results.attackerWins.count / results.numSimulations },
-    { name: "success-overrun", value: results.attackerWins.attackerCritWins / results.numSimulations },
-    { name: "success-standfast", value: results.attackerWins.defenderCritWins / results.numSimulations },
-    { name: "tie", value: results.ties.count / results.numSimulations },
-    { name: "tie-overrun", value: results.ties.attackerCritWins / results.numSimulations },
-    { name: "tie-standfast", value: results.ties.defenderCritWins / results.numSimulations },
-    { name: "failure", value: results.defenderWins.count / results.numSimulations },
-    { name: "push", value: pushes / results.numSimulations },
-    { name: "push-overrun", value: pushOverruns / results.numSimulations },
-    { name: "no-push", value: noPushes / results.numSimulations },
+    { name: "hit", value: results.hits / results.numSimulations },
+    { name: "hit-crit", value: results.critHits / results.numSimulations },
+    { name: "draw", value: results.draws / results.numSimulations },
+    { name: "miss", value: results.misses / results.numSimulations },
   ];
 };
 
@@ -311,9 +292,15 @@ saveCombatBtn.addEventListener("click", () => {
     defSuccess: parseInt(defTargetInp.value),
     defRerolls: parseInt(defRerollInp.value),
   };
+  const tempResults = calculateUWAttack(inputs);
+
   const simplePie = pieChart.simplePie(
-    calcResultsToPieData(
-      calculateUWAttack(inputs)));
+    calcResultsToPieData({
+      hits: tempResults.success - tempResults.successOverrun,
+      critHits: tempResults.successOverrun,
+      draws: tempResults.tie,
+      misses: tempResults.failure,
+    }));
   inputs.pieChart = simplePie;
   savedCombats.push(inputs);
   renderHistoryList();

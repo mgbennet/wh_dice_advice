@@ -18,20 +18,16 @@ export interface uw1ECombatSim extends uw1ECombatDef {
   simulations: number;
 }
 
-// Counts of outcomes for a batch of simulations
-export interface simulationResults1E {
+// Odds for each possibility of a given UWs combat.
+// Each number is between 0 and 1.0. success + tie + failure = 1.0
+export interface calcResult1E {
   critHits: number;
   hits: number;
   draws: number;
   misses: number;
-  numSimulations: number;
 }
 
-// Odds for each possibility of a given UWs combat.
-// Each number is between 0 and 1.0. success + tie + failure = 1.0
-export interface uw1ECombatCalcResult {
-  critHit: number;
-  hit: number;
-  draw: number;
-  miss: number;
+// Counts of outcomes for a batch of simulations
+export interface simResults1E extends calcResult1E {
+  numSimulations: number;
 }

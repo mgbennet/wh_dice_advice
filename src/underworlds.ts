@@ -73,7 +73,7 @@ export interface simulationResults {
  */
 export function simulateUWAttacks(simulation: uwCombatSim): simulationResults {
   // roll the dice
-  const results = [];
+  const results: uwCombatResult[] = [];
   for (let i = 0; i < simulation.simulations; i++) {
     const attackDice = reroll(dicePool(simulation.atkDice), simulation.atkSuccess, simulation.atkRerolls);
     if (simulation.atkHitsToCrit) {
