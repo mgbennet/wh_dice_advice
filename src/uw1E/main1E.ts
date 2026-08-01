@@ -1,12 +1,8 @@
-import {
-  calculateUWAttack,
-  savedCombat,
-} from "../underworlds";
-import { UW1ECombatPie } from "./uw1ECombatPie";
 import * as d3 from "d3";
 import { ResultTableData, UWCombatTable } from "../uwCombatTable";
-import { calcResult1E, simResults1E, simulateUWAttacks } from "./underworlds1E";
+import { calculateUWAttack, calcResult1E, simResults1E, simulateUWAttacks, uw1ESavedCombat } from "./underworlds1E";
 import { ResultData } from "../uwCombatPie";
+import { UW1ECombatPie } from "./uw1ECombatPie";
 
 const rollBtn = <HTMLButtonElement>document.getElementById("roll-btn")!;
 const numSimulationsInp = <HTMLInputElement>document.getElementById("num-simulations")!;
@@ -128,15 +124,12 @@ inputs.forEach((element) => {
         defDice: parseInt(defDiceInp.value),
         defSuccess: parseInt(defTargetInp.value),
         defRerolls: parseInt(defRerollInp.value),
+        attackInnate: 0,
+        defenderInnate: 0,
+        trapped: false,
       });
-      const tempResults = {
-        hits: results.success,
-        critHits: results.successOverrun,
-        draws: results.tie,
-        misses: results.failure,
-      };
-      pieChart.update(calcResultsToPieData(tempResults));
-      table.draw(calcResultsToTableData(tempResults));
+      pieChart.update(calcResultsToPieData(results));
+      table.draw(calcResultsToTableData(results));
     }
   });
 });
@@ -226,9 +219,9 @@ inputs[0].dispatchEvent(new Event("change"));
 diceSelectToButtons(true);
 diceSelectToButtons(false);
 
-const savedCombats: savedCombat[] = [];
+const savedCombats: uw1ESavedCombat[] = [];
 
-function loadCombat(combat: savedCombat) {
+function loadCombat(combat: uw1ESavedCombat) {
   atkDiceInp.value = String(combat.atkDice);
   atkTargetInp.value = String(combat.atkSuccess);
   atkRerollInp.value = String(combat.atkRerolls);
@@ -283,7 +276,7 @@ function renderHistoryList() {
 }
 
 saveCombatBtn.addEventListener("click", () => {
-  const inputs: savedCombat = {
+  const inputs: uw1ESavedCombat = {
     label: `Atk ${atkDiceInp.value}d ${atkTargetInp.value}+ ${atkRerollInp.value}rr / Def ${defDiceInp.value}d ${defTargetInp.value}+ ${defRerollInp.value}rr`,
     atkDice: parseInt(atkDiceInp.value),
     atkSuccess: parseInt(atkTargetInp.value),
@@ -293,16 +286,13 @@ saveCombatBtn.addEventListener("click", () => {
     defDice: parseInt(defDiceInp.value),
     defSuccess: parseInt(defTargetInp.value),
     defRerolls: parseInt(defRerollInp.value),
+    attackInnate: 0,
+    defenderInnate: 0,
+    trapped: false,
   };
-  const tempResults = calculateUWAttack(inputs);
+  const results = calculateUWAttack(inputs);
 
-  const simplePie = pieChart.simplePie(
-    calcResultsToPieData({
-      hits: tempResults.success - tempResults.successOverrun,
-      critHits: tempResults.successOverrun,
-      draws: tempResults.tie,
-      misses: tempResults.failure,
-    }));
+  const simplePie = pieChart.simplePie(calcResultsToPieData(results));
   inputs.pieChart = simplePie;
   savedCombats.push(inputs);
   renderHistoryList();

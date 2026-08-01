@@ -1,4 +1,5 @@
 import { changeDiceResults, dicePool, reroll } from "../dice";
+import { critProbDist } from "../probCalc";
 import { uwCombatDef } from "../underworlds";
 
 // All possible outcomes of a 1st edition combat
@@ -17,6 +18,12 @@ export interface uw1ECombatDef extends uwCombatDef {
 
 export interface uw1ECombatSim extends uw1ECombatDef {
   simulations: number;
+}
+
+export interface uw1ESavedCombat extends uw1ECombatDef {
+  label: string;
+  pieChart?: d3.Selection<SVGSVGElement, undefined, null, undefined>;
+  simulations?: number;
 }
 
 // Odds for each possibility of a given UWs combat.
@@ -108,4 +115,59 @@ function evaluateCombat(
       return CombatResult1E.Draw;
     }
   }
+}
+
+/**
+ * Precisly calculates the probable outcomes for an UWs combat.
+ * @param combatDef Object containing all parameters of an UWs combat
+ * @returns Odds for each possible outcome of the combat
+ */
+export function calculateUWAttack(combatDef: uw1ECombatDef): calcResult1E {
+  const atkCritsOdds = critProbDist(
+    combatDef.atkDice,
+    combatDef.atkSuccess,
+    combatDef.atkRerolls,
+    combatDef.atkHitsToCrit,
+    combatDef.atkMissesToHits,
+  );
+  const defCritsOdds = critProbDist(
+    combatDef.defDice,
+    combatDef.defSuccess,
+    combatDef.defRerolls,
+    0,
+  );
+  let critHits = 0, hits = 0, draws = 0, misses = 0;
+  for (let atkCrits = 0; atkCrits < atkCritsOdds.length; atkCrits++) {
+    for (let atkHits = 0; atkHits < atkCritsOdds[atkCrits].length; atkHits++) {
+      for (let defCrits = 0; defCrits < defCritsOdds.length; defCrits++) {
+        for (let defHits = 0; defHits < defCritsOdds[defCrits].length; defHits++) {
+          const odds = atkCritsOdds[atkCrits][atkHits] * defCritsOdds[defCrits][defHits];
+          if (atkCrits > defCrits) {
+            critHits += odds;
+            hits += odds;
+          } else if (atkCrits < defCrits) {
+            misses += odds;
+          } else {
+            if (atkCrits + atkHits > defCrits + defHits) {
+              hits += odds;
+              if (atkCrits > 0) {
+                critHits += odds;
+              }
+            } else if (atkCrits + atkHits < defCrits + defHits || atkCrits + atkHits === 0) {
+              misses += odds;
+            } else {
+              draws += odds;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return {
+    critHits: critHits,
+    hits: hits,
+    draws: draws,
+    misses: misses,
+  };
 }
