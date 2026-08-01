@@ -1,12 +1,12 @@
 import {
   calculateUWAttack,
   savedCombat,
-  simulateUWAttacks,
 } from "../underworlds";
-import { UW1ECombatPie, ResultData } from "./uw1ECombatPie";
+import { UW1ECombatPie } from "./uw1ECombatPie";
 import * as d3 from "d3";
 import { ResultTableData, UWCombatTable } from "../uwCombatTable";
-import { calcResult1E, simResults1E } from "./underworlds1E";
+import { calcResult1E, simResults1E, simulateUWAttacks } from "./underworlds1E";
+import { ResultData } from "../uwCombatPie";
 
 const rollBtn = <HTMLButtonElement>document.getElementById("roll-btn")!;
 const numSimulationsInp = <HTMLInputElement>document.getElementById("num-simulations")!;
@@ -58,16 +58,12 @@ rollBtn.addEventListener("click", () => {
     defDice: parseInt(defDiceInp.value),
     defSuccess: parseInt(defTargetInp.value),
     defRerolls: parseInt(defRerollInp.value),
+    attackInnate: 0,
+    defenderInnate: 0,
+    trapped: false,
   });
-  const tempResults = {
-    hits: results.attackerWins.count,
-    critHits: results.attackerWins.attackerCritWins,
-    draws: results.ties.count,
-    misses: results.defenderWins.count,
-    numSimulations: results.numSimulations,
-  };
-  pieChart.update(simResultsToPieData(tempResults));
-  table.draw(simResultsToTableData(tempResults));
+  pieChart.update(simResultsToPieData(results));
+  table.draw(simResultsToTableData(results));
 });
 
 for (let i = 0; i < inputNames.length; i++) {
@@ -198,7 +194,7 @@ const simResultsToPieData = (results: simResults1E): ResultData => {
     winners: [
       { name: "misses", value: results.misses / results.numSimulations },
       { name: "draws", value: results.draws / results.numSimulations },
-      { name: "hits", value: (results.hits - results.critHits) / results.numSimulations },
+      { name: "hits", value: results.hits / results.numSimulations },
     ],
     crits: [
       { name: "non-crits", value: (results.numSimulations - results.critHits) / results.numSimulations },

@@ -1,4 +1,4 @@
-import { dicePool, reroll } from "./dice";
+import { changeDiceResults, dicePool, reroll } from "./dice";
 import { arrayMult, critProbDist, diceProbDist } from "./probCalc";
 
 // All requirements for defining a UWs combat
@@ -75,26 +75,22 @@ export function simulateUWAttacks(simulation: uwCombatSim): simulationResults {
   // roll the dice
   const results: uwCombatResult[] = [];
   for (let i = 0; i < simulation.simulations; i++) {
-    const attackDice = reroll(dicePool(simulation.atkDice), simulation.atkSuccess, simulation.atkRerolls);
+    let attackDice = reroll(dicePool(simulation.atkDice), simulation.atkSuccess, simulation.atkRerolls);
     if (simulation.atkHitsToCrit) {
-      let changedCount = 0;
-      for (let i = 0; i < attackDice.length; i++) {
-        if (attackDice[i] >= simulation.atkSuccess && attackDice[i] !== 6) {
-          attackDice[i] = 6;
-          if (++changedCount >= simulation.atkHitsToCrit)
-            break;
-        }
-      }
+      attackDice = changeDiceResults(
+        attackDice,
+        n => n >= simulation.atkSuccess && n !== 6,
+        6,
+        simulation.atkHitsToCrit,
+      );
     }
     if (simulation.atkMissesToHits) {
-      let changedCount = 0;
-      for (let i = 0; i < attackDice.length; i++) {
-        if (attackDice[i] < simulation.atkSuccess) {
-          attackDice[i] = simulation.atkSuccess;
-          if (++changedCount >= simulation.atkMissesToHits)
-            break;
-        }
-      }
+      attackDice = changeDiceResults(
+        attackDice,
+        n => n < simulation.atkSuccess,
+        simulation.atkSuccess,
+        simulation.atkMissesToHits,
+      );
     }
     const defenseDice = reroll(dicePool(simulation.defDice), simulation.defSuccess, simulation.defRerolls);
     results.push(evaluateCombat(attackDice, simulation.atkSuccess, defenseDice, simulation.defSuccess));
@@ -141,10 +137,10 @@ function evaluateCombat(
   defDice: number[],
   defSuccess: number,
 ): uwCombatResult {
-  const atkSuccesses = atkDice.reduce((wins, cur) => cur >= atkSuccess ? wins + 1 : wins, 0);
-  const atkCrits = atkDice.reduce((wins, cur) => cur === 6 ? wins + 1 : wins, 0);
-  const defSuccesses = defDice.reduce((wins, cur) => cur >= defSuccess ? wins + 1 : wins, 0);
-  const defCrits = defDice.reduce((wins, cur) => cur === 6 ? wins + 1 : wins, 0);
+  const atkSuccesses = atkDice.reduce((count, d) => d >= atkSuccess ? count + 1 : count, 0);
+  const atkCrits = atkDice.reduce((count, d) => d === 6 ? count + 1 : count, 0);
+  const defSuccesses = defDice.reduce((count, d) => d >= defSuccess ? count + 1 : count, 0);
+  const defCrits = defDice.reduce((count, d) => d === 6 ? count + 1 : count, 0);
   return {
     winner: atkSuccesses == defSuccesses && atkSuccesses > 0
       ? CombatWinner.Tie
