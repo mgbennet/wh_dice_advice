@@ -3,4 +3,12 @@ export default {
   test: {
     setupFiles: ["/tests/testUtils.ts"],
   },
+  build: {
+    rollupOptions: {
+      input: {
+        main: "index.html",
+        firstEd: "pages/uwfirstedition.html",
+      },
+    },
+  },
 };
