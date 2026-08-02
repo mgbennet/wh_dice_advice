@@ -12,8 +12,8 @@ export enum CombatResult1E {
 
 export interface uw1ECombatDef extends uwCombatDef {
   trapped: boolean;
-  attackInnate: number;
-  defenderInnate: number;
+  atkInnates: number;
+  defInnates: number;
 }
 
 export interface uw1ECombatSim extends uw1ECombatDef {
@@ -65,7 +65,7 @@ export function simulateUWAttacks(simulation: uw1ECombatSim): simResults1E {
       );
     }
     const defenseDice = reroll(dicePool(simulation.defDice), simulation.defSuccess, simulation.defRerolls);
-    results.push(evaluateCombat(attackDice, simulation.atkSuccess, defenseDice, simulation.defSuccess));
+    results.push(evaluateCombat(attackDice, defenseDice, simulation));
   }
 
   // summarize the results
@@ -90,18 +90,22 @@ export function simulateUWAttacks(simulation: uw1ECombatSim): simResults1E {
  * @param atkSuccess Hit requirement for the attacker
  * @param defDice Dice rolls of the defender
  * @param defSuccess Hit requirement for the defender
- * @returns
+ * @returns The result of the attack
  */
 function evaluateCombat(
   atkDice: number[],
-  atkSuccess: number,
   defDice: number[],
-  defSuccess: number,
+  simulation: uw1ECombatSim,
 ): CombatResult1E {
-  const atkSuccesses = atkDice.reduce((count, d) => d >= atkSuccess ? count + 1 : count, 0);
+  let atkSuccesses = atkDice.reduce((count, d) => d >= simulation.atkSuccess ? count + 1 : count, 0);
   const atkCrits = atkDice.reduce((count, d) => d === 6 ? count + 1 : count, 0);
-  const defSuccesses = defDice.reduce((count, d) => d >= defSuccess ? count + 1 : count, 0);
+  let defSuccesses = defDice.reduce((count, d) => d >= simulation.defSuccess ? count + 1 : count, 0);
   const defCrits = defDice.reduce((count, d) => d === 6 ? count + 1 : count, 0);
+  if (simulation.trapped && atkSuccesses >= 1) {
+    atkSuccesses += 1;
+  }
+  atkSuccesses += simulation.atkInnates;
+  defSuccesses += simulation.defInnates;
   if (atkCrits > defCrits) {
     return CombatResult1E.CritHit;
   } else if (atkCrits < defCrits) {
@@ -142,18 +146,24 @@ export function calculateUWAttack(combatDef: uw1ECombatDef): calcResult1E {
       for (let defCrits = 0; defCrits < defCritsOdds.length; defCrits++) {
         for (let defHits = 0; defHits < defCritsOdds[defCrits].length; defHits++) {
           const odds = atkCritsOdds[atkCrits][atkHits] * defCritsOdds[defCrits][defHits];
+          let atkSuccesses = atkHits + atkCrits + combatDef.atkInnates;
+          if (combatDef.trapped && atkHits + atkCrits >= 1) {
+            atkSuccesses += 1;
+          }
+          const defSuccesses = defHits + defCrits + combatDef.defInnates;
+
           if (atkCrits > defCrits) {
             critHits += odds;
             hits += odds;
           } else if (atkCrits < defCrits) {
             misses += odds;
           } else {
-            if (atkCrits + atkHits > defCrits + defHits) {
+            if (atkSuccesses > defSuccesses) {
               hits += odds;
               if (atkCrits > 0) {
                 critHits += odds;
               }
-            } else if (atkCrits + atkHits < defCrits + defHits || atkCrits + atkHits === 0) {
+            } else if (atkSuccesses < defSuccesses || atkSuccesses === 0) {
               misses += odds;
             } else {
               draws += odds;
@@ -165,9 +175,9 @@ export function calculateUWAttack(combatDef: uw1ECombatDef): calcResult1E {
   }
 
   return {
-    critHits: critHits,
-    hits: hits,
-    draws: draws,
-    misses: misses,
+    critHits,
+    hits,
+    draws,
+    misses,
   };
 }

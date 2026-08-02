@@ -109,6 +109,16 @@
           </div>
           <div id="attacker-advanced-section" style="display:block">
             <div class="input-line">
+              <label for="attacker-innates">
+                Innates
+              </label>
+              <div class="input-elements-div">
+                <button class="inc-btn" id="attacker-innates-inc">+</button>
+                <input type="number" id="attacker-innates" min="0" value="0"/>
+                <button class="dec-btn" id="attacker-innates-dec">-</button>
+              </div>
+            </div>
+            <div class="input-line">
               <label for="attacker-hitstocrits">
                 Hits to crits
               </label>
@@ -128,6 +138,14 @@
                 <input type="number" id="attacker-missestohits" min="0" value="0"/>
                 <button class="dec-btn" id="attacker-missestohits-dec">-</button>
                 <button class="info-toggle-btn toggle-missestohits-info" popovertarget="missestohits-info-dialog">?</button>
+              </div>
+            </div>
+            <div class="input-line">
+              <label for="attacker-trapped">
+                Trapped?
+              </label>
+              <div class="input-elements-div">
+                <input type="checkbox" id="attacker-trapped" />
               </div>
             </div>
           </div>
@@ -189,6 +207,16 @@
               <button class="inc-btn" id="defender-rerolls-inc">+</button>
               <input type="number" id="defender-rerolls" min="0" value="0"/>
               <button class="dec-btn" id="defender-rerolls-dec">-</button>
+            </div>
+          </div>
+          <div class="input-line">
+            <label for="defender-innates">
+              Innates
+            </label>
+            <div class="input-elements-div">
+              <button class="inc-btn" id="defender-innates-inc">+</button>
+              <input type="number" id="defender-innates" min="0" value="0"/>
+              <button class="dec-btn" id="defender-innates-dec">-</button>
             </div>
           </div>
         </div>

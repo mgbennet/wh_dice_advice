@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import { ResultTableData, UWCombatTable } from "../uwCombatTable";
-import { calculateUWAttack, calcResult1E, simResults1E, simulateUWAttacks, uw1ESavedCombat } from "./underworlds1E";
+import { calculateUWAttack, combatResult1E, simResults1E, simulateUWAttacks, uw1ESavedCombat } from "./underworlds1E";
 import { ResultData } from "../uwCombatPie";
 import { UW1ECombatPie } from "./uw1ECombatPie";
 
@@ -10,20 +10,25 @@ const inputNames = [
   "attacker-dice",
   "attacker-target",
   "attacker-rerolls",
+  "attacker-innates",
   "attacker-missestohits",
   "attacker-hitstocrits",
   "defender-dice",
   "defender-target",
   "defender-rerolls",
+  "defender-innates",
 ];
 const atkDiceInp = <HTMLInputElement>document.getElementById("attacker-dice")!;
 const atkTargetInp = <HTMLInputElement>document.getElementById("attacker-target")!;
 const atkRerollInp = <HTMLInputElement>document.getElementById("attacker-rerolls")!;
+const atkInnatesInp = <HTMLInputElement>document.getElementById("attacker-innates")!;
 const atkMissestohitsInp = <HTMLInputElement>document.getElementById("attacker-missestohits")!;
 const atkHitstocritsInp = <HTMLInputElement>document.getElementById("attacker-hitstocrits")!;
+const atkTrappedInp = <HTMLInputElement>document.getElementById("attacker-trapped")!;
 const defDiceInp = <HTMLInputElement>document.getElementById("defender-dice")!;
 const defTargetInp = <HTMLInputElement>document.getElementById("defender-target")!;
 const defRerollInp = <HTMLInputElement>document.getElementById("defender-rerolls")!;
+const defInnatesInp = <HTMLInputElement>document.getElementById("defender-innates")!;
 
 const saveCombatBtn = <HTMLButtonElement>document.getElementById("save-combat")!;
 const historyList = <HTMLDivElement>document.getElementById("history-list")!;
@@ -54,9 +59,9 @@ rollBtn.addEventListener("click", () => {
     defDice: parseInt(defDiceInp.value),
     defSuccess: parseInt(defTargetInp.value),
     defRerolls: parseInt(defRerollInp.value),
-    attackInnate: 0,
-    defenderInnate: 0,
-    trapped: false,
+    atkInnates: parseInt(atkInnatesInp.value),
+    defInnates: parseInt(defInnatesInp.value),
+    trapped: atkTrappedInp.checked,
   });
   pieChart.update(simResultsToPieData(results));
   table.draw(simResultsToTableData(results));
@@ -124,9 +129,9 @@ inputs.forEach((element) => {
         defDice: parseInt(defDiceInp.value),
         defSuccess: parseInt(defTargetInp.value),
         defRerolls: parseInt(defRerollInp.value),
-        attackInnate: 0,
-        defenderInnate: 0,
-        trapped: false,
+        atkInnates: parseInt(atkInnatesInp.value),
+        defInnates: parseInt(defInnatesInp.value),
+        trapped: atkTrappedInp.checked,
       });
       pieChart.update(calcResultsToPieData(results));
       table.draw(calcResultsToTableData(results));
@@ -168,7 +173,7 @@ const diceSelectToButtons = (setAtker: boolean) => {
   }
 };
 
-const calcResultsToPieData = (results: calcResult1E): ResultData => {
+const calcResultsToPieData = (results: combatResult1E): ResultData => {
   return {
     winners: [
       { name: "misses", value: results.misses },
@@ -196,7 +201,7 @@ const simResultsToPieData = (results: simResults1E): ResultData => {
   };
 };
 
-const calcResultsToTableData = (results: calcResult1E): ResultTableData => {
+const calcResultsToTableData = (results: combatResult1E): ResultTableData => {
   return [
     { name: "hits", value: results.hits },
     { name: "hits-crits", value: results.critHits },
@@ -225,11 +230,14 @@ function loadCombat(combat: uw1ESavedCombat) {
   atkDiceInp.value = String(combat.atkDice);
   atkTargetInp.value = String(combat.atkSuccess);
   atkRerollInp.value = String(combat.atkRerolls);
+  atkInnatesInp.value = String(combat.atkInnates);
   atkHitstocritsInp.value = String(combat.atkHitsToCrit);
   atkMissestohitsInp.value = String(combat.atkMissesToHits);
+  atkTrappedInp.checked = combat.trapped;
   defDiceInp.value = String(combat.defDice);
   defTargetInp.value = String(combat.defSuccess);
   defRerollInp.value = String(combat.defRerolls);
+  defInnatesInp.value = String(combat.defInnates);
   diceSelectToButtons(true);
   diceSelectToButtons(false);
   // trigger recalc
@@ -286,12 +294,11 @@ saveCombatBtn.addEventListener("click", () => {
     defDice: parseInt(defDiceInp.value),
     defSuccess: parseInt(defTargetInp.value),
     defRerolls: parseInt(defRerollInp.value),
-    attackInnate: 0,
-    defenderInnate: 0,
-    trapped: false,
+    atkInnates: parseInt(atkInnatesInp.value),
+    defInnates: parseInt(defInnatesInp.value),
+    trapped: atkTrappedInp.checked,
   };
   const results = calculateUWAttack(inputs);
-
   const simplePie = pieChart.simplePie(calcResultsToPieData(results));
   inputs.pieChart = simplePie;
   savedCombats.push(inputs);
