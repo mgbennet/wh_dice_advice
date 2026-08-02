@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import { ResultTableData, UWCombatTable } from "../uwCombatTable";
-import { calculateUWAttack, combatResult1E, simResults1E, simulateUWAttacks, uw1ESavedCombat } from "./underworlds1E";
+import { calculateUWAttack, calcResult1E, simResults1E, simulateUWAttacks, uw1ESavedCombat } from "./underworlds1E";
 import { ResultData } from "../uwCombatPie";
 import { UW1ECombatPie } from "./uw1ECombatPie";
 
@@ -173,7 +173,7 @@ const diceSelectToButtons = (setAtker: boolean) => {
   }
 };
 
-const calcResultsToPieData = (results: combatResult1E): ResultData => {
+const calcResultsToPieData = (results: calcResult1E): ResultData => {
   return {
     winners: [
       { name: "misses", value: results.misses },
@@ -201,7 +201,7 @@ const simResultsToPieData = (results: simResults1E): ResultData => {
   };
 };
 
-const calcResultsToTableData = (results: combatResult1E): ResultTableData => {
+const calcResultsToTableData = (results: calcResult1E): ResultTableData => {
   return [
     { name: "hits", value: results.hits },
     { name: "hits-crits", value: results.critHits },
