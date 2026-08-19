@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import { ResultTableData, UWCombatTable } from "../uwCombatTable";
-import { calculateUWAttack, calcResult1E, simResults1E, simulateUWAttacks, uw1ESavedCombat } from "./underworlds1E";
+import { calculateUWAttack, calcResult1E, simResults1E, simulateUWAttacks, uw1ESavedCombat, uw1ECombatDef } from "./underworlds1E";
 import { ResultData } from "../uwCombatPie";
 import { UW1ECombatPie } from "./uw1ECombatPie";
 
@@ -25,10 +25,12 @@ const atkInnatesInp = <HTMLInputElement>document.getElementById("attacker-innate
 const atkMissestohitsInp = <HTMLInputElement>document.getElementById("attacker-missestohits")!;
 const atkHitstocritsInp = <HTMLInputElement>document.getElementById("attacker-hitstocrits")!;
 const atkTrappedInp = <HTMLInputElement>document.getElementById("attacker-trapped")!;
+const atkCritInp = <HTMLInputElement>document.getElementById("attacker-crit-toggle")!;
 const defDiceInp = <HTMLInputElement>document.getElementById("defender-dice")!;
 const defTargetInp = <HTMLInputElement>document.getElementById("defender-target")!;
 const defRerollInp = <HTMLInputElement>document.getElementById("defender-rerolls")!;
 const defInnatesInp = <HTMLInputElement>document.getElementById("defender-innates")!;
+const defCritInp = <HTMLInputElement>document.getElementById("defender-crit-toggle")!;
 
 const saveCombatBtn = <HTMLButtonElement>document.getElementById("save-combat")!;
 const historyList = <HTMLDivElement>document.getElementById("history-list")!;
@@ -50,18 +52,8 @@ const table = new UWCombatTable("results-table", true);
 // Button actions
 rollBtn.addEventListener("click", () => {
   const results = simulateUWAttacks({
+    ...getInputs(),
     simulations: parseInt(numSimulationsInp.value),
-    atkDice: parseInt(atkDiceInp.value),
-    atkSuccess: parseInt(atkTargetInp.value),
-    atkRerolls: parseInt(atkRerollInp.value),
-    atkHitsToCrit: parseInt(atkHitstocritsInp.value),
-    atkMissesToHits: parseInt(atkMissestohitsInp.value),
-    defDice: parseInt(defDiceInp.value),
-    defSuccess: parseInt(defTargetInp.value),
-    defRerolls: parseInt(defRerollInp.value),
-    atkInnates: parseInt(atkInnatesInp.value),
-    defInnates: parseInt(defInnatesInp.value),
-    trapped: atkTrappedInp.checked,
   });
   pieChart.update(simResultsToPieData(results));
   table.draw(simResultsToTableData(results));
@@ -98,8 +90,8 @@ document.querySelectorAll<HTMLInputElement>(".dice-tog input").forEach((diceTogg
   );
 });
 
-atkTargetInp.addEventListener("change", () => diceSelectToButtons(true));
-defTargetInp.addEventListener("change", () => diceSelectToButtons(false));
+atkTargetInp.addEventListener("change", () => diceSelectToButtons(true, false));
+defTargetInp.addEventListener("change", () => diceSelectToButtons(false, false));
 
 monteCarloToggle?.addEventListener("click", () => {
   monteCarlo = !monteCarlo;
@@ -115,24 +107,30 @@ monteCarloToggle?.addEventListener("click", () => {
   }
 });
 
+const getInputs = (): uw1ECombatDef => {
+  return {
+    atkDice: parseInt(atkDiceInp.value),
+    atkSuccess: parseInt(atkTargetInp.value),
+    atkRerolls: parseInt(atkRerollInp.value),
+    atkHitsToCrit: parseInt(atkHitstocritsInp.value),
+    atkMissesToHits: parseInt(atkMissestohitsInp.value),
+    atkNoCrits: !atkCritInp.checked,
+    defDice: parseInt(defDiceInp.value),
+    defSuccess: parseInt(defTargetInp.value),
+    defRerolls: parseInt(defRerollInp.value),
+    atkInnates: parseInt(atkInnatesInp.value),
+    defInnates: parseInt(defInnatesInp.value),
+    defNoCrits: !defCritInp.checked,
+    trapped: atkTrappedInp.checked,
+  };
+};
+
 // automatic triggers calculation when not using monte carlo
 const inputs = document.querySelectorAll<HTMLInputElement | HTMLSelectElement>("#inputs-wrapper input,#inputs-wrapper select");
 inputs.forEach((element) => {
   element.addEventListener("change", () => {
     if (!monteCarlo) {
-      const results = calculateUWAttack({
-        atkDice: parseInt(atkDiceInp.value),
-        atkSuccess: parseInt(atkTargetInp.value),
-        atkRerolls: parseInt(atkRerollInp.value),
-        atkHitsToCrit: parseInt(atkHitstocritsInp.value),
-        atkMissesToHits: parseInt(atkMissestohitsInp.value),
-        defDice: parseInt(defDiceInp.value),
-        defSuccess: parseInt(defTargetInp.value),
-        defRerolls: parseInt(defRerollInp.value),
-        atkInnates: parseInt(atkInnatesInp.value),
-        defInnates: parseInt(defInnatesInp.value),
-        trapped: atkTrappedInp.checked,
-      });
+      const results = calculateUWAttack(getInputs());
       pieChart.update(calcResultsToPieData(results));
       table.draw(calcResultsToTableData(results));
     }
@@ -164,12 +162,21 @@ const diceBtnGuide = [
   [1, 0, 1, 1, 1],
   [1, 1, 1, 1, 1],
 ];
-const diceSelectToButtons = (setAtker: boolean) => {
+const diceBtnGuideNoCrits = [
+  [0, 0, 0, 0, 0],
+  [0, 1, 0, 0, 0],
+  [0, 0, 1, 0, 0],
+  [0, 1, 1, 0, 0],
+  [0, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1],
+  [1, 1, 1, 1, 1],
+];
+const diceSelectToButtons = (setAtker: boolean, noCrits: boolean) => {
   const select = setAtker ? atkTargetInp : defTargetInp;
   const target = 7 - parseInt(select.value);
   const buttons = document.querySelectorAll<HTMLInputElement>(`#${setAtker ? "attacker" : "defender"}-dice-togs input`);
   for (let i = 0; i < 5; i++) {
-    buttons[i].checked = diceBtnGuide[target][i] === 1;
+    buttons[i].checked = (noCrits ? diceBtnGuideNoCrits : diceBtnGuide)[target][i] === 1;
   }
 };
 
@@ -221,8 +228,8 @@ const simResultsToTableData = (results: simResults1E): ResultTableData => {
 
 // on initial load, trigger a draw from current/saved inputs.
 inputs[0].dispatchEvent(new Event("change"));
-diceSelectToButtons(true);
-diceSelectToButtons(false);
+diceSelectToButtons(true, false);
+diceSelectToButtons(false, false);
 
 const savedCombats: uw1ESavedCombat[] = [];
 
@@ -238,8 +245,8 @@ function loadCombat(combat: uw1ESavedCombat) {
   defTargetInp.value = String(combat.defSuccess);
   defRerollInp.value = String(combat.defRerolls);
   defInnatesInp.value = String(combat.defInnates);
-  diceSelectToButtons(true);
-  diceSelectToButtons(false);
+  diceSelectToButtons(true, !!combat.atkNoCrits);
+  diceSelectToButtons(false, !!combat.defNoCrits);
   // trigger recalc
   inputs[0].dispatchEvent(new Event("change"));
 }
@@ -285,18 +292,8 @@ function renderHistoryList() {
 
 saveCombatBtn.addEventListener("click", () => {
   const inputs: uw1ESavedCombat = {
+    ...getInputs(),
     label: `Atk ${atkDiceInp.value}d ${atkTargetInp.value}+ ${atkRerollInp.value}rr / Def ${defDiceInp.value}d ${defTargetInp.value}+ ${defRerollInp.value}rr`,
-    atkDice: parseInt(atkDiceInp.value),
-    atkSuccess: parseInt(atkTargetInp.value),
-    atkRerolls: parseInt(atkRerollInp.value),
-    atkHitsToCrit: parseInt(atkHitstocritsInp.value),
-    atkMissesToHits: parseInt(atkMissestohitsInp.value),
-    defDice: parseInt(defDiceInp.value),
-    defSuccess: parseInt(defTargetInp.value),
-    defRerolls: parseInt(defRerollInp.value),
-    atkInnates: parseInt(atkInnatesInp.value),
-    defInnates: parseInt(defInnatesInp.value),
-    trapped: atkTrappedInp.checked,
   };
   const results = calculateUWAttack(inputs);
   const simplePie = pieChart.simplePie(calcResultsToPieData(results));

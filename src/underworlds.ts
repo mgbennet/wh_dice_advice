@@ -8,9 +8,11 @@ export interface uwCombatDef {
   atkRerolls: number;
   atkHitsToCrit: number;
   atkMissesToHits: number;
+  atkNoCrits?: boolean;
   defDice: number;
   defSuccess: number;
   defRerolls: number;
+  defNoCrits?: boolean;
 }
 
 export interface uwCombatSim extends uwCombatDef {

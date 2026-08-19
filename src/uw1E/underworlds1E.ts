@@ -98,9 +98,13 @@ function evaluateCombat(
   simulation: uw1ECombatSim,
 ): CombatResult1E {
   let atkSuccesses = atkDice.reduce((count, d) => d >= simulation.atkSuccess ? count + 1 : count, 0);
-  const atkCrits = atkDice.reduce((count, d) => d === 6 ? count + 1 : count, 0);
+  const atkCrits = simulation.atkNoCrits
+    ? 0
+    : atkDice.reduce((count, d) => d === 6 ? count + 1 : count, 0);
   let defSuccesses = defDice.reduce((count, d) => d >= simulation.defSuccess ? count + 1 : count, 0);
-  const defCrits = defDice.reduce((count, d) => d === 6 ? count + 1 : count, 0);
+  const defCrits = simulation.defNoCrits
+    ? 0
+    : defDice.reduce((count, d) => d === 6 ? count + 1 : count, 0);
   if (simulation.trapped && atkSuccesses >= 1) {
     atkSuccesses += 1;
   }
@@ -151,16 +155,18 @@ export function calculateUWAttack(combatDef: uw1ECombatDef): calcResult1E {
             atkSuccesses += 1;
           }
           const defSuccesses = defHits + defCrits + combatDef.defInnates;
+          const tempAtkCrits = combatDef.atkNoCrits ? 0 : atkCrits;
+          const tempDefCrits = combatDef.defNoCrits ? 0 : defCrits;
 
-          if (atkCrits > defCrits) {
+          if (tempAtkCrits > tempDefCrits) {
             critHits += odds;
             hits += odds;
-          } else if (atkCrits < defCrits) {
+          } else if (tempAtkCrits < tempDefCrits) {
             misses += odds;
           } else {
             if (atkSuccesses > defSuccesses) {
               hits += odds;
-              if (atkCrits > 0) {
+              if (tempAtkCrits > 0) {
                 critHits += odds;
               }
             } else if (atkSuccesses < defSuccesses || atkSuccesses === 0) {

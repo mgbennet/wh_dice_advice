@@ -17,6 +17,7 @@ export function dicePool(numDice: number): number[] {
 
 /**
  * Given a dice pool, uses a specified number of rerolls to try and improve results.
+ * If a dice is less than the successTarget, a reroll will be used to try to improve it.
  * Dice that have been rerolled cannot be rerolled again.
  * @param dicePool A dice pool to be given rerolls. Un-ordered.
  * @param successTarget Successful result for a roll. Results equal or above will no be rerolled.
