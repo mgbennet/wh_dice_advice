@@ -227,9 +227,9 @@ const simResultsToTableData = (results: simResults1E): ResultTableData => {
 };
 
 // on initial load, trigger a draw from current/saved inputs.
-inputs[0].dispatchEvent(new Event("change"));
 diceSelectToButtons(true, false);
 diceSelectToButtons(false, false);
+inputs[0].dispatchEvent(new Event("change"));
 
 const savedCombats: uw1ESavedCombat[] = [];
 

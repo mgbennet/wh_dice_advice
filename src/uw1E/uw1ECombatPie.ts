@@ -16,13 +16,13 @@ const color = d3.scaleOrdinal<string>()
 
 const initData = {
   winners: [
-    { name: "misses", value: 0.25 },
-    { name: "draws", value: 0.25 },
-    { name: "hits", value: 0.5 },
+    { name: "misses", value: 0.324 },
+    { name: "draws", value: 0.139 },
+    { name: "hits", value: 0.537 },
   ],
   crits: [
-    { name: "non-crits", value: 0.796 },
-    { name: "hits-crits", value: 0.204 },
+    { name: "non-crits", value: 0.722 },
+    { name: "hits-crits", value: 0.278 },
   ],
 };
 
