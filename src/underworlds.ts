@@ -95,7 +95,7 @@ export function simulateUWAttacks(simulation: uwCombatSim): simulationResults {
       );
     }
     const defenseDice = reroll(dicePool(simulation.defDice), simulation.defSuccess, simulation.defRerolls);
-    results.push(evaluateCombat(attackDice, simulation.atkSuccess, defenseDice, simulation.defSuccess));
+    results.push(evaluateCombat(attackDice, defenseDice, simulation));
   }
 
   // summarize the results
@@ -135,14 +135,17 @@ export function simulateUWAttacks(simulation: uwCombatSim): simulationResults {
  */
 function evaluateCombat(
   atkDice: number[],
-  atkSuccess: number,
   defDice: number[],
-  defSuccess: number,
+  simulation: uwCombatSim,
 ): uwCombatResult {
-  const atkSuccesses = atkDice.reduce((count, d) => d >= atkSuccess ? count + 1 : count, 0);
-  const atkCrits = atkDice.reduce((count, d) => d === 6 ? count + 1 : count, 0);
-  const defSuccesses = defDice.reduce((count, d) => d >= defSuccess ? count + 1 : count, 0);
-  const defCrits = defDice.reduce((count, d) => d === 6 ? count + 1 : count, 0);
+  const atkSuccesses = atkDice.reduce((count, d) => d >= simulation.atkSuccess ? count + 1 : count, 0);
+  const atkCrits = simulation.atkNoCrits
+    ? 0
+    : atkDice.reduce((count, d) => d === 6 ? count + 1 : count, 0);
+  const defSuccesses = defDice.reduce((count, d) => d >= simulation.defSuccess ? count + 1 : count, 0);
+  const defCrits = simulation.defNoCrits
+    ? 0
+    : defDice.reduce((count, d) => d === 6 ? count + 1 : count, 0);
   return {
     winner: atkSuccesses == defSuccesses && atkSuccesses > 0
       ? CombatWinner.Tie
@@ -199,16 +202,18 @@ export function calculateUWAttack(combatDef: uwCombatDef): uwCombatCalcResult {
       for (let defendCrits = 0; defendCrits < defenderCritsOdds.length; defendCrits++) {
         for (let defendHits = 0; defendHits < defenderCritsOdds[defendCrits].length; defendHits++) {
           const odds = attackerCritsOdds[attackCrits][attackHits] * defenderCritsOdds[defendCrits][defendHits];
-          if (attackCrits > defendCrits) {
-            if (attackCrits + attackHits > defendCrits + defendHits) {
+          const tempAtkCrits = combatDef.atkNoCrits ? 0 : attackCrits;
+          const tempDefCrits = combatDef.defNoCrits ? 0 : defendCrits;
+          if (tempAtkCrits > tempDefCrits) {
+            if (tempAtkCrits + attackHits > tempDefCrits + defendHits) {
               successOverrun += odds;
-            } else if (attackCrits + attackHits === defendCrits + defendHits) {
+            } else if (tempAtkCrits + attackHits === tempDefCrits + defendHits) {
               tieOverrun += odds;
             }
-          } else if (attackCrits < defendCrits) {
-            if (attackCrits + attackHits > defendCrits + defendHits) {
+          } else if (tempAtkCrits < tempDefCrits) {
+            if (tempAtkCrits + attackHits > tempDefCrits + defendHits) {
               successStandfast += odds;
-            } else if (attackCrits + attackHits === defendCrits + defendHits) {
+            } else if (tempAtkCrits + attackHits === tempDefCrits + defendHits) {
               tieStandfast += odds;
             }
           }

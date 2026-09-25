@@ -4,6 +4,7 @@ import {
   simulateUWAttacks,
   simulationResults,
   uwCombatCalcResult,
+  uwCombatDef,
 } from "./underworlds";
 import { UWCombatPie, ResultData } from "./uwCombatPie";
 import * as d3 from "d3";
@@ -26,9 +27,11 @@ const atkTargetInp = <HTMLInputElement>document.getElementById("attacker-target"
 const atkRerollInp = <HTMLInputElement>document.getElementById("attacker-rerolls")!;
 const atkMissestohitsInp = <HTMLInputElement>document.getElementById("attacker-missestohits")!;
 const atkHitstocritsInp = <HTMLInputElement>document.getElementById("attacker-hitstocrits")!;
+const atkCritInp = <HTMLInputElement>document.getElementById("attacker-crit-toggle")!;
 const defDiceInp = <HTMLInputElement>document.getElementById("defender-dice")!;
 const defTargetInp = <HTMLInputElement>document.getElementById("defender-target")!;
 const defRerollInp = <HTMLInputElement>document.getElementById("defender-rerolls")!;
+const defCritInp = <HTMLInputElement>document.getElementById("defender-crit-toggle")!;
 
 const saveCombatBtn = <HTMLButtonElement>document.getElementById("save-combat")!;
 const historyList = <HTMLDivElement>document.getElementById("history-list")!;
@@ -50,15 +53,8 @@ const table = new UWCombatTable("results-table");
 // Button actions
 rollBtn.addEventListener("click", () => {
   const results = simulateUWAttacks({
+    ...getInputs(),
     simulations: parseInt(numSimulationsInp.value),
-    atkDice: parseInt(atkDiceInp.value),
-    atkSuccess: parseInt(atkTargetInp.value),
-    atkRerolls: parseInt(atkRerollInp.value),
-    atkHitsToCrit: parseInt(atkHitstocritsInp.value),
-    atkMissesToHits: parseInt(atkMissestohitsInp.value),
-    defDice: parseInt(defDiceInp.value),
-    defSuccess: parseInt(defTargetInp.value),
-    defRerolls: parseInt(defRerollInp.value),
   });
   pieChart.update(simResultsToPieData(results));
   table.draw(simResultsToTableData(results));
@@ -95,8 +91,8 @@ document.querySelectorAll<HTMLInputElement>(".dice-tog input").forEach((diceTogg
   );
 });
 
-atkTargetInp.addEventListener("change", () => diceSelectToButtons(true));
-defTargetInp.addEventListener("change", () => diceSelectToButtons(false));
+atkTargetInp.addEventListener("change", () => diceSelectToButtons(true, false));
+defTargetInp.addEventListener("change", () => diceSelectToButtons(false, false));
 
 monteCarloToggle?.addEventListener("click", () => {
   monteCarlo = !monteCarlo;
@@ -112,21 +108,27 @@ monteCarloToggle?.addEventListener("click", () => {
   }
 });
 
+const getInputs = (): uwCombatDef => {
+  return {
+    atkDice: parseInt(atkDiceInp.value),
+    atkSuccess: parseInt(atkTargetInp.value),
+    atkRerolls: parseInt(atkRerollInp.value),
+    atkHitsToCrit: parseInt(atkHitstocritsInp.value),
+    atkMissesToHits: parseInt(atkMissestohitsInp.value),
+    atkNoCrits: !atkCritInp.checked,
+    defDice: parseInt(defDiceInp.value),
+    defSuccess: parseInt(defTargetInp.value),
+    defRerolls: parseInt(defRerollInp.value),
+    defNoCrits: !defCritInp.checked,
+  };
+};
+
 // automatic triggers calculation when not using monte carlo
 const inputs = document.querySelectorAll<HTMLInputElement | HTMLSelectElement>("#inputs-wrapper input,#inputs-wrapper select");
 inputs.forEach((element) => {
   element.addEventListener("change", () => {
     if (!monteCarlo) {
-      const results = calculateUWAttack({
-        atkDice: parseInt(atkDiceInp.value),
-        atkSuccess: parseInt(atkTargetInp.value),
-        atkRerolls: parseInt(atkRerollInp.value),
-        atkHitsToCrit: parseInt(atkHitstocritsInp.value),
-        atkMissesToHits: parseInt(atkMissestohitsInp.value),
-        defDice: parseInt(defDiceInp.value),
-        defSuccess: parseInt(defTargetInp.value),
-        defRerolls: parseInt(defRerollInp.value),
-      });
+      const results = calculateUWAttack(getInputs());
       pieChart.update(calcResultsToPieData(results));
       table.draw(calcResultsToTableData(results));
     }
@@ -158,12 +160,21 @@ const diceBtnGuide = [
   [1, 0, 1, 1, 1],
   [1, 1, 1, 1, 1],
 ];
-const diceSelectToButtons = (setAtker: boolean) => {
+const diceBtnGuideNoCrits = [
+  [0, 0, 0, 0, 0],
+  [0, 1, 0, 0, 0],
+  [0, 0, 1, 0, 0],
+  [0, 1, 1, 0, 0],
+  [0, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1],
+  [1, 1, 1, 1, 1],
+];
+const diceSelectToButtons = (setAtker: boolean, noCrits: boolean) => {
   const select = setAtker ? atkTargetInp : defTargetInp;
   const target = 7 - parseInt(select.value);
   const buttons = document.querySelectorAll<HTMLInputElement>(`#${setAtker ? "attacker" : "defender"}-dice-togs input`);
   for (let i = 0; i < 5; i++) {
-    buttons[i].checked = diceBtnGuide[target][i] === 1;
+    buttons[i].checked = (noCrits ? diceBtnGuideNoCrits : diceBtnGuide)[target][i] === 1;
   }
 };
 
@@ -239,9 +250,9 @@ const simResultsToTableData = (results: simulationResults): ResultTableData => {
 };
 
 // on initial load, trigger a draw from current/saved inputs.
+diceSelectToButtons(true, false);
+diceSelectToButtons(false, false);
 inputs[0].dispatchEvent(new Event("change"));
-diceSelectToButtons(true);
-diceSelectToButtons(false);
 
 const savedCombats: savedCombat[] = [];
 
@@ -254,8 +265,8 @@ function loadCombat(combat: savedCombat) {
   defDiceInp.value = String(combat.defDice);
   defTargetInp.value = String(combat.defSuccess);
   defRerollInp.value = String(combat.defRerolls);
-  diceSelectToButtons(true);
-  diceSelectToButtons(false);
+  diceSelectToButtons(true, !!combat.atkNoCrits);
+  diceSelectToButtons(false, !!combat.defNoCrits);
   // trigger recalc
   inputs[0].dispatchEvent(new Event("change"));
 }
@@ -301,15 +312,8 @@ function renderHistoryList() {
 
 saveCombatBtn.addEventListener("click", () => {
   const inputs: savedCombat = {
+    ...getInputs(),
     label: `Atk ${atkDiceInp.value}d ${atkTargetInp.value}+ ${atkRerollInp.value}rr / Def ${defDiceInp.value}d ${defTargetInp.value}+ ${defRerollInp.value}rr`,
-    atkDice: parseInt(atkDiceInp.value),
-    atkSuccess: parseInt(atkTargetInp.value),
-    atkRerolls: parseInt(atkRerollInp.value),
-    atkHitsToCrit: parseInt(atkHitstocritsInp.value),
-    atkMissesToHits: parseInt(atkMissestohitsInp.value),
-    defDice: parseInt(defDiceInp.value),
-    defSuccess: parseInt(defTargetInp.value),
-    defRerolls: parseInt(defRerollInp.value),
   };
   const simplePie = pieChart.simplePie(
     calcResultsToPieData(
