@@ -293,8 +293,11 @@ selectedcontent .target-helper {
 
 #roll-btn {
   margin-top: 1rem;
-  padding: .1rem 2rem;
+  padding-top: .1rem;
+  padding-bottom: .1rem;
   font-size: large;
+  text-align: center;
+  width: 6.5rem;
 }
 
 #data-area {

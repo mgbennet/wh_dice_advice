@@ -1,4 +1,5 @@
 import {
+  addSimulationResults,
   calculateUWAttack,
   savedCombat,
   simulateUWAttacks,
@@ -52,12 +53,56 @@ const table = new UWCombatTable("results-table");
 
 // Button actions
 rollBtn.addEventListener("click", () => {
-  const results = simulateUWAttacks({
-    ...getInputs(),
-    simulations: parseInt(numSimulationsInp.value),
+  rollBtn.disabled = true;
+  rollBtn.innerHTML = "Rolling...";
+
+  const batch_size = 10000;
+  const inputs = getInputs();
+  const numSims = parseInt(numSimulationsInp.value);
+  let completed = 0;
+
+  let aggregateResults = {
+    attackerWins: {
+      count: 0,
+      attackerCritWins: 0,
+      defenderCritWins: 0,
+    },
+    defenderWins: {
+      count: 0,
+      attackerCritWins: 0,
+      defenderCritWins: 0,
+    },
+    ties: {
+      count: 0,
+      attackerCritWins: 0,
+      defenderCritWins: 0,
+    },
+    numSimulations: 0,
+  };
+  new Promise<simulationResults>((resolve) => {
+    const runBatch = () => {
+      const results = simulateUWAttacks({
+        ...inputs,
+        simulations: Math.min(batch_size, numSims - completed),
+      });
+      completed = completed + Math.min(batch_size, numSims - completed);
+      aggregateResults = addSimulationResults(aggregateResults, results);
+
+      if (completed < numSims) {
+        setTimeout(runBatch, 0);
+      } else {
+        resolve(aggregateResults);
+      }
+    };
+
+    runBatch();
+  }).then((simResults: simulationResults) => {
+    rollBtn.disabled = false;
+    rollBtn.innerHTML = "Roll!";
+
+    pieChart.update(simResultsToPieData(simResults));
+    table.draw(simResultsToTableData(simResults));
   });
-  pieChart.update(simResultsToPieData(results));
-  table.draw(simResultsToTableData(results));
 });
 
 for (let i = 0; i < inputNames.length; i++) {

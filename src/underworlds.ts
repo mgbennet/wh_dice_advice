@@ -160,6 +160,40 @@ function evaluateCombat(
   };
 }
 
+export function addSimulationResults(
+  a: simulationResults,
+  b: simulationResults,
+): simulationResults {
+  return {
+    attackerWins: {
+      count: a.attackerWins.count + b.attackerWins.count,
+      attackerCritWins:
+        a.attackerWins.attackerCritWins
+        + b.attackerWins.attackerCritWins,
+      defenderCritWins:
+        a.attackerWins.defenderCritWins
+        + b.attackerWins.defenderCritWins,
+    },
+    defenderWins: {
+      count: a.defenderWins.count + b.defenderWins.count,
+      attackerCritWins:
+        a.defenderWins.attackerCritWins
+        + b.defenderWins.attackerCritWins,
+      defenderCritWins:
+        a.defenderWins.defenderCritWins
+        + b.defenderWins.defenderCritWins,
+    },
+    ties: {
+      count: a.ties.count + b.ties.count,
+      attackerCritWins:
+        a.ties.attackerCritWins + b.ties.attackerCritWins,
+      defenderCritWins:
+        a.ties.defenderCritWins + b.ties.defenderCritWins,
+    },
+    numSimulations: a.numSimulations + b.numSimulations,
+  };
+}
+
 /**
  * Precisly calculates the probable outcomes for an UWs combat.
  * @param combatDef Object containing all parameters of an UWs combat
