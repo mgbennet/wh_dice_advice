@@ -40,6 +40,16 @@ export interface simResults1E extends calcResult1E {
   numSimulations: number;
 }
 
+export function addSimResults1E(a: simResults1E, b: simResults1E): simResults1E {
+  return {
+    critHits: a.critHits + b.critHits,
+    hits: a.hits + b.hits,
+    draws: a.draws + b.draws,
+    misses: a.misses + b.misses,
+    numSimulations: a.numSimulations + b.numSimulations,
+  };
+}
+
 /**
  * Runs a Monte Carlo simulation of an Underworlds combat.
  */

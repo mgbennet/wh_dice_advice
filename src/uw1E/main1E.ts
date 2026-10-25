@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import { ResultTableData, UWCombatTable } from "../uwCombatTable";
-import { calculateUWAttack, calcResult1E, simResults1E, simulateUWAttacks, uw1ESavedCombat, uw1ECombatDef } from "./underworlds1E";
+import { calculateUWAttack, calcResult1E, simResults1E, simulateUWAttacks, uw1ESavedCombat, uw1ECombatDef, addSimResults1E } from "./underworlds1E";
 import { ResultData } from "../uwCombatPie";
 import { UW1ECombatPie } from "./uw1ECombatPie";
 
@@ -51,12 +51,46 @@ const table = new UWCombatTable("results-table", true);
 
 // Button actions
 rollBtn.addEventListener("click", () => {
-  const results = simulateUWAttacks({
-    ...getInputs(),
-    simulations: parseInt(numSimulationsInp.value),
+  rollBtn.disabled = true;
+  rollBtn.innerHTML = "Rolling...";
+
+  const batch_size = 10000;
+  const inputs = getInputs();
+  const numSims = parseInt(numSimulationsInp.value);
+  let completed = 0;
+
+  let aggregateResults = {
+    critHits: 0,
+    hits: 0,
+    draws: 0,
+    misses: 0,
+    numSimulations: 0,
+  };
+
+  new Promise<simResults1E>((resolve) => {
+    const runBatch = () => {
+      const results = simulateUWAttacks({
+        ...inputs,
+        simulations: Math.min(batch_size, numSims - completed),
+      });
+      completed = completed + Math.min(batch_size, numSims - completed);
+      aggregateResults = addSimResults1E(aggregateResults, results);
+
+      if (completed < numSims) {
+        setTimeout(runBatch, 0);
+      } else {
+        resolve(aggregateResults);
+      }
+    };
+
+    runBatch();
+  }).then((simResults: simResults1E) => {
+    rollBtn.disabled = false;
+    rollBtn.innerHTML = "Roll!";
+
+    pieChart.update(simResultsToPieData(simResults));
+    table.draw(simResultsToTableData(simResults));
   });
-  pieChart.update(simResultsToPieData(results));
-  table.draw(simResultsToTableData(results));
 });
 
 for (let i = 0; i < inputNames.length; i++) {
