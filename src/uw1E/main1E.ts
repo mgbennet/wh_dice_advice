@@ -10,6 +10,7 @@ const inputNames = [
   "attacker-dice",
   "attacker-target",
   "attacker-rerolls",
+  "attacker-critabilities",
   "attacker-innates",
   "attacker-missestohits",
   "attacker-hitstocrits",
@@ -22,6 +23,7 @@ const atkDiceInp = <HTMLInputElement>document.getElementById("attacker-dice")!;
 const atkTargetInp = <HTMLInputElement>document.getElementById("attacker-target")!;
 const atkRerollInp = <HTMLInputElement>document.getElementById("attacker-rerolls")!;
 const atkInnatesInp = <HTMLInputElement>document.getElementById("attacker-innates")!;
+const atkCritabilitiesInp = <HTMLInputElement>document.getElementById("attacker-critabilities")!;
 const atkMissestohitsInp = <HTMLInputElement>document.getElementById("attacker-missestohits")!;
 const atkHitstocritsInp = <HTMLInputElement>document.getElementById("attacker-hitstocrits")!;
 const atkTrappedInp = <HTMLInputElement>document.getElementById("attacker-trapped")!;
@@ -100,6 +102,9 @@ for (let i = 0; i < inputNames.length; i++) {
     if (name.includes("target")) {
       if (input.value !== "6")
         input.value = (parseInt(input.value) + 1).toString();
+    } else if (name.includes("critabilities")) {
+      if (input.value !== "2")
+        input.value = (parseInt(input.value) + 1).toString();
     } else {
       input.value = (parseInt(input.value) + 1).toString();
     }
@@ -146,6 +151,7 @@ const getInputs = (): uw1ECombatDef => {
     atkDice: parseInt(atkDiceInp.value),
     atkSuccess: parseInt(atkTargetInp.value),
     atkRerolls: parseInt(atkRerollInp.value),
+    atkCritAbilities: parseInt(atkCritabilitiesInp.value),
     atkHitsToCrit: parseInt(atkHitstocritsInp.value),
     atkMissesToHits: parseInt(atkMissestohitsInp.value),
     atkNoCrits: !atkCritInp.checked,
@@ -271,6 +277,7 @@ function loadCombat(combat: uw1ESavedCombat) {
   atkDiceInp.value = String(combat.atkDice);
   atkTargetInp.value = String(combat.atkSuccess);
   atkRerollInp.value = String(combat.atkRerolls);
+  atkCritabilitiesInp.value = String(combat.atkCritAbilities);
   atkInnatesInp.value = String(combat.atkInnates);
   atkHitstocritsInp.value = String(combat.atkHitsToCrit);
   atkMissestohitsInp.value = String(combat.atkMissesToHits);

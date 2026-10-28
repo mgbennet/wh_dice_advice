@@ -74,7 +74,10 @@ export function simulateUWAttacks(simulation: uw1ECombatSim): simResults1E {
         simulation.atkMissesToHits,
       );
     }
-    const defenseDice = reroll(dicePool(simulation.defDice), simulation.defSuccess, simulation.defRerolls);
+    const modifiedDefSuccess = attackDice.indexOf(6) >= 0 && !simulation.atkNoCrits
+      ? simulation.defSuccess + simulation.atkCritAbilities
+      : simulation.defSuccess;
+    const defenseDice = reroll(dicePool(simulation.defDice), modifiedDefSuccess, simulation.defRerolls);
     results.push(evaluateCombat(attackDice, defenseDice, simulation));
   }
 
@@ -111,7 +114,10 @@ function evaluateCombat(
   const atkCrits = simulation.atkNoCrits
     ? 0
     : atkDice.reduce((count, d) => d === 6 ? count + 1 : count, 0);
-  let defSuccesses = defDice.reduce((count, d) => d >= simulation.defSuccess ? count + 1 : count, 0);
+  const modifiedDefSuccess = atkCrits > 0
+    ? simulation.defSuccess + simulation.atkCritAbilities
+    : simulation.defSuccess;
+  let defSuccesses = defDice.reduce((count, d) => d >= modifiedDefSuccess ? count + 1 : count, 0);
   const defCrits = simulation.defNoCrits
     ? 0
     : defDice.reduce((count, d) => d === 6 ? count + 1 : count, 0);
@@ -154,18 +160,25 @@ export function calculateUWAttack(combatDef: uw1ECombatDef): calcResult1E {
     combatDef.defRerolls,
     0,
   );
+  const defCritsOddsCritted = critProbDist(
+    combatDef.defDice,
+    combatDef.defSuccess + combatDef.atkCritAbilities,
+    combatDef.defRerolls,
+    0,
+  );
   let critHits = 0, hits = 0, draws = 0, misses = 0;
   for (let atkCrits = 0; atkCrits < atkCritsOdds.length; atkCrits++) {
     for (let atkHits = 0; atkHits < atkCritsOdds[atkCrits].length; atkHits++) {
-      for (let defCrits = 0; defCrits < defCritsOdds.length; defCrits++) {
-        for (let defHits = 0; defHits < defCritsOdds[defCrits].length; defHits++) {
-          const odds = atkCritsOdds[atkCrits][atkHits] * defCritsOdds[defCrits][defHits];
+      const tempAtkCrits = combatDef.atkNoCrits ? 0 : atkCrits;
+      const defenseOddsTable = tempAtkCrits < 1 ? defCritsOdds : defCritsOddsCritted;
+      for (let defCrits = 0; defCrits < defenseOddsTable.length; defCrits++) {
+        for (let defHits = 0; defHits < defenseOddsTable[defCrits].length; defHits++) {
+          const odds = atkCritsOdds[atkCrits][atkHits] * defenseOddsTable[defCrits][defHits];
           let atkSuccesses = atkHits + atkCrits + combatDef.atkInnates;
           if (combatDef.trapped && atkHits + atkCrits >= 1) {
             atkSuccesses += 1;
           }
           const defSuccesses = defHits + defCrits + combatDef.defInnates;
-          const tempAtkCrits = combatDef.atkNoCrits ? 0 : atkCrits;
           const tempDefCrits = combatDef.defNoCrits ? 0 : defCrits;
 
           if (tempAtkCrits > tempDefCrits) {
