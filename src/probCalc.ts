@@ -146,3 +146,39 @@ export function arrayMult(arr1: number[], arr2: number[]): number[][] {
   }
   return result;
 }
+
+/**
+ * Adds two arrays of equal length together.
+ */
+export function arrayAdd(arr1: number[], arr2: number[]): number[] {
+  return arr1.map((v, i) => v + arr2[i]);
+}
+
+/**
+ * Returns the sum of an array of numbers
+ */
+export function arraySum(arr: number[]): number {
+  return arr.reduce((a, b) => a + b);
+}
+
+/**
+ * Given an array of arrays, returns an array of the sums of each "column"
+ * For example, given
+ * [[1,2,3]
+ *  [3,4]
+ *  [5,6,7]]
+ * it will return [9, 10, 10]
+ */
+export function collapseTableToRow(arr: number[][]): number[] {
+  const result = [];
+  const maxDepth = arr.reduce<number>((prev: number, cur: number[]) => Math.max(prev, cur.length), 0);
+  for (let i = 0; i < maxDepth; i++) {
+    result[i] = 0;
+    for (const row of arr) {
+      if (row.length >= i + 1) {
+        result[i] += row[i];
+      }
+    }
+  }
+  return result;
+}

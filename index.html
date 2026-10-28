@@ -25,6 +25,10 @@
 </svg>
   <div id="app">
     <div id="main-content">
+      <dialog id="critabilities-info-dialog" popover>
+        <p>Weapon abilities that only trigger if at least one critical hit is rolled. Note that the simulation doesn't care what dice sides you've selected as active for the defender, so selecting -2 here will reduce the defender's success target by 2 regardless of whether the Shield button is selected or not.</p>
+        <button autofocus class="close-dialog-btn" popovertarget="critabilities-info-dialog" popovertargetaction="hide">Close</button>
+      </dialog>
       <dialog id="hitstocrits-info-dialog" popover>
         <p>After rolling and rerolls, change successes to critical successes. Fighters with the Enraged ability from Raging Slayers should set this&nbsp;to&nbsp;1.</p>
         <button autofocus class="close-dialog-btn" popovertarget="hitstocrits-info-dialog" popovertargetaction="hide">Close</button>
@@ -109,6 +113,24 @@
             </div>
           </div>
           <div id="attacker-advanced-section" style="display:block">
+            <div class="input-line">
+              <label for="attacker-critabilities">
+                Crit abilities
+              </label>
+              <div class="input-elements-div">
+                <button class="inc-btn" id="attacker-critabilities-inc">+</button>
+                <select name="attacker-critabilities" id="attacker-critabilities">
+                  <button>
+                    <selectedcontent></selectedcontent>
+                  </button>
+                  <option value="0" selected><span class="target-label">-0</span>&nbsp; <span class="target-helper">(no effect)</span></option>
+                  <option value="1"><span class="target-label">-1</span>&nbsp; <span class="target-helper">(ensnare)</span></option>
+                  <option value="2"><span class="target-label">-2</span>&nbsp; <span class="target-helper">(cleave)</span></option>
+                </select>
+                <button class="dec-btn" id="attacker-critabilities-dec">-</button>
+                <button class="info-toggle-btn toggle-critabilities-info" popovertarget="critabilities-info-dialog">?</button>
+              </div>
+            </div>
             <div class="input-line">
               <label for="attacker-hitstocrits">
                 Hits to crits

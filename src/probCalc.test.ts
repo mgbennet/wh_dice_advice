@@ -1,5 +1,6 @@
 import { expect, test } from "vitest";
 import * as pc from "./probCalc";
+import { collapseTableToRow } from "./probCalc";
 
 test("binomialProbability", () => {
   expect(pc.binomialProbability(4, 0.5, 3)).toBe(0.25);
@@ -100,4 +101,12 @@ test("critProbDist", () => {
     [0, 0],
     [0],
   ]);
+});
+
+test("collapseTableToRow", () => {
+  expect(collapseTableToRow([[1, 2, 3]])).toEqual([1, 2, 3]);
+
+  expect(collapseTableToRow([[1, 2, 3], [4, 5], [6, 7, 8]])).toEqual([11, 14, 11]);
+
+  expect(collapseTableToRow([[1, 2, 3], [4, 5], [6]])).toEqual([11, 7, 3]);
 });
